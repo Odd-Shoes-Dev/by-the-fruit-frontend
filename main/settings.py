@@ -190,12 +190,11 @@ ALLOWED_HOSTS = allowed_hosts_str.split(',') if allowed_hosts_str else []
 
 # Do the same for CORS and CSRF settings
 allowed_origins_str = os.environ.get('CORS_ALLOWED_ORIGINS', '')
-CORS_ALLOWED_ORIGINS = allowed_origins_str.split(
-    ',') if allowed_origins_str else []
+CORS_ALLOWED_ORIGINS = allowed_origins_str.split(',') if allowed_origins_str else []
 
 trusted_origins_str = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
-CSRF_TRUSTED_ORIGINS = trusted_origins_str.split(
-    ',') if trusted_origins_str else []
+CSRF_TRUSTED_ORIGINS = trusted_origins_str.split(',') if trusted_origins_str else []
+
 JAZZMIN_SETTINGS = {
     # title of the window (Will default to current_admin_site.site_title if absent or None)
     "site_title": os.environ.get('SITE_NAME'), "user_avatar": None,
