@@ -44,16 +44,16 @@ class RegisterView(generics.GenericAPIView):
         user = CustomUser.objects.get(email=user_data['email'])
         # token = RefreshToken.for_user(user).access_token
 
-        relative_link = reverse('verify-email')
-        current_site = get_current_site(request).domain
+        # relative_link = reverse('verify-email')
+        # current_site = get_current_site(request).domain
 
-        abs_url = f"http://{current_site}{relative_link}?token="
+        # abs_url = f"http://{current_site}{relative_link}?token="
 
-        email_body = 'Hi {} Use below link to verify your email \n {}'.format(
-            user.full_name, abs_url)
-        data = {'to_email': CustomUser.email, 'email_body': email_body,
-                'email_subject': 'Verify your email'}
-        Util.send_email(data)
+        # email_body = 'Hi {} Use below link to verify your email \n {}'.format(
+        #     user.full_name, abs_url)
+        # data = {'to_email': CustomUser.email, 'email_body': email_body,
+        #         'email_subject': 'Verify your email'}
+        # Util.send_email(data)
 
         return Response(user_data, status=status.HTTP_201_CREATED)
 

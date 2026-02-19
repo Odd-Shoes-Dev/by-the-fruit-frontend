@@ -106,12 +106,26 @@ WSGI_APPLICATION = 'main.wsgi.application'
 #         'PORT': os.environ.get('DB_PORT')
 #     }
 # }
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+DB_CHOICE = os.environ.get("DB_CHOICE", default="sqlite")
+if DB_CHOICE == "sqlite":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'dev.sqlite3',
+        }
     }
-}
+
+elif DB_CHOICE == "postgres":
+
+    DATABASES = {
+        'default': dj_database_url.config(
+            default='postgresql://neondb_owner:npg_VGhaY8z3uKsN@ep-muddy-block-a8u8tkyt-pooler.eastus2.azure.neon.tech/neondb?sslmode=require&channel_binding=require',
+            conn_max_age=600
+        )
+    }
+
+else:
+    raise ValueError(f"Unsupported DB_CHOICE: {DB_CHOICE}")
 REST_FRAMEWORK = {
 
     'EXCEPTION_HANDLER': 'accounts.utils.custom_exception_handler',
@@ -150,7 +164,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Dhaka'
+TIME_ZONE = 'Africa/Kampala'
 
 USE_I18N = True
 
