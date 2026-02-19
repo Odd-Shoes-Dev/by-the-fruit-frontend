@@ -155,8 +155,38 @@ Here are sample JSON payloads for testing the API endpoints.
 
 **Endpoint:** `POST /profiles/communities/{id}/add-businesses/`
 
-```json
+````json
 {
   "business_ids": [2, 4]
 }
+
+## 12. Get Current User Profile (with related data)
+**Endpoint:** `GET /user/me`
+**Header:** `Authorization: Token <your_token>`
+
+```json
+{
+  "id": 1,
+  "full_name": "John Doe",
+  "email": "john@example.com",
+  "phone": "+256700000000",
+  "photo": null,
+  "address": "Kampala",
+  "created_at": "2026-02-19T10:00:00Z",
+  "businesses": [
+    {
+      "id": 1,
+      "name": "Green Future Agro",
+      "category": "agriculture",
+      ...
+    }
+  ],
+  "investment_profiles": [],
+  "job_applications": [],
+  "communities": []
+}
+````
+
+```
+
 ```

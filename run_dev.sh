@@ -19,11 +19,11 @@ trap cleanup SIGINT SIGTERM
 
 # Start Celery Worker
 echo -e "${GREEN}Starting Celery Worker...${NC}"
-celery -A ApiTheVillage worker --loglevel=info &
+celery -A main worker --loglevel=info &
 
 # Start Celery Beat
 echo -e "${GREEN}Starting Celery Beat...${NC}"
-celery -A ApiTheVillage beat --loglevel=info &
+celery -A main beat --loglevel=info &
 
 # Wait a moment for Celery to start
 sleep 2

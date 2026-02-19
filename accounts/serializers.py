@@ -10,6 +10,10 @@ from django.urls import reverse
 from accounts.models import CustomUser
 from .utils import Util
 import requests
+from profiles.serializers import (
+    BusinessSerializer, InvestmentProfileSerializer,
+    JobApplicationSerializer, CommunitySerializer
+)
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -107,20 +111,29 @@ class SetNewPasswordSerializer(serializers.Serializer):
 
 
 class UsersSerializer(serializers.ModelSerializer):
+    businesses = BusinessSerializer(source='business_set', many=True, read_only=True)
+    investment_profiles = InvestmentProfileSerializer(source='investmentprofile_set', many=True, read_only=True)
+    job_applications = JobApplicationSerializer(many=True, read_only=True)
+    communities = CommunitySerializer(source='community_people', many=True, read_only=True)
 
     class Meta:
         model = CustomUser
         fields = ['id', 'full_name', 'email', 'phone',
-                  'photo', 'address', 'status', 'created_at']
+                  'photo', 'address', 'status', 'created_at',
+                  'businesses', 'investment_profiles', 'job_applications', 'communities']
 
 
 class MeAPIViewSerializer(serializers.ModelSerializer):
-    role = serializers.StringRelatedField()
+    businesses = BusinessSerializer(source='business_set', many=True, read_only=True)
+    investment_profiles = InvestmentProfileSerializer(source='investmentprofile_set', many=True, read_only=True)
+    job_applications = JobApplicationSerializer(many=True, read_only=True)
+    communities = CommunitySerializer(source='community_people', many=True, read_only=True)
 
     class Meta:
         model = CustomUser
         fields = ['id', 'full_name', 'email',
-                  'phone', 'photo', 'address', 'created_at']
+                  'phone', 'photo', 'address', 'created_at',
+                  'businesses', 'investment_profiles', 'job_applications', 'communities']
 
 
 class LoginRequestSerializer(serializers.Serializer):
