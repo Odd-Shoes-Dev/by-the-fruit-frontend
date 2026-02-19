@@ -232,3 +232,10 @@ CELERY_RESULT_BACKEND = os.environ.get('CELERY_BROKER_URL', 'redis://redis:6379/
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+
+MIGRATION_MODULES = {
+    'accounts': "migrations.accounts",
+    'api': "migrations.api",
+    "profiles": "migrations.profiles",
+}
