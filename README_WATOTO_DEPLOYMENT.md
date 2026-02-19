@@ -137,16 +137,16 @@ Create `/etc/nginx/sites-available/api.watoto.lightbeammedia.xyz`
 ```nginx
 server {
     listen 80;
-    server_name api.watoto.lightbeammedia.xyz;
+    server_name api-bythefruit.oddshoesdev.xyz;
     return 301 https://$host$request_uri;
 }
 
 server {
     listen 443 ssl;
-    server_name api.watoto.lightbeammedia.xyz;
+    server_name api-bythefruit.oddshoesdev.xyz;
 
-    ssl_certificate /etc/letsencrypt/live/api.watoto.lightbeammedia.xyz/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/api.watoto.lightbeammedia.xyz/privkey.pem;
+    ssl_certificate etc/letsencrypt/live/api-bythefruit.oddshoesdev.xyz/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/api-bythefruit.oddshoesdev.xyz/privkey.pem;
 
     location / {
         proxy_pass http://127.0.0.1:7080;
@@ -159,9 +159,7 @@ server {
 ## 7. SSL Certificates
 
 ```bash
-sudo certbot --nginx \
-  -d watoto.lightbeammedia.xyz \
-  -d api.watoto.lightbeammedia.xyz
+sudo certbot --nginx -d api-bythefruit.oddshoesdev.xyz
 ```
 
 ---
