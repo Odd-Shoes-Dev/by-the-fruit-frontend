@@ -45,8 +45,16 @@ cd by-the-fruit
 ```bash
 cd backend/by-the-fruit
 python -m venv venv
-# Windows: venv\Scripts\activate
-# macOS/Linux: source venv/bin/activate
+```
+
+Activate the virtual environment (required before installing or running anything):
+
+- **Windows (PowerShell or CMD):** `venv\Scripts\activate`
+- **macOS / Linux:** `source venv/bin/activate`
+
+You should see `(venv)` in your prompt. Then:
+
+```bash
 pip install -r requirements.txt
 cp .env.example .env
 # Edit .env: set SECRET_KEY, DEBUG=1, ALLOWED_HOSTS, CORS_ALLOWED_ORIGINS, ADMIN_EMAIL, ADMIN_PASSWORD (see Backend section below)

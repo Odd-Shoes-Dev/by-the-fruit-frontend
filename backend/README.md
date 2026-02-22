@@ -20,10 +20,16 @@ For the full project (frontend + docs), see the **root [README](../README.md)**.
 ```bash
 cd backend/by-the-fruit
 python -m venv venv
-# Windows:
-venv\Scripts\activate
-# macOS / Linux:
-source venv/bin/activate
+```
+
+**Activate the virtual environment** (required — all backend commands below assume the venv is active):
+
+- **Windows (PowerShell or CMD):** `venv\Scripts\activate`
+- **macOS / Linux:** `source venv/bin/activate`
+
+You should see `(venv)` in your prompt. Then install dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
@@ -62,6 +68,8 @@ python manage.py create_super_user
 ---
 
 ## Running the backend
+
+In each new terminal, activate the venv first (`venv\Scripts\activate` on Windows, `source venv/bin/activate` on macOS/Linux), then:
 
 **REST API only (no WebSockets):**
 
