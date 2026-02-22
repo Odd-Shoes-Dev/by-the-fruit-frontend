@@ -1,117 +1,172 @@
-# Django REST Framework API Starter
+# By The Fruit
 
-This is a powerful and secure starter project for building RESTful APIs with Django. It comes pre-configured with a modern technology stack and essential features to get you up and running quickly.
+A faith-oriented marketplace connecting founders and investors. Full-stack app: **Next.js** frontend and **Django REST** backend with real-time chat, connections, channels, events, and a relevance-based feed.
 
+---
 
-## Features
+## Repository structure: one repo (recommended)
 
-* **Modern Authentication**: Uses **JSON Web Tokens (JWT)** for secure, stateless authentication (`djangorestframework-simplejwt`).
-* **Custom User Model**: A flexible and extensible custom user model is ready from the start, using email as the primary identifier.
-* **API Documentation**: Automatic, interactive API documentation powered by **Swagger (drf-yasg)**.
-* **Environment-based Configuration**: All sensitive keys and settings are loaded from a `.env` file for better security.
-* **Custom Management Commands**: Includes a command to create a superuser from environment variables, perfect for deployment.
-* **Social Authentication Hooks**: Includes skeletons for Google and Facebook social authentication.
-* **CORS Ready**: Pre-configured with `django-cors-headers` to allow frontend integrations.
+**Use a single GitHub repository** (monorepo) for this project.
 
-## Getting Started
+| Approach | When it fits |
+|----------|----------------|
+| **One repo** ✅ | One product, one team, backend and frontend stay in sync. Easier to clone, run, and document. |
+| Separate repos | Only if different teams own backend vs frontend and need independent release cycles. |
 
-Follow these instructions to get the project set up and running on your local machine.
+This codebase is structured as a **monorepo**:
+
+```
+by-the-fruit/
+├── backend/by-the-fruit/   # Django REST API (Python)
+├── frontend/               # Next.js app (React)
+├── docs/                   # Project documentation
+└── README.md               # This file
+```
+
+---
+
+## Quick start (run the whole app)
 
 ### Prerequisites
 
-* Python 3.8+
-* `virtualenv` (or another virtual environment tool)
+- **Python 3.10+** (backend)
+- **Node.js 18+** and **npm** (frontend)
+- (Optional) **PostgreSQL** if you prefer it over SQLite
 
-### Installation and Setup
+### 1. Clone and backend setup
 
-1.  **Clone the Project**
-    ```bash
-    git clone [https://github.com/morshedmasud/django-rest-framework-mysql-boilerplate.git](https://github.com/morshedmasud/django-rest-framework-mysql-boilerplate.git)
-    cd django-rest-framework-mysql-boilerplate
-    ```
+```bash
+git clone https://github.com/YOUR_ORG/by-the-fruit.git
+cd by-the-fruit
+```
 
-2.  **Create and Activate a Virtual Environment**
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
-    *On Windows, use `venv\Scripts\activate`*
+**Backend (Django):**
 
-3.  **Install Dependencies**
-    ```bash
-    pip install -r requirements.txt
-    ```
+```bash
+cd backend/by-the-fruit
+python -m venv venv
+# Windows: venv\Scripts\activate
+# macOS/Linux: source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+# Edit .env: set SECRET_KEY, DEBUG=1, ALLOWED_HOSTS, CORS_ALLOWED_ORIGINS, ADMIN_EMAIL, ADMIN_PASSWORD (see Backend section below)
+python manage.py migrate
+python manage.py create_super_user
+```
 
-4.  **Set Up Environment Variables**
+**Run backend:**
 
-    Create a `.env` file in the project root by copying the example file:
-    ```bash
-    cp .env.example .env
-    ```
+- REST only: `python manage.py runserver` → API at **http://127.0.0.1:8000**
+- REST + WebSockets (real-time chat): `daphne -b 0.0.0.0 -p 8000 main.asgi:application`
 
-    Now, open the `.env` file and fill in the required values. At a minimum, you need to generate a `SECRET_KEY`.
+### 2. Frontend setup
 
-    **Generate a Secret Key:**
-    You can generate a new secret key using the built-in Django utility:
-    ```bash
-    python generate_key.py
-    ```
-    Copy the output and paste it as the value for `SECRET_KEY` in your `.env` file.
+In a new terminal:
 
-    **Your `.env` file should look like this:**
-    ```env
-    # SECURITY
-    SECRET_KEY=your_newly_generated_secret_key_here
-    DEBUG=1
-    ALLOWED_HOSTS=127.0.0.1,localhost
+```bash
+cd by-the-fruit/frontend
+cp .env.local.example .env.local
+# Set NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000 (or your backend URL; no trailing slash)
+npm install
+npm run dev
+```
 
-    # ADMIN USER CREDENTIALS
-    ADMIN_EMAIL=admin@example.com
-    ADMIN_PASSWORD=YourSecurePassword123
+Frontend: **http://localhost:3000**
 
-    # DATABASE (Defaults to SQLite)
-    # DB_NAME=your_db
-    # DB_USER=your_user
-    # ...
-    ```
+### 3. Verify
 
-5.  **Run Database Migrations**
-    This will create the necessary database tables, including those for the custom user model.
-    ```bash
-    python manage.py migrate
-    ```
+- Open http://localhost:3000 — you should see the By The Fruit homepage.
+- Log in (or sign up) — the frontend uses the backend `/user/` and `/api/` auth endpoints.
+- Admin: http://127.0.0.1:8000/admin/ (use the superuser you created).
 
-6.  **Create a Superuser**
-    This command will create an admin account using the credentials you set in your `.env` file.
-    ```bash
-    python manage.py create_super_user
-    ```
+---
 
-7.  **Run the Development Server**
-    ```bash
-    python manage.py runserver
-    ```
-    The API will now be running at `http://127.0.0.1:8000/`.
+## Database
 
-## API Endpoints
+- **Default:** SQLite. File: `backend/by-the-fruit/db.sqlite3` (created on first `migrate`). No extra setup.
+- **PostgreSQL:** Set `DB_CHOICE=postgres` and configure the DB URL (e.g. via `DATABASE_URL` / `dj_database_url` in `main/settings.py`). Run `python manage.py migrate` as usual.
 
-Once the server is running, you can interact with the following key endpoints:
+**Handling the database:**
 
-* **Admin Panel**: `http://127.0.0.1:8000/admin/`
-* **API Documentation (Swagger)**: `http://127.0.0.1:8000/swagger/`
+- **Create/apply migrations (after model changes):**  
+  `cd backend/by-the-fruit && python manage.py makemigrations && python manage.py migrate`
+- **Reset DB (SQLite, dev only):** delete `db.sqlite3`, then run `python manage.py migrate` and `python manage.py create_super_user` again.
+- **Backups:** For SQLite, copy `db.sqlite3`. For Postgres, use your DB backup tools (`pg_dump`, etc.).
 
-### Authentication Endpoints
+See **docs/DATABASE.md** for schema overview and **backend/by-the-fruit/README.md** for env and migration details.
 
-* **Register a new user**:
-    * `POST /api/register/`
-    * Body: `{ "full_name": "John Doe", "email": "john.doe@example.com", "password": "yourpassword" }`
-* **Obtain JWT Tokens**:
-    * `POST /api/login/`
-    * Body: `{ "email": "your_email", "password": "your_password" }`
-    * **Returns**: An `access` and `refresh` token.
-* **Refresh Access Token**:
-    * `POST /api/login/refresh/`
-    * Body: `{ "refresh": "your_refresh_token" }`
+---
 
-To access protected endpoints, include the access token in the request header:
-`Authorization: Bearer <your_access_token>`
+## Testing
+
+### Backend (Django)
+
+```bash
+cd backend/by-the-fruit
+# Activate venv, then:
+python manage.py test
+```
+
+To run a specific app’s tests:
+
+```bash
+python manage.py test accounts
+python manage.py test profiles
+```
+
+### Frontend (Next.js)
+
+```bash
+cd frontend
+npm run lint
+```
+
+Add `npm run test` (and a test script in `package.json`) when you add a test runner (e.g. Jest).
+
+---
+
+## Environment variables
+
+### Backend (`backend/by-the-fruit/.env`)
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `SECRET_KEY` | Yes | Django secret (e.g. `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"`) |
+| `DEBUG` | Yes | `1` for development, `0` for production |
+| `ALLOWED_HOSTS` | Yes | Comma-separated, e.g. `127.0.0.1,localhost` |
+| `CORS_ALLOWED_ORIGINS` | Yes | Comma-separated frontend origins, e.g. `http://localhost:3000,http://127.0.0.1:3000` |
+| `ADMIN_EMAIL` | Yes | Superuser email for `create_super_user` |
+| `ADMIN_PASSWORD` | Yes | Superuser password |
+| `DB_CHOICE` | No | `sqlite` (default) or `postgres` |
+| `SITE_NAME` | No | Admin site title |
+| `CSRF_TRUSTED_ORIGINS` | No | Comma-separated if using HTTPS (e.g. `https://yourdomain.com`) |
+
+See **backend/by-the-fruit/.env.example** for a template.
+
+### Frontend (`frontend/.env.local`)
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `NEXT_PUBLIC_API_BASE_URL` | Yes (if API on different origin) | Backend base URL with no trailing slash, e.g. `http://127.0.0.1:8000` |
+
+If the frontend is served from the same host as the API, you can leave it empty or set it to the same origin.
+
+---
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| **docs/PHASES.md** | Implementation phases (1–7) and status |
+| **docs/DATABASE.md** | Database schema overview |
+| **docs/COMPLIANCE.md** | Legal/compliance checklist (US Reg D/CF, etc.) |
+| **docs/README.md** | Index of all docs and per-phase guides |
+| **docs/PHASE1_PROFILE_FIELDS.md** … **PHASE7_CREATORS_MICRO_INVESTORS.md** | Per-phase scope, API, and notes |
+| **backend/by-the-fruit/README.md** | Backend setup, run, test, env |
+| **frontend/README.md** | Frontend setup, run, build, env |
+
+---
+
+## License and contributing
+
+Add your license and contribution guidelines here. Do not commit `.env` or secrets; use `.env.example` as a template.

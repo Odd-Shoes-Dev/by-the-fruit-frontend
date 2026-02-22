@@ -1,0 +1,52 @@
+.main {
+  padding: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.title {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+.lead {
+  color: #333;
+  margin-bottom: 18px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.card {
+  padding: 12px;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+.testimonials {
+  margin: 0 auto;
+  max-width: 900px;
+}
+.testimonialCard {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 18px 24px;
+  margin-bottom: 12px;
+  flex: 1;
+  min-width: 220px;
+}
+.btn {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--orange, #ff9800);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.btn:hover {
+  background: #fb8c00;
+}
