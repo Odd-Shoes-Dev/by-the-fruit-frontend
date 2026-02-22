@@ -113,8 +113,8 @@ class Community(BaseModel):
     description = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to='community_images/', null=True, blank=True)
     thumbnail = models.ImageField(upload_to='community_thumbnails/', null=True, blank=True)
-    people = models.ManyToManyField(CustomUser, null=True, blank=True, related_name='community_people')
-    businesses = models.ManyToManyField(Business, null=True, blank=True, related_name='commmunity_business')
+    people = models.ManyToManyField(CustomUser, blank=True, related_name='community_people')
+    businesses = models.ManyToManyField(Business, blank=True, related_name='commmunity_business')
 
 
 class CommunityPost(BaseModel):

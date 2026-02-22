@@ -249,8 +249,5 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
 
-MIGRATION_MODULES = {
-    'accounts': "migrations.accounts",
-    'api': "migrations.api",
-    "profiles": "migrations.profiles",
-}
+# Use default migration paths (accounts/migrations, profiles/migrations, etc.)
+# MIGRATION_MODULES = {...}  # Removed: pointed to non-existent migrations package

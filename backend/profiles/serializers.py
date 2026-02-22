@@ -49,6 +49,12 @@ class CommunitySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class UserBriefSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'email', 'full_name', 'photo']
+
+
 class CommunityPostSerializer(serializers.ModelSerializer):
     author_detail = UserBriefSerializer(source='author', read_only=True)
 
@@ -70,11 +76,6 @@ class JobApplicationSerializer(serializers.ModelSerializer):
 
 
 # Connection & Channel serializers
-
-class UserBriefSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ['id', 'email', 'full_name', 'photo']
 
 
 class ConnectionSerializer(serializers.ModelSerializer):
