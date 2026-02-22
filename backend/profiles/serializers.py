@@ -7,11 +7,20 @@ from .models import (
     JobPosting, JobApplication,
     Connection, Channel, ChannelMember, ChannelProgressUpdate, ChannelMessage,
     FamilyMember,
-    Event, EventRegistration, EventReminder, EventParticipant
+    Event, EventRegistration, EventReminder, EventParticipant,
+    Testimonial, ContactMessage, Notification
 )
 
 
+class UserBriefSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'email', 'full_name', 'photo']
+
+
 class InvestmentProfileSerializer(serializers.ModelSerializer):
+    user_detail = UserBriefSerializer(source='user', read_only=True)
+
     class Meta:
         model = InvestmentProfile
         fields = '__all__'
@@ -47,12 +56,6 @@ class CommunitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Community
         fields = '__all__'
-
-
-class UserBriefSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ['id', 'email', 'full_name', 'photo']
 
 
 class CommunityPostSerializer(serializers.ModelSerializer):
@@ -176,4 +179,22 @@ class EventParticipantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EventParticipant
+        fields = '__all__'
+
+
+class TestimonialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Testimonial
+        fields = '__all__'
+
+
+class ContactMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactMessage
+        fields = '__all__'
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
         fields = '__all__'

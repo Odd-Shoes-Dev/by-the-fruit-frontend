@@ -343,3 +343,48 @@ class EventParticipant(BaseModel):
 
     def __str__(self):
         return f"{self.user.email} in {self.event.title}"
+
+
+class Testimonial(BaseModel):
+    """Admin-curated testimonial shown on the landing page."""
+    author_name = models.CharField(max_length=255)
+    role = models.CharField(max_length=100, blank=True, help_text='e.g. Founder, Investor')
+    quote = models.TextField()
+    order = models.PositiveIntegerField(default=0, help_text='Lower = show first')
+    visible = models.BooleanField(default=True, help_text='Admin toggles which testimonials appear')
+
+    class Meta:
+        ordering = ['order', 'created_at']
+
+    def __str__(self):
+        return f"{self.author_name} — {self.quote[:50]}..."
+
+
+class ContactMessage(BaseModel):
+    """Newsletter / contact form: message from visitor to admin."""
+    email = models.EmailField()
+    message = models.TextField()
+    # optional: subject, name fields can be added later
+
+    def __str__(self):
+        return f"{self.email} — {self.created_at}"
+
+
+NOTIFICATION_TYPES = [
+    ('connection_request', 'Connection request'),
+    ('connection_accepted', 'Connection accepted'),
+    ('channel_message', 'Channel message'),
+]
+
+
+class Notification(BaseModel):
+    """In-app notification for a user. read_at is null until read."""
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='notifications')
+    notification_type = models.CharField(max_length=50, choices=NOTIFICATION_TYPES)
+    title = models.CharField(max_length=255)
+    message = models.TextField(blank=True)
+    link = models.CharField(max_length=500, blank=True, help_text='Frontend path or URL to open when clicked')
+    read_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.email}: {self.title}"

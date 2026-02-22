@@ -3,13 +3,15 @@ from django.utils import timezone
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from services.customPermission import IsApprovedUser
 from .models import (
     InvestmentProfile, Business, BusinessMileStone,
     InvestmentRequest, Investment, Community, CommunityPost,
     JobPosting, JobApplication,
     Connection, Channel, ChannelMember, ChannelProgressUpdate, ChannelMessage,
     FamilyMember,
-    Event, EventRegistration, EventReminder, EventParticipant
+    Event, EventRegistration, EventReminder, EventParticipant,
+    Testimonial, ContactMessage, Notification
 )
 from .serializers import (
     InvestmentProfileSerializer, BusinessSerializer, BusinessMileStoneSerializer,
@@ -19,19 +21,31 @@ from .serializers import (
     ConnectionSerializer, ChannelSerializer, ChannelMemberSerializer,
     ChannelProgressUpdateSerializer, ChannelMessageSerializer,
     FamilyMemberSerializer,
-    EventSerializer, EventRegistrationSerializer, EventReminderSerializer, EventParticipantSerializer
+    EventSerializer, EventRegistrationSerializer, EventReminderSerializer, EventParticipantSerializer,
+    TestimonialSerializer, ContactMessageSerializer, NotificationSerializer
 )
+
+
+def _notify(user, notification_type, title, message='', link=''):
+    Notification.objects.create(user=user, notification_type=notification_type, title=title, message=message, link=link)
 
 
 class InvestmentProfileViewSet(viewsets.ModelViewSet):
     queryset = InvestmentProfile.objects.all()
     serializer_class = InvestmentProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action == 'list':
+            return [permissions.IsAdminUser()]
+        return [permissions.IsAuthenticated(), IsApprovedUser()]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class FounderListViewSet(viewsets.ViewSet):
-    """List founders (users who have businesses). For connection flow."""
-    permission_classes = [permissions.AllowAny]
+    """List founders (users who have businesses). Admin only."""
+    permission_classes = [permissions.IsAdminUser]
 
     def list(self, request):
         from accounts.models import CustomUser
@@ -53,19 +67,22 @@ class FounderListViewSet(viewsets.ViewSet):
 class BusinessViewSet(viewsets.ModelViewSet):
     queryset = Business.objects.all()
     serializer_class = BusinessSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsApprovedUser]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class BusinessMileStoneViewSet(viewsets.ModelViewSet):
     queryset = BusinessMileStone.objects.all()
     serializer_class = BusinessMileStoneSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsApprovedUser]
 
 
 class InvestmentRequestViewSet(viewsets.ModelViewSet):
     queryset = InvestmentRequest.objects.all()
     serializer_class = InvestmentRequestSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsApprovedUser]
 
     @action(detail=False, methods=['get'], url_path='deals-for-creators')
     def deals_for_creators(self, request):
@@ -154,7 +171,7 @@ class CommunityPostViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ('list', 'retrieve', 'feed'):
             return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
+        return [permissions.IsAuthenticated(), IsApprovedUser()]
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -204,19 +221,19 @@ class CommunityPostViewSet(viewsets.ModelViewSet):
 class JobPostingViewSet(viewsets.ModelViewSet):
     queryset = JobPosting.objects.all()
     serializer_class = JobPostingSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsApprovedUser]
 
 
 class JobApplicationViewSet(viewsets.ModelViewSet):
     queryset = JobApplication.objects.all()
     serializer_class = JobApplicationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsApprovedUser]
 
 
 class FamilyMemberViewSet(viewsets.ModelViewSet):
     """CRUD for current user's family members (Phase 4)."""
     serializer_class = FamilyMemberSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsApprovedUser]
 
     def get_queryset(self):
         return FamilyMember.objects.filter(user=self.request.user)
@@ -237,7 +254,7 @@ class EventViewSet(viewsets.ModelViewSet):
             return [permissions.AllowAny()]
         if self.action in ('create', 'update', 'partial_update', 'destroy', 'tag_participant'):
             return [permissions.IsAdminUser()]
-        return [permissions.IsAuthenticated()]
+        return [permissions.IsAuthenticated(), IsApprovedUser()]
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
@@ -290,7 +307,7 @@ class EventViewSet(viewsets.ModelViewSet):
 
 class EventRegistrationViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = EventRegistrationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsApprovedUser]
 
     def get_queryset(self):
         return EventRegistration.objects.filter(user=self.request.user)
@@ -298,7 +315,7 @@ class EventRegistrationViewSet(viewsets.ReadOnlyModelViewSet):
 
 class EventReminderViewSet(viewsets.ModelViewSet):
     serializer_class = EventReminderSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsApprovedUser]
 
     def get_queryset(self):
         return EventReminder.objects.filter(user=self.request.user)
@@ -309,7 +326,7 @@ class EventReminderViewSet(viewsets.ModelViewSet):
 class ConnectionViewSet(viewsets.ModelViewSet):
     queryset = Connection.objects.all()
     serializer_class = ConnectionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsApprovedUser]
 
     def get_queryset(self):
         user = self.request.user
@@ -352,6 +369,7 @@ class ConnectionViewSet(viewsets.ModelViewSet):
         if not conn.interested_at:
             conn.interested_at = timezone.now()
         conn.save()
+        _notify(conn.founder, 'connection_request', f'{investor.full_name or investor.email} wants to connect', link='/connections')
         return Response(ConnectionSerializer(conn).data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['post'], url_path='accept')
@@ -370,6 +388,7 @@ class ConnectionViewSet(viewsets.ModelViewSet):
         })
         ChannelMember.objects.get_or_create(channel=channel, user=conn.founder, defaults={'role': 'founder'})
         ChannelMember.objects.get_or_create(channel=channel, user=conn.investor, defaults={'role': 'investor'})
+        _notify(conn.investor, 'connection_accepted', f'{conn.founder.full_name or conn.founder.email} accepted your connection', link='/connections')
         return Response(ConnectionSerializer(conn).data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['post'], url_path='reject')
@@ -400,7 +419,7 @@ class ConnectionViewSet(viewsets.ModelViewSet):
 class ChannelViewSet(viewsets.ModelViewSet):
     queryset = Channel.objects.all()
     serializer_class = ChannelSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsApprovedUser]
 
     def get_queryset(self):
         user = self.request.user
@@ -464,7 +483,7 @@ class ChannelViewSet(viewsets.ModelViewSet):
 class ChannelProgressUpdateViewSet(viewsets.ModelViewSet):
     queryset = ChannelProgressUpdate.objects.all()
     serializer_class = ChannelProgressUpdateSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsApprovedUser]
 
     def get_queryset(self):
         user = self.request.user
@@ -485,7 +504,7 @@ class ChannelProgressUpdateViewSet(viewsets.ModelViewSet):
 class ChannelMessageViewSet(viewsets.ModelViewSet):
     queryset = ChannelMessage.objects.all()
     serializer_class = ChannelMessageSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsApprovedUser]
 
     def get_queryset(self):
         user = self.request.user
@@ -500,4 +519,63 @@ class ChannelMessageViewSet(viewsets.ModelViewSet):
         if not ChannelMember.objects.filter(channel=channel, user=self.request.user).exists():
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied('Only channel members can send messages')
-        serializer.save(sender=self.request.user)
+        msg = serializer.save(sender=self.request.user)
+        sender_name = self.request.user.full_name or self.request.user.email
+        for member in ChannelMember.objects.filter(channel=channel).exclude(user=self.request.user).select_related('user'):
+            _notify(member.user, 'channel_message', f'New message in channel', f'{sender_name}: {(msg.content or "")[:100]}', link=f'/channels/{channel.id}')
+
+
+class TestimonialViewSet(viewsets.ModelViewSet):
+    """Public: list visible testimonials. Admin: full CRUD."""
+    queryset = Testimonial.objects.all()
+    serializer_class = TestimonialSerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if not (self.request.user and self.request.user.is_staff):
+            qs = qs.filter(visible=True)
+        return qs.order_by('order', 'created_at')
+
+    def get_permissions(self):
+        if self.action in ('list', 'retrieve'):
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
+
+
+class ContactMessageViewSet(viewsets.ModelViewSet):
+    """Public: create (submit message). Admin: list/retrieve/delete."""
+    queryset = ContactMessage.objects.all()
+    serializer_class = ContactMessageSerializer
+
+    def get_permissions(self):
+        if self.action == 'create':
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
+
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+
+class NotificationViewSet(viewsets.ModelViewSet):
+    """List my notifications, mark as read, get unread count."""
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated, IsApprovedUser]
+
+    def get_queryset(self):
+        return Notification.objects.filter(user=self.request.user).order_by('-created_at')
+
+    def partial_update(self, request, *args, **kwargs):
+        """Mark as read."""
+        obj = self.get_object()
+        if obj.user != request.user:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied()
+        if not obj.read_at:
+            obj.read_at = timezone.now()
+            obj.save(update_fields=['read_at'])
+        return Response(NotificationSerializer(obj).data)
+
+    @action(detail=False, methods=['get'], url_path='unread-count')
+    def unread_count(self, request):
+        n = Notification.objects.filter(user=request.user, read_at__isnull=True).count()
+        return Response({'count': n})

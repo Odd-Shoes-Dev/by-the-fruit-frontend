@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { motion } from 'framer-motion'
 
 export default function Signup() {
+  const router = useRouter()
+  const role = router.query.role || ''
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
@@ -9,6 +13,7 @@ export default function Signup() {
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
   const [postalCode, setPostalCode] = useState('')
+  const [newsletterOptIn, setNewsletterOptIn] = useState(false)
   const [saved, setSaved] = useState(false)
 
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || ''
@@ -21,6 +26,7 @@ export default function Signup() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email, full_name: name, password,
+          newsletter_opt_in: newsletterOptIn,
           ...(location && { location }),
           ...(address && { address }),
           ...(phone && { phone }),
@@ -28,6 +34,9 @@ export default function Signup() {
         })
       })
       if (res.ok) {
+        if (role === 'founder' || role === 'investor') {
+          if (typeof window !== 'undefined') localStorage.setItem('btf_pending_role', role)
+        }
         setSaved(true)
         return
       }
@@ -40,12 +49,13 @@ export default function Signup() {
   }
 
   return (
-    <div className="container">
-      <h2>Sign up</h2>
+    <motion.div className="container" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+      <h2>Join the waitlist{role === 'founder' ? ' as Founder' : role === 'investor' ? ' as Investor' : ''}</h2>
       {saved ? (
         <div>
-          <p>Thanks — check your email for confirmation (simulated).</p>
-          <p><Link href="/">Back to home</Link></p>
+          <p><strong>You&apos;re on the waitlist.</strong></p>
+          <p>We review each request to keep the community trusted. We may contact you by email before approving. Once approved, you can log in and access the full app.</p>
+          <p><Link href="/login">Log in</Link> to check your status, or <Link href="/">Back to home</Link>.</p>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="form">
@@ -71,12 +81,19 @@ export default function Signup() {
           <label>Postal / ZIP Code
             <input value={postalCode} onChange={e => setPostalCode(e.target.value)} placeholder="e.g., 94102" />
           </label>
+          <label style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <input type="checkbox" checked={newsletterOptIn} onChange={e => setNewsletterOptIn(e.target.checked)} />
+            <span>The latest news about By the Fruit in your inbox? Sign me up!</span>
+          </label>
+          <p className="small" style={{ marginTop: 8, marginBottom: 12 }}>
+            Community access is by approval only. Joining the waitlist does not guarantee access. We protect our members by reviewing each request.
+          </p>
           <div>
-            <button className="btn" type="submit">Create account</button>
-            <Link href="/login"><button style={{ marginLeft: 8 }}>Log in</button></Link>
+            <button className="btn" type="submit">Submit</button>
+            <Link href="/login"><button type="button" style={{ marginLeft: 8 }}>Log in</button></Link>
           </div>
         </form>
       )}
-    </div>
+    </motion.div>
   )
 }

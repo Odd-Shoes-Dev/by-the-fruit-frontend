@@ -2,7 +2,7 @@
 
 Documentation for each development phase. Updated as features are completed.
 
-**Per-phase docs:** `PHASE1_PROFILE_FIELDS.md`, `PHASE2_CONNECTIONS_CHANNELS.md`, `PHASE3_REALTIME.md`, `PHASE4_FAMILY.md`, `PHASE5_FEED_ALGORITHM.md`, `PHASE6_EVENTS.md`, `PHASE7_CREATORS_MICRO_INVESTORS.md`
+**Per-phase docs:** `PHASE1_PROFILE_FIELDS.md`, `PHASE2_CONNECTIONS_CHANNELS.md`, `PHASE3_REALTIME.md`, `PHASE4_FAMILY.md`, `PHASE5_FEED_ALGORITHM.md`, `PHASE6_EVENTS.md`, `PHASE7_CREATORS_MICRO_INVESTORS.md`, `PHASE8_TESTIMONIALS_NEWSLETTER_ADMIN.md`
 
 ---
 
@@ -196,3 +196,19 @@ Or `uvicorn` with `--interface asgi` for development.
 
 ### See
 - **PHASE7_CREATORS_MICRO_INVESTORS.md** for API and model details
+
+---
+
+## Phase 8: Testimonials, Newsletter & Admin
+
+**Status:** ✅ Complete
+
+### Scope
+- **Testimonials**: Admin-curated; visible toggle in Django admin; public list on landing
+- **Newsletter**: Contact form (email + message) → ContactMessage; admin views in Django admin
+- **Founders/Investors lists**: Admin only (API + frontend)
+- **Admin page**: Connected to backend (posts, events, founders, investors, testimonials, messages)
+- **Profile [id]**: Loads from `/user/{id}`; edit form for own profile
+
+### See
+- **PHASE8_TESTIMONIALS_NEWSLETTER_ADMIN.md** for details

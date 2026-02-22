@@ -3,7 +3,8 @@ from .models import (
     InvestmentRequest, Business, BusinessMileStone, Investment,
     JobPosting, JobApplication, Connection, Channel, ChannelMember,
     ChannelProgressUpdate, ChannelMessage, FamilyMember, CommunityPost,
-    Event, EventRegistration, EventReminder, EventParticipant
+    Event, EventRegistration, EventReminder, EventParticipant,
+    Testimonial, ContactMessage, Notification
 )
 from import_export.admin import ImportExportModelAdmin
 
@@ -59,3 +60,25 @@ admin.site.register(Event)
 admin.site.register(EventRegistration)
 admin.site.register(EventReminder)
 admin.site.register(EventParticipant)
+
+
+class TestimonialAdmin(admin.ModelAdmin):
+    list_display = ('author_name', 'role', 'visible', 'order', 'created_at')
+    list_editable = ('visible', 'order')
+    list_filter = ('visible',)
+    search_fields = ('author_name', 'quote')
+
+
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ('email', 'message_preview', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('email', 'message')
+
+    def message_preview(self, obj):
+        return (obj.message or '')[:80] + ('...' if len(obj.message or '') > 80 else '')
+    message_preview.short_description = 'Message'
+
+
+admin.site.register(Testimonial, TestimonialAdmin)
+admin.site.register(ContactMessage, ContactMessageAdmin)
+admin.site.register(Notification)

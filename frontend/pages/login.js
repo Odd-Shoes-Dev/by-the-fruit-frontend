@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { setAuth, getToken } from '../lib/api'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || ''
@@ -21,11 +22,27 @@ export default function Login() {
       })
       if (res.ok) {
         const result = await res.json()
-        const user = result?.user
-        const token = user?.token
-        if (user && token) {
+        const raw = result?.user
+        const token = raw?.token
+        if (raw && token) {
+          const user = raw.user_data ? { ...raw.user_data, token } : { ...raw }
           setAuth(user, token)
           setOk(true)
+          if (typeof window !== 'undefined') {
+            const approved = user.approval_status === 'approved' || user.is_staff
+            if (!approved) {
+              window.location.href = '/pending'
+              return
+            }
+            const pending = localStorage.getItem('btf_pending_role')
+            if (pending === 'founder' || pending === 'investor') {
+              localStorage.removeItem('btf_pending_role')
+              window.location.href = `/onboarding/${pending}`
+              return
+            }
+            window.location.href = '/'
+            return
+          }
           return
         }
       }
@@ -47,7 +64,7 @@ export default function Login() {
   }
 
   return (
-    <div className="container">
+    <motion.div className="container" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
       <h2>Log in</h2>
       {ok ? (
         <div>
@@ -67,8 +84,9 @@ export default function Login() {
             <button className="btn" type="submit">Log in</button>
             <Link href="/signup"><button style={{ marginLeft: 8 }}>Sign up</button></Link>
           </div>
+          <p style={{ marginTop: 12 }}><Link href="/forgot-password">Forgot password?</Link></p>
         </form>
       )}
-    </div>
+    </motion.div>
   )
 }

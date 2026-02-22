@@ -1,6 +1,17 @@
 from rest_framework import permissions
 
 
+class IsApprovedUser(permissions.BasePermission):
+    """Allow only authenticated users who are approved (or staff). Pending/rejected users cannot access community/connections/etc."""
+
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+        if getattr(request.user, 'is_staff', False):
+            return True
+        return getattr(request.user, 'approval_status', None) == 'approved'
+
+
 class IsUser(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):

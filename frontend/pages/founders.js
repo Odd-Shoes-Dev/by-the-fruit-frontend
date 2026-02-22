@@ -1,32 +1,40 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import Pagination from '../components/Pagination'
 import ConnectionButtons from '../components/ConnectionButtons'
+import { apiFetch, getToken, isAdmin } from '../lib/api'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || ''
 const PAGE_SIZE = 6
 
 export default function FoundersList() {
+  const router = useRouter()
   const [items, setItems] = useState([])
   const [q, setQ] = useState('')
   const [page, setPage] = useState(1)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!getToken() || !isAdmin()) {
+      router.replace('/')
+      return
+    }
+    let mounted = true
     async function load() {
       try {
-        const res = await fetch(`${API_BASE}/profiles/founders/`)
-        if (res.ok) {
+        const res = await apiFetch('/profiles/founders/')
+        if (res.ok && mounted) {
           const data = await res.json()
           setItems(data)
-          return
+        } else if (res.status === 403 && mounted) {
+          router.replace('/')
         }
       } catch (e) {}
-
-      const local = JSON.parse(localStorage.getItem('btf_founders') || '[]')
-      setItems(local)
+      if (mounted) setLoading(false)
     }
     load()
-  }, [])
+    return () => { mounted = false }
+  }, [router])
 
   const filtered = useMemo(() => {
     const term = q.toLowerCase()
@@ -37,6 +45,8 @@ export default function FoundersList() {
   const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   useEffect(() => { if (page > totalPages) setPage(1) }, [totalPages])
+
+  if (loading) return <div className="container"><p>Loading…</p></div>
 
   return (
     <div className="container">

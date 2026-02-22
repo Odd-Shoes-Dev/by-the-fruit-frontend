@@ -8,7 +8,8 @@ from .views import (
     FamilyMemberViewSet,
     EventViewSet, EventRegistrationViewSet, EventReminderViewSet,
     ConnectionViewSet, ChannelViewSet, ChannelProgressUpdateViewSet, ChannelMessageViewSet,
-    FounderListViewSet
+    FounderListViewSet,
+    TestimonialViewSet, ContactMessageViewSet, NotificationViewSet
 )
 
 router = DefaultRouter()
@@ -30,6 +31,9 @@ router.register(r'connections', ConnectionViewSet, basename='connection')
 router.register(r'channels', ChannelViewSet, basename='channel')
 router.register(r'channel-progress', ChannelProgressUpdateViewSet, basename='channel-progress')
 router.register(r'channel-messages', ChannelMessageViewSet, basename='channel-messages')
+router.register(r'testimonials', TestimonialViewSet, basename='testimonial')
+router.register(r'contact-messages', ContactMessageViewSet, basename='contact-message')
+router.register(r'notifications', NotificationViewSet, basename='notification')
 
 urlpatterns = [
     path('', include(router.urls)),

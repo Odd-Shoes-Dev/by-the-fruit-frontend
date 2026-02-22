@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { apiFetch, getToken } from '../lib/api'
 
 export default function EventsPage() {
@@ -51,7 +52,7 @@ export default function EventsPage() {
       <Head>
         <title>Events — By the Fruit</title>
       </Head>
-      <main className="container">
+      <motion.main className="container" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
         <header>
           <h1>Events</h1>
           <p className="tagline">Upcoming and live events. Register as a founder or set a reminder as an investor.</p>
@@ -114,7 +115,7 @@ export default function EventsPage() {
         </aside>
 
         <p style={{ marginTop: 24 }}><Link href="/">Back</Link></p>
-      </main>
+      </motion.main>
     </>
   )
 }

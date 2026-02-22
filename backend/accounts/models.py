@@ -50,6 +50,7 @@ class UserManager(BaseUserManager):
 
         user.is_admin = True
         user.is_staff = True
+        user.approval_status = 'approved'
         user.save(using=self._db)
 
         return user
@@ -107,6 +108,26 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
     auth_provider = models.CharField(max_length=255, blank=False, null=False, default=AUTH_PROVIDERS.get('email'))
 
     status = models.CharField(max_length=32, choices=STATUS, default=ACTIVE)
+
+    # Waitlist: new signups are pending until admin approves (community is invite-only).
+    PENDING = 'pending'
+    APPROVED = 'approved'
+    REJECTED = 'rejected'
+    APPROVAL_STATUS = [
+        (PENDING, _('Pending approval')),
+        (APPROVED, _('Approved')),
+        (REJECTED, _('Rejected')),
+    ]
+    approval_status = models.CharField(
+        max_length=20, choices=APPROVAL_STATUS, default=PENDING,
+        help_text='User can log in when pending but only sees waitlist status until approved.'
+    )
+    approved_at = models.DateTimeField(null=True, blank=True)
+    approved_by = models.ForeignKey(
+        'self', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='approved_users'
+    )
+    newsletter_opt_in = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

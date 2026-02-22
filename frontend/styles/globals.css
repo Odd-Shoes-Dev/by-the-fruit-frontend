@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 :root{
   --orange: #F28B2B;
+  --teal: #2a9d8f;
+  --teal-dark: #1d7870;
   --dark: #0b0b0b;
   --muted: #6c757d;
 }

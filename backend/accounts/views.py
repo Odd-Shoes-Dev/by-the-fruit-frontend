@@ -111,7 +111,7 @@ class ResetPasswordWithEmail(generics.GenericAPIView):
 
             email_body = 'Hi, \n Use below link to reset your password \n {}'.format(
                 abs_url)
-            data = {'to_email': CustomUser.email, 'email_body': email_body,
+            data = {'to_email': user.email, 'email_body': email_body,
                     'email_subject': 'Reset your password'}
             Util.send_email(data)
 

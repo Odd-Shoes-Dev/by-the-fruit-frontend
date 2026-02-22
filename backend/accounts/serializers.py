@@ -23,13 +23,14 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['email', 'full_name', 'password', 'id', 'phone', 'address', 'location', 'postal_code']
+        fields = ['email', 'full_name', 'password', 'id', 'phone', 'address', 'location', 'postal_code', 'newsletter_opt_in']
 
     def validate(self, attrs):
         return attrs
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
+        newsletter_opt_in = validated_data.pop('newsletter_opt_in', False)
         user = CustomUser.objects.create_user(
             email=validated_data.get('email'),
             full_name=validated_data.get('full_name', ''),
@@ -38,6 +39,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         for field in ['phone', 'address', 'location', 'postal_code']:
             if field in validated_data and validated_data.get(field):
                 setattr(user, field, validated_data[field])
+        user.newsletter_opt_in = newsletter_opt_in
         user.save()
         return user
 
@@ -132,7 +134,8 @@ class UsersSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['id', 'full_name', 'email', 'phone',
                   'photo', 'address', 'location', 'postal_code', 'status', 'created_at',
-                  'family_visibility', 'bio_visibility',
+                  'family_visibility', 'bio_visibility', 'is_staff',
+                  'approval_status', 'approved_at',
                   'businesses', 'investment_profiles', 'job_applications', 'communities', 'family_members']
 
 
@@ -147,7 +150,8 @@ class MeAPIViewSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['id', 'full_name', 'email', 'bio',
                   'phone', 'photo', 'address', 'location', 'postal_code', 'created_at',
-                  'family_visibility', 'bio_visibility',
+                  'family_visibility', 'bio_visibility', 'is_staff',
+                  'approval_status', 'approved_at',
                   'businesses', 'investment_profiles', 'job_applications', 'communities', 'family_members']
 
 

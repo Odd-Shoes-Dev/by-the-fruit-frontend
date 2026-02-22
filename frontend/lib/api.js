@@ -11,13 +11,35 @@ export function getToken() {
 }
 
 export function getUserId() {
+  const u = getStoredUser()
+  if (!u) return null
+  return u.id ?? u.user_data?.id ?? null
+}
+
+/** Cached user from localStorage (set on login). May be stale; call /user/me to refresh. */
+export function getStoredUser() {
   if (typeof window === 'undefined') return null
   try {
     const u = localStorage.getItem('btf_user')
-    return u ? JSON.parse(u).id : null
+    return u ? JSON.parse(u) : null
   } catch {
     return null
   }
+}
+
+export function isAdmin() {
+  const u = getStoredUser()
+  if (!u) return false
+  return !!(u.is_staff ?? u.user_data?.is_staff)
+}
+
+/** True if user is approved (or staff). Pending/rejected users see waitlist screen only. */
+export function isApproved() {
+  const u = getStoredUser()
+  if (!u) return false
+  if (u.is_staff ?? u.user_data?.is_staff) return true
+  const status = u.approval_status ?? u.user_data?.approval_status
+  return status === 'approved'
 }
 
 export function setAuth(user, token) {

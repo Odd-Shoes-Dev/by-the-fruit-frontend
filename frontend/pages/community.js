@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import PostForm from '../components/PostForm'
 import PostList from '../components/PostList'
 
@@ -10,7 +11,7 @@ export default function Community() {
       <Head>
         <title>Community — By the Fruit</title>
       </Head>
-      <main className="container">
+      <motion.main className="container" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
         <header>
           <h1>Community</h1>
           <p className="tagline">Connect, share deals, and record events. Your feed is ordered by relevance when you’re logged in.</p>
@@ -29,7 +30,7 @@ export default function Community() {
             <p>Events, opportunities, and announcements will appear here.</p>
           </aside>
         </div>
-      </main>
+      </motion.main>
     </>
   )
 }

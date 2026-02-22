@@ -37,6 +37,11 @@ Per-phase docs (scope, API, models):
 
 ---
 
+## Auth & onboarding
+- **[AUTH_AND_ONBOARDING.md](AUTH_AND_ONBOARDING.md)** — Signup/login, dedicated founder/investor routes, onboarding, password reset, verify-email stub.
+
+---
+
 ## Quick reference
 
 - **Backend base URL (dev):** `http://127.0.0.1:8000`
