@@ -8,16 +8,14 @@ export default function Community() {
   const [refresh, setRefresh] = useState(0)
   return (
     <>
-      <Head>
-        <title>Community — By the Fruit</title>
-      </Head>
+      <Head><title>Feed — By The Fruit</title></Head>
       <motion.main className="container" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
         <header>
-          <h1>Community</h1>
-          <p className="tagline">Connect, share deals, and record events. Your feed is ordered by relevance when you’re logged in.</p>
+          <h1>Community Feed</h1>
+          <p className="tagline">Connect, share deals, and record events. Your feed is ordered by relevance.</p>
         </header>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 420px', gap: 20 }}>
+        <div className="community-layout">
           <div>
             <PostForm onCreate={() => setRefresh(r => r + 1)} />
             <div style={{ marginTop: 18 }}>
@@ -25,7 +23,7 @@ export default function Community() {
             </div>
           </div>
 
-          <aside className="card">
+          <aside className="card community-aside">
             <h3>Upcoming</h3>
             <p>Events, opportunities, and announcements will appear here.</p>
           </aside>

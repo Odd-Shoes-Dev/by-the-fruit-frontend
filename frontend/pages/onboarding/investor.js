@@ -10,16 +10,18 @@ const CATEGORIES = ['technology', 'finance', 'retail', 'healthcare', 'education'
 
 export default function OnboardingInvestor() {
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+  const [token, setToken] = useState(null)
   const [bio, setBio] = useState('')
   const [checkSizeRange, setCheckSizeRange] = useState('1000-5000')
   const [investmentType, setInvestmentType] = useState('other')
   const [status, setStatus] = useState('')
 
   useEffect(() => {
-    if (!getToken()) {
-      router.replace('/login')
-      return
-    }
+    const t = getToken()
+    setToken(t)
+    setMounted(true)
+    if (!t) router.replace('/login')
   }, [router])
 
   async function handleSubmit(e) {
@@ -45,12 +47,19 @@ export default function OnboardingInvestor() {
     }
   }
 
-  if (!getToken()) return <div className="container"><p>Redirecting to login…</p></div>
+  if (!mounted) return <div className="container"><p>Loading…</p></div>
+  if (!token) return <div className="container"><p>Redirecting to login…</p></div>
 
   return (
     <>
       <Head><title>Complete your investor profile — By The Fruit</title></Head>
-      <motion.div className="container" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} style={{ maxWidth: 560 }}>
+      <motion.div
+        className="container"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        style={{ maxWidth: 560 }}
+      >
         <h2>Complete your investor profile</h2>
         <p className="meta">Share a bit about your interests so founders can connect.</p>
 
@@ -78,8 +87,6 @@ export default function OnboardingInvestor() {
             </div>
           </form>
         )}
-
-        <p style={{ marginTop: 24 }}><Link href="/">Back to home</Link></p>
       </motion.div>
     </>
   )

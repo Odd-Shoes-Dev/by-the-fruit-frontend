@@ -5,6 +5,7 @@ import Pagination from '../components/Pagination'
 import { apiFetch, getToken, isAdmin } from '../lib/api'
 
 const PAGE_SIZE = 8
+const unwrap = json => { const r = json?.data ?? json; return Array.isArray(r) ? r : Array.isArray(r?.results) ? r.results : [] }
 
 export default function InvestorsList() {
   const router = useRouter()
@@ -23,8 +24,7 @@ export default function InvestorsList() {
       try {
         const res = await apiFetch('/profiles/investment-profiles/')
         if (res.ok && mounted) {
-          const data = await res.json()
-          setItems(data)
+          setItems(unwrap(await res.json()))
         } else if (res.status === 403 && mounted) {
           router.replace('/')
         }
@@ -46,15 +46,15 @@ export default function InvestorsList() {
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
-  useEffect(() => { if (page > totalPages) setPage(1) }, [totalPages])
+  useEffect(() => { if (page > totalPages) setPage(1) }, [totalPages, page])
 
   if (loading) return <div className="container"><p>Loading…</p></div>
 
   return (
     <div className="container">
-      <h2>Investors</h2>
+      <header><h1>Investors</h1></header>
       <div className="filters">
-        <input className="search" placeholder="Search by name or bio" value={q} onChange={e => setQ(e.target.value)} />
+        <input className="search" placeholder="Search by name or bio" value={q} onChange={e => { setQ(e.target.value); setPage(1) }} />
       </div>
 
       {pageItems.length === 0 ? <div>No results</div> : (
@@ -64,12 +64,12 @@ export default function InvestorsList() {
             const name = ip.user_detail?.full_name || ip.full_name || 'Investor'
             return (
               <li key={ip.id} className="list-item">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="list-item-row">
                   <div>
                     <Link href={userId ? `/profile/${userId}` : '#'}><strong>{name}</strong></Link>
                     <div className="meta">{(ip.bio || '').slice(0, 80)}{(ip.bio || '').length > 80 ? '…' : ''}</div>
                   </div>
-                  <div>
+                  <div className="list-item-actions">
                     {userId && <Link href={`/profile/${userId}`}><button className="btn">View</button></Link>}
                   </div>
                 </div>
@@ -81,7 +81,6 @@ export default function InvestorsList() {
 
       <Pagination page={page} totalPages={totalPages} onChange={setPage} />
 
-      <p style={{ marginTop: 18 }}><Link href="/">Back</Link></p>
     </div>
   )
 }

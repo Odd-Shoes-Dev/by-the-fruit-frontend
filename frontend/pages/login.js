@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
+import Head from 'next/head'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { setAuth, getToken } from '../lib/api'
+import styles from '../styles/Auth.module.css'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || ''
 
@@ -10,10 +13,12 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [ok, setOk] = useState(false)
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
+    setLoading(true)
     try {
       const res = await fetch(`${API_BASE}/user/login`, {
         method: 'POST',
@@ -30,63 +35,99 @@ export default function Login() {
           setOk(true)
           if (typeof window !== 'undefined') {
             const approved = user.approval_status === 'approved' || user.is_staff
+            // Always clear any stale pending role
+            localStorage.removeItem('btf_pending_role')
+
             if (!approved) {
               window.location.href = '/pending'
               return
             }
-            const pending = localStorage.getItem('btf_pending_role')
-            if (pending === 'founder' || pending === 'investor') {
-              localStorage.removeItem('btf_pending_role')
-              window.location.href = `/onboarding/${pending}`
-              return
+            // Send admins to admin dashboard, everyone else to the community feed
+            if (user.is_staff) {
+              window.location.href = '/admin'
+            } else {
+              window.location.href = '/community'
             }
-            window.location.href = '/'
             return
           }
           return
         }
       }
       const errData = await res.json().catch(() => ({}))
-      setError(errData?.error || 'Login failed')
+      setError(errData?.error || 'Login failed. Check your email and password.')
     } catch (e) {
-      setError('Network error — try again')
-    }
-
-    // Fallback: localStorage mock when API not available
-    const users = JSON.parse(localStorage.getItem('btf_users') || '[]')
-    const found = users.find(u => u.email === email)
-    if (found) {
-      localStorage.setItem('btf_session', JSON.stringify({ userId: found.id }))
-      setOk(true)
-    } else {
-      setError('No account found')
+      setError('Network error — please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <motion.div className="container" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-      <h2>Log in</h2>
-      {ok ? (
-        <div>
-          <p>Logged in successfully.</p>
-          <p><Link href="/">Go to home</Link></p>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="form">
-          <label>Email
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
-          </label>
-          <label>Password
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
-          </label>
-          {error && <div className="error">{error}</div>}
-          <div>
-            <button className="btn" type="submit">Log in</button>
-            <Link href="/signup"><button style={{ marginLeft: 8 }}>Sign up</button></Link>
+    <>
+      <Head><title>Log in — By The Fruit</title></Head>
+      <div className={styles.authPage}>
+        <motion.div
+          className={styles.authCard}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+        >
+          <Link href="/" className={styles.authLogo}>
+            <Image src="/images/logo.png" alt="By The Fruit" width={44} height={44} />
+            <span>By The Fruit</span>
+          </Link>
+
+          <h1 className={styles.authTitle}>Welcome back</h1>
+          <p className={styles.authSub}>Log in to your account</p>
+
+          {ok ? (
+            <div className={styles.successBox}>
+              <p>Logged in successfully.</p>
+              <Link href="/" className={styles.authLink}>Go to home →</Link>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className={styles.authForm}>
+              <label className={styles.fieldLabel}>
+                Email address
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  placeholder="you@example.com"
+                  className={styles.fieldInput}
+                />
+              </label>
+              <label className={styles.fieldLabel}>
+                Password
+                <input
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  placeholder="••••••••"
+                  className={styles.fieldInput}
+                />
+              </label>
+
+              {error && <div className={styles.errorBox}>{error}</div>}
+
+              <button className={styles.submitBtn} type="submit" disabled={loading}>
+                {loading ? 'Logging in…' : 'Log in'}
+              </button>
+
+              <p className={styles.forgotLink}>
+                <Link href="/forgot-password">Forgot your password?</Link>
+              </p>
+            </form>
+          )}
+
+          <div className={styles.authFooter}>
+            <span>Don&apos;t have an account?</span>
+            <Link href="/signup" className={styles.authLink}>Join the waitlist</Link>
           </div>
-          <p style={{ marginTop: 12 }}><Link href="/forgot-password">Forgot password?</Link></p>
-        </form>
-      )}
-    </motion.div>
+        </motion.div>
+      </div>
+    </>
   )
 }

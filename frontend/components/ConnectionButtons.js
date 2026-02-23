@@ -2,98 +2,81 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { apiFetch, getToken, getUserId } from '../lib/api'
 
-/**
- * Shows Interested / Connect buttons when viewing a founder (as investor)
- * targetUserId: the founder's user id
- * viewerRole: 'investor' | 'founder' - who is viewing (investor sees buttons)
- */
+const unwrap = json => { const r = json?.data ?? json; return Array.isArray(r) ? r : Array.isArray(r?.results) ? r.results : r }
+
 export default function ConnectionButtons({ targetUserId, viewerRole = 'investor' }) {
   const [connection, setConnection] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const token = getToken()
-  const userId = getUserId()
+  const [token, setToken] = useState(null)
+  const [userId, setUserId] = useState(null)
 
   useEffect(() => {
-    if (!token || !userId || !targetUserId) return
-    async function load() {
-      try {
-        const res = await apiFetch('/profiles/connections/')
-        if (!res.ok) return
-        const data = await res.json()
-        const conn = data.find(c => {
+    const t = getToken()
+    const uid = getUserId()
+    setToken(t)
+    setUserId(uid)
+    if (!t || !uid || !targetUserId) return
+
+    apiFetch('/profiles/connections/')
+      .then(r => r.ok ? r.json() : {})
+      .then(json => {
+        const data = unwrap(json)
+        const list = Array.isArray(data) ? data : []
+        const conn = list.find(c => {
           const inv = c.investor ?? c.investor_detail?.id
           const fnd = c.founder ?? c.founder_detail?.id
-          return (Number(inv) === Number(userId) && Number(fnd) === Number(targetUserId)) ||
-                 (Number(inv) === Number(targetUserId) && Number(fnd) === Number(userId))
+          return (Number(inv) === Number(uid) && Number(fnd) === Number(targetUserId)) ||
+                 (Number(inv) === Number(targetUserId) && Number(fnd) === Number(uid))
         })
         setConnection(conn || null)
-      } catch (e) {}
-    }
-    load()
-  }, [token, userId, targetUserId])
+      })
+      .catch(() => {})
+  }, [targetUserId])
 
   async function markInterested() {
-    if (!token) return
-    setLoading(true)
-    setError(null)
+    setLoading(true); setError(null)
     try {
       const res = await apiFetch('/profiles/connections/interested/', {
         method: 'POST',
         body: JSON.stringify({ founder_id: targetUserId })
       })
-      if (res.ok) {
-        const data = await res.json()
-        setConnection(data)
-      } else {
-        const err = await res.json()
-        setError(err.error || 'Failed')
-      }
-    } catch (e) {
-      setError('Network error')
-    }
+      const json = await res.json()
+      if (res.ok) setConnection(unwrap(json))
+      else setError((unwrap(json))?.error || 'Failed')
+    } catch (e) { setError('Network error') }
     setLoading(false)
   }
 
   async function requestConnect() {
-    if (!token) return
-    setLoading(true)
-    setError(null)
+    setLoading(true); setError(null)
     try {
       const res = await apiFetch('/profiles/connections/connect/', {
         method: 'POST',
         body: JSON.stringify({ founder_id: targetUserId })
       })
-      if (res.ok) {
-        const data = await res.json()
-        setConnection(data)
-      } else {
-        const err = await res.json()
-        setError(err.error || 'Failed')
-      }
-    } catch (e) {
-      setError('Network error')
-    }
+      const json = await res.json()
+      if (res.ok) setConnection(unwrap(json))
+      else setError((unwrap(json))?.error || 'Failed')
+    } catch (e) { setError('Network error') }
     setLoading(false)
   }
 
   if (!token) {
     return (
-      <div className="connection-buttons">
-        <Link href="/login">
-          <button className="btn" style={{ marginRight: 8 }}>Log in to connect</button>
-        </Link>
-      </div>
+      <Link href="/login">
+        <button className="btn">Log in to connect</button>
+      </Link>
     )
   }
 
-  if (!userId || userId === targetUserId) return null
+  if (!userId || String(userId) === String(targetUserId)) return null
 
   const status = connection?.status
 
   return (
-    <div className="connection-buttons" style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-      {error && <span style={{ color: 'var(--muted)', fontSize: 0.9 }}>{error}</span>}
+    <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+      {error && <span style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>{error}</span>}
       {status === 'connected' && (
         <Link href={`/channels?connection=${connection?.id}`}>
           <button className="btn">View channel</button>

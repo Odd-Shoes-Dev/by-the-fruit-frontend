@@ -1,8 +1,11 @@
 import Head from 'next/head'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { motion } from 'framer-motion'
 import { getToken, getStoredUser, clearAuth, isApproved } from '../lib/api'
+import styles from '../styles/Auth.module.css'
 
 export default function Pending() {
   const router = useRouter()
@@ -26,33 +29,50 @@ export default function Pending() {
     <>
       <Head>
         <title>Request pending — By The Fruit</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <main className="container" style={{ maxWidth: 520, marginTop: 48, textAlign: 'center' }}>
-        <div style={{ background: '#f9fafb', border: '1px solid #eee', borderRadius: 12, padding: 32, boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-          <h1 style={{ marginTop: 0, color: 'var(--dark)' }}>Request pending</h1>
-          <p style={{ color: 'var(--muted)', marginBottom: 24 }}>
+      <div className={styles.authPage}>
+        <motion.div
+          className={styles.authCard}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+          style={{ textAlign: 'center' }}
+        >
+          <Link href="/" className={styles.authLogo} style={{ justifyContent: 'center' }}>
+            <Image src="/images/logo.png" alt="By The Fruit" width={44} height={44} />
+            <span>By The Fruit</span>
+          </Link>
+
+          <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>⏳</div>
+
+          <h1 className={styles.authTitle}>Request pending</h1>
+          <p className={styles.authSub}>
             Thanks for joining the waitlist. Your request to join the By the Fruit community is under review.
           </p>
-          <p style={{ color: 'var(--muted)', fontSize: '0.95rem' }}>
-            We may reach out by email before approving. Once approved, you&apos;ll be able to access the full app—feed, connections, channels, and events.
-          </p>
-          <p style={{ marginTop: 24, fontWeight: 600, color: 'var(--teal, #2a9d8f)' }}>
-            You&apos;re on the list. We&apos;ll be in touch.
-          </p>
-          <div style={{ marginTop: 28, display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/"><button className="btn">Back to home</button></Link>
+
+          <div className={styles.successBox} style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
+            <p style={{ margin: '0 0 0.5rem', fontSize: '0.9rem', color: 'var(--muted)' }}>
+              We may reach out by email before approving. Once approved, you&apos;ll have full access to the feed, connections, channels, and events.
+            </p>
+            <p style={{ margin: 0, fontWeight: 600, color: 'var(--teal)' }}>
+              You&apos;re on the list. We&apos;ll be in touch.
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link href="/" className={styles.submitBtn} style={{ textDecoration: 'none', display: 'inline-block', width: 'auto', padding: '0.65rem 1.5rem' }}>
+              Back to home
+            </Link>
             <button
               type="button"
-              className="btn"
-              style={{ background: '#fff', color: 'var(--orange)', border: '1px solid var(--orange)' }}
+              style={{ padding: '0.65rem 1.25rem', background: '#fff', color: 'var(--orange)', border: '1.5px solid var(--orange)', borderRadius: 10, fontWeight: 600, cursor: 'pointer', fontSize: '0.95rem' }}
               onClick={() => { clearAuth(); router.push('/login') }}
             >
               Log out
             </button>
           </div>
-        </div>
-      </main>
+        </motion.div>
+      </div>
     </>
   )
 }

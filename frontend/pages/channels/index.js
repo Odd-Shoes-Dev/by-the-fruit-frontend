@@ -3,23 +3,30 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { apiFetch, getToken } from '../../lib/api'
 
+const unwrap = json => { const r = json?.data ?? json; return Array.isArray(r) ? r : Array.isArray(r?.results) ? r.results : [] }
+
 export default function ChannelsPage() {
   const [channels, setChannels] = useState([])
   const [loading, setLoading] = useState(true)
-  const token = getToken()
+  const [mounted, setMounted] = useState(false)
+  const [token, setToken] = useState(null)
   const router = useRouter()
   const connId = router.query.connection
 
   useEffect(() => {
-    if (!token) return
+    const t = getToken()
+    setToken(t)
+    setMounted(true)
+    if (!t) { setLoading(false); return }
+
     async function load() {
       try {
         const res = await apiFetch('/profiles/channels/')
         if (res.ok) {
-          const data = await res.json()
-          setChannels(data)
-          if (connId && data.length > 0) {
-            const ch = data.find(c => c.connection === Number(connId))
+          const items = unwrap(await res.json())
+          setChannels(items)
+          if (connId && items.length > 0) {
+            const ch = items.find(c => c.connection === Number(connId))
             if (ch) router.replace(`/channels/${ch.id}`)
           }
         }
@@ -27,7 +34,9 @@ export default function ChannelsPage() {
       setLoading(false)
     }
     load()
-  }, [token, connId])
+  }, [connId])
+
+  if (!mounted || loading) return <div className="container"><p>Loading…</p></div>
 
   if (!token) {
     return (
@@ -40,25 +49,25 @@ export default function ChannelsPage() {
 
   return (
     <div className="container">
-      <h2>My channels</h2>
-      <p className="meta">Private channels with connected founders and investors.</p>
+      <header>
+        <h1>My Channels</h1>
+        <p className="tagline">Private channels with connected founders and investors.</p>
+      </header>
 
-      {loading ? <p>Loading…</p> : channels.length === 0 ? (
-        <p>No channels yet. Connect with a founder or investor to create one.</p>
+      {channels.length === 0 ? (
+        <p className="meta">No channels yet. Connect with a founder or investor to create one.</p>
       ) : (
         <ul className="list">
           {channels.map(ch => (
             <li key={ch.id} className="list-item">
-              <Link href={`/channels/${ch.id}`}>
+              <div className="list-item-row">
                 <strong>{ch.founder_detail?.full_name} ↔ {ch.investor_detail?.full_name}</strong>
-              </Link>
-              <Link href={`/channels/${ch.id}`}><button className="btn" style={{ marginTop: 8 }}>Open</button></Link>
+                <Link href={`/channels/${ch.id}`}><button className="btn">Open</button></Link>
+              </div>
             </li>
           ))}
         </ul>
       )}
-
-      <p style={{ marginTop: 24 }}><Link href="/connections">View connections</Link> · <Link href="/">Back</Link></p>
     </div>
   )
 }

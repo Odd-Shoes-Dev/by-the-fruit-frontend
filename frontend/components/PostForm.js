@@ -1,17 +1,38 @@
-import { useState } from 'react'
-import { apiFetch, getToken } from '../lib/api'
+import { useState, useEffect } from 'react'
+import { apiFetch, getToken, getStoredUser } from '../lib/api'
+import styles from '../styles/PostList.module.css'
+
+function Avatar({ src, name, size = 40 }) {
+  const initials = (name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+  if (src) {
+    return <img src={src} alt={name} width={size} height={size} className={styles.avatar} style={{ width: size, height: size }} />
+  }
+  return (
+    <div className={styles.avatarFallback} style={{ width: size, height: size, fontSize: size * 0.38 }}>
+      {initials}
+    </div>
+  )
+}
 
 export default function PostForm({ onCreate }) {
   const [content, setContent] = useState('')
   const [category, setCategory] = useState('')
   const [status, setStatus] = useState(null)
-  const token = getToken()
+  const [error, setError] = useState(null)
+  const [user, setUser] = useState(null)
+  const [focused, setFocused] = useState(false)
+
+  useEffect(() => {
+    setUser(getStoredUser())
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault()
     if (!content.trim()) return
     setStatus('sending')
+    setError(null)
     const payload = { content: content.trim(), category: category || null }
+    const token = getToken()
 
     if (token) {
       try {
@@ -20,45 +41,91 @@ export default function PostForm({ onCreate }) {
           body: JSON.stringify(payload)
         })
         if (res.ok) {
-          const data = await res.json()
+          const json = await res.json()
+          const data = json?.data ?? json
           setStatus('saved')
-          onCreate && onCreate(data)
           setContent('')
           setCategory('')
+          setFocused(false)
+          setTimeout(() => setStatus(null), 3000)
+          onCreate && onCreate(data)
           return
         }
-      } catch (err) {}
+        let msg = `Error ${res.status}`
+        try {
+          const errJson = await res.json()
+          const errData = errJson?.data ?? errJson
+          msg = errData?.detail || errData?.content?.[0] || errData?.non_field_errors?.[0] || JSON.stringify(errData) || msg
+        } catch (_) {}
+        setStatus(null)
+        setError(msg)
+        return
+      } catch (err) {
+        setStatus(null)
+        setError('Network error — check your connection.')
+        return
+      }
     }
 
+    // No token fallback
     const posts = JSON.parse(localStorage.getItem('btf_posts') || '[]')
     const item = { ...payload, author: 'Me', created_at: new Date().toISOString() }
     posts.unshift(item)
     localStorage.setItem('btf_posts', JSON.stringify(posts))
     setStatus('saved-local')
-    onCreate && onCreate(item)
     setContent('')
     setCategory('')
+    setFocused(false)
+    onCreate && onCreate(item)
   }
 
+  const name = user?.full_name || user?.email || ''
+  const photo = user?.photo || null
+
   return (
-    <form onSubmit={handleSubmit} className="form">
-      <label>Share an update, deal, or event
-        <textarea value={content} onChange={e => setContent(e.target.value)} rows={3} placeholder="What's on your mind?" required />
-      </label>
-      <label>Category (optional)
-        <select value={category} onChange={e => setCategory(e.target.value)}>
-          <option value="">—</option>
-          <option value="technology">Technology</option>
-          <option value="finance">Finance</option>
-          <option value="healthcare">Healthcare</option>
-          <option value="education">Education</option>
-          <option value="other">Other</option>
-        </select>
-      </label>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button type="submit" className="btn" disabled={!content.trim()}>Post</button>
-        <span style={{ alignSelf: 'center', color: 'var(--muted)' }}>{status === 'sending' ? 'Sending...' : status === 'saved' ? 'Posted' : ''}</span>
+    <div className={styles.postFormCard}>
+      <div className={styles.postFormTop}>
+        <Avatar src={photo} name={name} size={40} />
+        <textarea
+          className={styles.postFormTextarea}
+          value={content}
+          onChange={e => setContent(e.target.value)}
+          onFocus={() => setFocused(true)}
+          rows={focused || content ? 3 : 1}
+          placeholder="Share an update, deal, or event…"
+        />
       </div>
-    </form>
+
+      {(focused || content) && (
+        <div className={styles.postFormFooter}>
+          <select
+            className={styles.postFormSelect}
+            value={category}
+            onChange={e => setCategory(e.target.value)}
+          >
+            <option value="">Category (optional)</option>
+            <option value="technology">Technology</option>
+            <option value="finance">Finance</option>
+            <option value="healthcare">Healthcare</option>
+            <option value="education">Education</option>
+            <option value="other">Other</option>
+          </select>
+
+          <div className={styles.postFormActions}>
+            {status === 'saved' && <span className={styles.postSuccess}>✓ Posted</span>}
+            {status === 'saved-local' && <span className={styles.postMuted}>Saved locally</span>}
+            {error && <span className={styles.postError}>{error}</span>}
+            <button
+              type="button"
+              className={styles.postSubmitBtn}
+              disabled={!content.trim() || status === 'sending'}
+              onClick={handleSubmit}
+            >
+              {status === 'sending' ? 'Posting…' : 'Post'}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }

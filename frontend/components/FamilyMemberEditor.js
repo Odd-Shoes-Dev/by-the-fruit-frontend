@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { apiFetch, getToken } from '../lib/api'
 
 const RELATIONSHIPS = ['spouse', 'child', 'parent', 'sibling', 'other']
+const unwrap = json => { const r = json?.data ?? json; return r }
 
 export default function FamilyMemberEditor({ members = [], onChange, readOnly }) {
   const [list, setList] = useState(members || [])
@@ -9,7 +10,6 @@ export default function FamilyMemberEditor({ members = [], onChange, readOnly })
   const [relationship, setRelationship] = useState('other')
   const [profileLinkId, setProfileLinkId] = useState('')
   const [saving, setSaving] = useState(false)
-  const token = getToken()
 
   useEffect(() => { setList(members || []) }, [members])
 
@@ -17,6 +17,7 @@ export default function FamilyMemberEditor({ members = [], onChange, readOnly })
     const v = name.trim()
     if (!v) return
     const payload = { name: v, relationship, profile_link: profileLinkId ? Number(profileLinkId) : null }
+    const token = getToken()
     if (token) {
       setSaving(true)
       try {
@@ -25,7 +26,7 @@ export default function FamilyMemberEditor({ members = [], onChange, readOnly })
           body: JSON.stringify(payload)
         })
         if (res.ok) {
-          const created = await res.json()
+          const created = unwrap(await res.json())
           const next = [...list, created]
           setList(next)
           setName('')
@@ -49,13 +50,14 @@ export default function FamilyMemberEditor({ members = [], onChange, readOnly })
     const next = list.filter((_, i) => i !== idx)
     setList(next)
     onChange && onChange(next)
+    const token = getToken()
     if (item?.id && !String(item.id).startsWith('local-') && token) {
       setSaving(true)
       try {
         await apiFetch(`/profiles/family-members/${item.id}/`, { method: 'DELETE' })
-        } finally {
-          setSaving(false)
-        }
+      } finally {
+        setSaving(false)
+      }
     }
   }
 
@@ -77,7 +79,7 @@ export default function FamilyMemberEditor({ members = [], onChange, readOnly })
           <input
             value={profileLinkId}
             onChange={e => setProfileLinkId(e.target.value)}
-            placeholder="Profile user ID (if on platform)"
+            placeholder="Profile user ID (optional)"
             style={{ minWidth: 100 }}
             type="number"
           />

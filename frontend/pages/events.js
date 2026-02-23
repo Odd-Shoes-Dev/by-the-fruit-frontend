@@ -1,16 +1,18 @@
 import Head from 'next/head'
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { apiFetch, getToken } from '../lib/api'
+
+const unwrap = json => { const r = json?.data ?? json; return Array.isArray(r) ? r : Array.isArray(r?.results) ? r.results : [] }
 
 export default function EventsPage() {
   const [upcoming, setUpcoming] = useState([])
   const [live, setLive] = useState([])
   const [loading, setLoading] = useState(true)
-  const token = getToken()
+  const [token, setToken] = useState(null)
 
   useEffect(() => {
+    setToken(getToken())
     let mounted = true
     async function load() {
       try {
@@ -18,8 +20,8 @@ export default function EventsPage() {
           apiFetch('/profiles/events/upcoming/'),
           apiFetch('/profiles/events/live/')
         ])
-        if (upRes.ok && mounted) setUpcoming(await upRes.json())
-        if (liveRes.ok && mounted) setLive(await liveRes.json())
+        if (upRes.ok && mounted) setUpcoming(unwrap(await upRes.json()))
+        if (liveRes.ok && mounted) setLive(unwrap(await liveRes.json()))
       } catch (e) {}
       if (mounted) setLoading(false)
     }
@@ -28,30 +30,24 @@ export default function EventsPage() {
   }, [])
 
   async function register(eventId) {
-    if (!token) return
+    if (!getToken()) return
     try {
       const res = await apiFetch(`/profiles/events/${eventId}/register/`, { method: 'POST' })
-      if (res.ok) {
-        setUpcoming(prev => prev.map(e => e.id === eventId ? { ...e, registered: true } : e))
-      }
+      if (res.ok) setUpcoming(prev => prev.map(e => e.id === eventId ? { ...e, registered: true } : e))
     } catch (e) {}
   }
 
   async function remindMe(eventId) {
-    if (!token) return
+    if (!getToken()) return
     try {
       const res = await apiFetch(`/profiles/events/${eventId}/remind-me/`, { method: 'POST' })
-      if (res.ok) {
-        setUpcoming(prev => prev.map(e => e.id === eventId ? { ...e, reminded: true } : e))
-      }
+      if (res.ok) setUpcoming(prev => prev.map(e => e.id === eventId ? { ...e, reminded: true } : e))
     } catch (e) {}
   }
 
   return (
     <>
-      <Head>
-        <title>Events — By the Fruit</title>
-      </Head>
+      <Head><title>Events — By The Fruit</title></Head>
       <motion.main className="container" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
         <header>
           <h1>Events</h1>
@@ -82,7 +78,7 @@ export default function EventsPage() {
             <section>
               <h2>Upcoming events</h2>
               {upcoming.length === 0 ? (
-                <p className="meta">No upcoming events. Check back later or create one from the admin.</p>
+                <p className="meta">No upcoming events. Check back later.</p>
               ) : (
                 <div style={{ display: 'grid', gap: 12 }}>
                   {upcoming.map(e => (
@@ -113,8 +109,6 @@ export default function EventsPage() {
           <h3>Opportunities</h3>
           <p>Expiring opportunities will surface here for quick action.</p>
         </aside>
-
-        <p style={{ marginTop: 24 }}><Link href="/">Back</Link></p>
       </motion.main>
     </>
   )

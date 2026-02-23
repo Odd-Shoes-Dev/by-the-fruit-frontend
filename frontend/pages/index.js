@@ -5,7 +5,6 @@ import { motion } from 'framer-motion'
 import styles from '../styles/Home.module.css'
 import { useEffect, useState } from 'react'
 import { getToken, isAdmin, isApproved, apiFetch } from '../lib/api'
-import NotificationBell from '../components/NotificationBell'
 
 // Scroll-triggered: fire when element enters viewport (amount = how much visible to trigger)
 const viewportScroll = { once: true, amount: 0.12 }
@@ -42,9 +41,15 @@ export default function Home() {
   const [newsletterAgree, setNewsletterAgree] = useState(false)
 
   useEffect(() => {
-    setToken(!!getToken())
+    const t = !!getToken()
+    const a = isApproved()
+    setToken(t)
     setAdmin(isAdmin())
-    setApproved(isApproved())
+    setApproved(a)
+    // Redirect logged-in approved users away from landing page
+    if (t && a && typeof window !== 'undefined') {
+      window.location.href = '/community'
+    }
   }, [])
 
   useEffect(() => {
@@ -100,27 +105,15 @@ export default function Home() {
               <p className={styles.lead}>Investing in innovation with clarity, care, and covenant.</p>
             </div>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-              {token && approved && (
+              {token && !approved && <Link href="/pending">Pending request</Link>}
+              {!token && (
                 <>
-                  <Link href="/community">Feed</Link>
-                  <Link href="/events">Events</Link>
-                  <Link href="/deals">Deals</Link>
-                  <Link href="/profile/settings">Profile</Link>
-                  <Link href="/connections">Connections</Link>
-                  <Link href="/channels">Channels</Link>
-                  <NotificationBell />
-                  {admin && (
-                    <>
-                      <Link href="/founders">Founders</Link>
-                      <Link href="/investors">Investors</Link>
-                      <Link href="/admin">Admin</Link>
-                    </>
-                  )}
+                  <Link href="/signup"><button className="btn">Join the waitlist</button></Link>
+                  <span style={{ color: 'var(--muted)', fontSize: '0.9rem', alignSelf: 'center' }}>
+                    Already have an account? <Link href="/login" style={{ color: 'var(--orange)', fontWeight: 500 }}>Log in</Link>
+                  </span>
                 </>
               )}
-              {token && !approved && <Link href="/pending">Pending request</Link>}
-              <Link href="/signup"><button className="btn" style={{ marginRight: 8 }}>Join the waitlist</button></Link>
-              <Link href="/login"><button className="btn" style={{ background: token ? 'var(--orange)' : '#fff', color: token ? '#fff' : 'var(--orange)', border: '1px solid var(--orange)' }}>Log in</button></Link>
             </div>
           </motion.header>
 
@@ -140,9 +133,6 @@ export default function Home() {
             <motion.p className={styles.focusSub} variants={fadeUp}>
               Built on radical hospitality, accessibility, and the conviction to fuel a better tomorrow—starting with media, tech, and entertainment.
             </motion.p>
-            <motion.div className={styles.scrollCue} variants={fadeUp} aria-hidden="true">
-              <div className={styles.scrollCueIcon} />
-            </motion.div>
           </motion.section>
 
           {/* Zigzag 1: Waitlist (left) → How it works + visual (right) */}
@@ -159,9 +149,9 @@ export default function Home() {
                 Request access as a founder or investor. Our team reviews each request to keep the community trusted and intentional. Once approved, you can log in and complete your profile.
               </p>
               <div className={styles.ctaGroup}>
-                <Link href="/signup/founder"><button className="btn">Join as Founder</button></Link>
-                <Link href="/signup/investor"><button className="btn" style={{ background: '#fff', color: 'var(--orange)', border: '1px solid var(--orange)' }}>Join as Investor</button></Link>
-                <Link href="/login"><button className="btn" style={{ background: 'transparent', color: 'var(--dark)' }}>Log in</button></Link>
+                <Link href="/signup?role=founder"><button className="btn">Join as Founder</button></Link>
+                <Link href="/signup?role=investor"><button className={`btn ${styles.btnOutline}`}>Join as Investor</button></Link>
+                <Link href="/login" style={{ color: 'var(--orange)', fontWeight: 500, fontSize: '0.95rem', alignSelf: 'center' }}>Log in</Link>
               </div>
               <p className={styles.disclaimer}>
                 Community access is by approval only. Joining the waitlist does not guarantee access. We may contact you by email before approving. This helps us protect our members and maintain a faith-aligned, intentional space.
@@ -184,7 +174,7 @@ export default function Home() {
 
           {/* Testimonials: scroll-triggered */}
           <motion.section
-            className={`${styles.testimonials} ${styles.sectionSpaceLg}`}
+            className={`${styles.testimonials} ${styles.sectionSpace}`}
             initial="initial"
             whileInView="animate"
             viewport={viewportScroll}

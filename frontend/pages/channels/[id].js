@@ -4,49 +4,59 @@ import { useRouter } from 'next/router'
 import { apiFetch, getToken } from '../../lib/api'
 import { useChannelChat } from '../../lib/useChannelChat'
 
+const unwrap = json => { const r = json?.data ?? json; return Array.isArray(r) ? r : Array.isArray(r?.results) ? r.results : r }
+
 export default function ChannelDetailPage() {
   const [channel, setChannel] = useState(null)
   const [updates, setUpdates] = useState([])
   const [newMsg, setNewMsg] = useState('')
   const [newUpdate, setNewUpdate] = useState('')
   const [loading, setLoading] = useState(true)
-  const token = getToken()
+  const [mounted, setMounted] = useState(false)
+  const [token, setToken] = useState(null)
   const router = useRouter()
   const { id } = router.query
   const { messages, connected, error: wsError, send: wsSend, addMessage } = useChannelChat(id)
 
   useEffect(() => {
-    if (!token || !id) return
+    const t = getToken()
+    setToken(t)
+    setMounted(true)
+    if (!t || !id) { setLoading(false); return }
+
     async function load() {
       try {
         const [chRes, updRes] = await Promise.all([
           apiFetch(`/profiles/channels/${id}/`),
           apiFetch(`/profiles/channel-progress/?channel=${id}`)
         ])
-        if (chRes.ok) setChannel(await chRes.json())
-        if (updRes.ok) setUpdates(await updRes.json())
+        if (chRes.ok) {
+          const json = await chRes.json()
+          setChannel(unwrap(json))
+        }
+        if (updRes.ok) {
+          setUpdates(unwrap(await updRes.json()))
+        }
       } catch (e) {}
       setLoading(false)
     }
     load()
-  }, [token, id])
+  }, [id])
 
   async function sendMessage(e) {
     e.preventDefault()
     const content = newMsg.trim()
     if (!content) return
     const sent = connected && wsSend(content)
-    if (sent) {
-      setNewMsg('')
-      return
-    }
+    if (sent) { setNewMsg(''); return }
     try {
       const res = await apiFetch('/profiles/channel-messages/', {
         method: 'POST',
         body: JSON.stringify({ channel: Number(id), content })
       })
       if (res.ok) {
-        const data = await res.json()
+        const json = await res.json()
+        const data = unwrap(json)
         addMessage({ ...data, sender_name: data.sender_detail?.full_name })
         setNewMsg('')
       }
@@ -62,11 +72,14 @@ export default function ChannelDetailPage() {
         body: JSON.stringify({ channel: Number(id), content: newUpdate.trim() })
       })
       if (res.ok) {
-        setUpdates(u => [...u, await res.json()])
+        const json = await res.json()
+        setUpdates(u => [...u, unwrap(json)])
         setNewUpdate('')
       }
     } catch (e) {}
   }
+
+  if (!mounted || loading) return <div className="container"><p>Loading…</p></div>
 
   if (!token) {
     return (
@@ -76,22 +89,24 @@ export default function ChannelDetailPage() {
     )
   }
 
-  if (loading || !channel) return <div className="container"><p>Loading…</p></div>
+  if (!channel) return <div className="container"><p>Channel not found.</p></div>
 
   return (
     <div className="container">
-      <h2>Channel: {channel.founder_detail?.full_name} ↔ {channel.investor_detail?.full_name}</h2>
-      <p className="meta">
-        {connected ? (
-          <span style={{ color: 'green' }}>● Real-time</span>
-        ) : wsError ? (
-          <span style={{ color: 'var(--muted)' }}>Using fallback (refresh for new messages)</span>
-        ) : (
-          'Messages and progress updates'
-        )}
-      </p>
+      <header>
+        <h1>Channel</h1>
+        <p className="tagline">
+          {channel.founder_detail?.full_name} ↔ {channel.investor_detail?.full_name}
+          {' · '}
+          {connected ? (
+            <span style={{ color: 'green' }}>● Real-time</span>
+          ) : (
+            <span style={{ color: 'var(--muted)' }}>Fallback mode</span>
+          )}
+        </p>
+      </header>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginTop: 24 }}>
+      <div className="channel-detail-grid">
         <section>
           <h3>Messages</h3>
           <div style={{ maxHeight: 300, overflowY: 'auto', border: '1px solid #eee', borderRadius: 8, padding: 12, marginBottom: 12 }}>
@@ -103,8 +118,8 @@ export default function ChannelDetailPage() {
               ))
             )}
           </div>
-          <form onSubmit={sendMessage} style={{ display: 'flex', gap: 8 }}>
-            <input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder="Type a message..." style={{ flex: 1 }} />
+          <form onSubmit={sendMessage} style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder="Type a message..." style={{ flex: 1, minWidth: 0 }} />
             <button type="submit" className="btn">Send</button>
           </form>
         </section>
@@ -121,14 +136,12 @@ export default function ChannelDetailPage() {
               ))
             )}
           </div>
-          <form onSubmit={postUpdate} style={{ display: 'flex', gap: 8 }}>
-            <textarea value={newUpdate} onChange={e => setNewUpdate(e.target.value)} placeholder="Post progress update..." rows={2} style={{ flex: 1 }} />
+          <form onSubmit={postUpdate} style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <textarea value={newUpdate} onChange={e => setNewUpdate(e.target.value)} placeholder="Post progress update..." rows={2} style={{ flex: 1, minWidth: 0 }} />
             <button type="submit" className="btn">Post</button>
           </form>
         </section>
       </div>
-
-      <p style={{ marginTop: 24 }}><Link href="/channels">Back to channels</Link></p>
     </div>
   )
 }

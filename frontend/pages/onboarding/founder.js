@@ -9,6 +9,8 @@ const CATEGORIES = ['technology', 'finance', 'retail', 'healthcare', 'education'
 
 export default function OnboardingFounder() {
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+  const [token, setToken] = useState(null)
   const [name, setName] = useState('')
   const [category, setCategory] = useState('other')
   const [description, setDescription] = useState('')
@@ -16,7 +18,10 @@ export default function OnboardingFounder() {
   const [status, setStatus] = useState('')
 
   useEffect(() => {
-    if (!getToken()) router.replace('/login')
+    const t = getToken()
+    setToken(t)
+    setMounted(true)
+    if (!t) router.replace('/login')
   }, [router])
 
   async function handleSubmit(e) {
@@ -38,12 +43,19 @@ export default function OnboardingFounder() {
     }
   }
 
-  if (!getToken()) return <div className="container"><p>Redirecting to login…</p></div>
+  if (!mounted) return <div className="container"><p>Loading…</p></div>
+  if (!token) return <div className="container"><p>Redirecting to login…</p></div>
 
   return (
     <>
       <Head><title>Complete your founder profile — By The Fruit</title></Head>
-      <motion.div className="container" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} style={{ maxWidth: 560 }}>
+      <motion.div
+        className="container"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        style={{ maxWidth: 560 }}
+      >
         <h2>Complete your founder profile</h2>
         <p className="meta">Add your company so other members can discover you.</p>
 
@@ -72,8 +84,6 @@ export default function OnboardingFounder() {
             </div>
           </form>
         )}
-
-        <p style={{ marginTop: 24 }}><Link href="/">Back to home</Link></p>
       </motion.div>
     </>
   )

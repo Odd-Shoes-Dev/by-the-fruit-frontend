@@ -3,38 +3,43 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { apiFetch, getToken } from '../lib/api'
 
+const unwrap = json => { const r = json?.data ?? json; return Array.isArray(r) ? r : Array.isArray(r?.results) ? r.results : [] }
+
 export default function DealsPage() {
   const [deals, setDeals] = useState([])
   const [loading, setLoading] = useState(true)
   const [forbidden, setForbidden] = useState(false)
-  const token = getToken()
+  const [mounted, setMounted] = useState(false)
+  const [token, setToken] = useState(null)
 
   useEffect(() => {
-    let mounted = true
+    const t = getToken()
+    setToken(t)
+    setMounted(true)
+    if (!t) { setLoading(false); return }
+
+    let active = true
     async function load() {
-      if (!token) {
-        if (mounted) setLoading(false)
-        return
-      }
       try {
         const res = await apiFetch('/profiles/investment-requests/deals-for-creators/')
         if (res.status === 403) {
-          if (mounted) setForbidden(true)
-        } else if (res.ok && mounted) {
-          const data = await res.json()
-          setDeals(Array.isArray(data) ? data : [])
+          if (active) setForbidden(true)
+        } else if (res.ok && active) {
+          setDeals(unwrap(await res.json()))
         }
       } catch (e) {}
-      if (mounted) setLoading(false)
+      if (active) setLoading(false)
     }
     load()
-    return () => { mounted = false }
-  }, [token])
+    return () => { active = false }
+  }, [])
+
+  if (!mounted || loading) return <div className="container"><p>Loading…</p></div>
 
   if (!token) {
     return (
       <>
-        <Head><title>Deals for creators — By the Fruit</title></Head>
+        <Head><title>Deals for creators — By The Fruit</title></Head>
         <main className="container">
           <h1>Deals for creators</h1>
           <p><Link href="/login">Log in</Link> to see deals tailored for creator/influencer investors.</p>
@@ -45,21 +50,17 @@ export default function DealsPage() {
 
   return (
     <>
-      <Head>
-        <title>Deals for creators — By the Fruit</title>
-      </Head>
+      <Head><title>Deals for creators — By The Fruit</title></Head>
       <main className="container">
         <header>
           <h1>Deals for creators</h1>
           <p className="tagline">Investment opportunities surfaced for creator/influencer investors by relevance.</p>
         </header>
 
-        {loading ? (
-          <p>Loading…</p>
-        ) : forbidden ? (
+        {forbidden ? (
           <div className="card" style={{ maxWidth: 560 }}>
             <p>Only creator/influencer investors can access this feed.</p>
-            <p className="meta">In your investor profile, enable &quot;I&apos;m a creator / influencer&quot; and save. Then return here to see deals matched to your interests.</p>
+            <p className="meta">In your investor profile, enable &quot;I&apos;m a creator / influencer&quot; and save.</p>
             <Link href="/profile/settings">Go to profile settings</Link>
           </div>
         ) : deals.length === 0 ? (

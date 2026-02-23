@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
@@ -16,11 +15,29 @@ export default function NotificationsPage() {
       return
     }
     let mounted = true
+
     apiFetch('/profiles/notifications/')
-      .then(r => r.ok ? r.json() : [])
-      .then(data => { if (mounted) setList(Array.isArray(data) ? data : []) })
+      .then(r => r.ok ? r.json() : {})
+      .then(json => {
+        if (!mounted) return
+        const raw = json?.data ?? json
+        const items = Array.isArray(raw) ? raw : Array.isArray(raw?.results) ? raw.results : []
+        setList(items)
+
+        // Auto mark all unread as read
+        items.filter(n => !n.read_at).forEach(n => {
+          apiFetch(`/profiles/notifications/${n.id}/`, {
+            method: 'PATCH',
+            body: JSON.stringify({})
+          }).catch(() => {})
+        })
+
+        // Update list to show all as read immediately in UI
+        if (mounted) setList(items.map(n => ({ ...n, read_at: n.read_at || new Date().toISOString() })))
+      })
       .catch(() => {})
       .finally(() => { if (mounted) setLoading(false) })
+
     return () => { mounted = false }
   }, [router])
 
@@ -39,8 +56,10 @@ export default function NotificationsPage() {
     <>
       <Head><title>Notifications — By The Fruit</title></Head>
       <motion.main className="container" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <h1>Notifications</h1>
-        <p className="meta">Connection requests, accepted connections, and new channel messages.</p>
+        <header>
+          <h1>Notifications</h1>
+          <p className="tagline">Connection requests, accepted connections, and new channel messages.</p>
+        </header>
 
         {loading ? (
           <p>Loading…</p>
@@ -52,25 +71,33 @@ export default function NotificationsPage() {
               <li
                 key={n.id}
                 className="list-item"
-                style={{ opacity: n.read_at ? 0.8 : 1, borderLeft: n.read_at ? undefined : '3px solid var(--orange)' }}
+                style={{
+                  opacity: n.read_at ? 0.7 : 1,
+                  borderLeft: n.read_at ? '3px solid transparent' : '3px solid var(--orange)'
+                }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
-                  <div>
-                    <strong>{n.title}</strong>
+                <div className="list-item-row">
+                  <div style={{ minWidth: 0 }}>
+                    <strong style={{ color: n.read_at ? 'var(--muted)' : 'var(--dark)' }}>{n.title}</strong>
                     {n.message && <p className="meta" style={{ marginTop: 4 }}>{n.message}</p>}
-                    <span className="meta" style={{ fontSize: '0.85rem' }}>{new Date(n.created_at).toLocaleString()}</span>
+                    <span className="meta" style={{ fontSize: '0.82rem' }}>
+                      {new Date(n.created_at).toLocaleString()}
+                    </span>
                   </div>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    {n.link && <Link href={n.link}><button className="btn" onClick={() => markRead(n.id)}>View</button></Link>}
-                    {!n.read_at && <button type="button" onClick={() => markRead(n.id)} style={{ background: 'transparent', border: '1px solid #ccc', borderRadius: 6, padding: '4px 8px', fontSize: '0.9rem' }}>Mark read</button>}
+                  <div className="list-item-actions">
+                    {n.link && (
+                      <a href={n.link}>
+                        <button className="btn" style={{ padding: '6px 14px', fontSize: '0.88rem' }}>
+                          View
+                        </button>
+                      </a>
+                    )}
                   </div>
                 </div>
               </li>
             ))}
           </ul>
         )}
-
-        <p style={{ marginTop: 24 }}><Link href="/">Back to home</Link></p>
       </motion.main>
     </>
   )
