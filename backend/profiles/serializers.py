@@ -64,6 +64,7 @@ class CommunityPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommunityPost
         fields = '__all__'
+        read_only_fields = ('author', 'created_at', 'updated_at')
 
 
 class JobPostingSerializer(serializers.ModelSerializer):

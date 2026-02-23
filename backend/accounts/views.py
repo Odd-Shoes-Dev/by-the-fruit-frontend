@@ -40,20 +40,22 @@ class RegisterView(generics.GenericAPIView):
         serializer.save()
 
         user_data = serializer.data
+        new_user = CustomUser.objects.get(email=user_data['email'])
 
-        user = CustomUser.objects.get(email=user_data['email'])
-        # token = RefreshToken.for_user(user).access_token
-
-        # relative_link = reverse('verify-email')
-        # current_site = get_current_site(request).domain
-
-        # abs_url = f"http://{current_site}{relative_link}?token="
-
-        # email_body = 'Hi {} Use below link to verify your email \n {}'.format(
-        #     user.full_name, abs_url)
-        # data = {'to_email': CustomUser.email, 'email_body': email_body,
-        #         'email_subject': 'Verify your email'}
-        # Util.send_email(data)
+        # Notify all admin/staff users about the new waitlist request
+        try:
+            from profiles.models import Notification
+            admins = CustomUser.objects.filter(is_staff=True, is_active=True)
+            for admin in admins:
+                Notification.objects.create(
+                    user=admin,
+                    notification_type='waitlist_request',
+                    title=f'New waitlist request: {new_user.full_name or new_user.email}',
+                    message=f'{new_user.email} has joined the waitlist and is awaiting your approval.',
+                    link='/admin'
+                )
+        except Exception:
+            pass
 
         return Response(user_data, status=status.HTTP_201_CREATED)
 
@@ -188,6 +190,72 @@ class MeAPIView(views.APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class WaitlistUsersView(generics.ListAPIView):
+    """Admin-only: list all users filterable by approval_status."""
+    serializer_class = UsersSerializer
+    renderer_classes = (Renderer,)
+    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser)
+
+    def get_queryset(self):
+        status_filter = self.request.query_params.get('status', 'pending')
+        if status_filter == 'all':
+            return CustomUser.objects.filter(is_staff=False).order_by('-created_at')
+        return CustomUser.objects.filter(
+            approval_status=status_filter, is_staff=False
+        ).order_by('-created_at')
+
+
+class ApproveUserView(generics.UpdateAPIView):
+    """Admin-only: approve or reject a user by id."""
+    serializer_class = UsersSerializer
+    renderer_classes = (Renderer,)
+    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser)
+    queryset = CustomUser.objects.all()
+    lookup_field = 'id'
+
+    def patch(self, request, *args, **kwargs):
+        from django.utils import timezone
+        action = request.data.get('action')  # 'approve' or 'reject'
+        user = self.get_object()
+
+        if action == 'approve':
+            user.approval_status = 'approved'
+            user.approved_at = timezone.now()
+            user.approved_by = request.user
+            user.save(update_fields=['approval_status', 'approved_at', 'approved_by'])
+            # Notify the user they have been approved
+            try:
+                from profiles.models import Notification
+                Notification.objects.create(
+                    user=user,
+                    notification_type='waitlist_approved',
+                    title='Your request has been approved!',
+                    message='Welcome to By The Fruit. You can now log in and access the full community.',
+                    link='/community'
+                )
+            except Exception:
+                pass
+            return Response({'status': 'approved'}, status=status.HTTP_200_OK)
+
+        elif action == 'reject':
+            user.approval_status = 'rejected'
+            user.save(update_fields=['approval_status'])
+            try:
+                from profiles.models import Notification
+                Notification.objects.create(
+                    user=user,
+                    notification_type='waitlist_rejected',
+                    title='Your waitlist request was not approved',
+                    message='Thank you for your interest in By The Fruit. Unfortunately your request was not approved at this time.',
+                    link='/'
+                )
+            except Exception:
+                pass
+            return Response({'status': 'rejected'}, status=status.HTTP_200_OK)
+
+        return Response({'error': 'action must be approve or reject'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginViewSet(APIView):
