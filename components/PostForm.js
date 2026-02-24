@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { apiFetch, getToken, getStoredUser } from '../lib/api'
+import FluffyButton from './FluffyButton'
 import styles from '../styles/PostList.module.css'
 
 function Avatar({ src, name, size = 40 }) {
@@ -115,14 +116,16 @@ export default function PostForm({ onCreate }) {
             {status === 'saved' && <span className={styles.postSuccess}>✓ Posted</span>}
             {status === 'saved-local' && <span className={styles.postMuted}>Saved locally</span>}
             {error && <span className={styles.postError}>{error}</span>}
-            <button
-              type="button"
-              className={styles.postSubmitBtn}
-              disabled={!content.trim() || status === 'sending'}
+            <FluffyButton
               onClick={handleSubmit}
-            >
-              {status === 'sending' ? 'Posting…' : 'Post'}
-            </button>
+              disabled={!content.trim() || status === 'sending'}
+              label={status === 'sending' ? 'Posting…' : 'Post'}
+              width={88}
+              height={36}
+              strands={600}
+              strandLen={6}
+              fontSize={13}
+            />
           </div>
         </div>
       )}

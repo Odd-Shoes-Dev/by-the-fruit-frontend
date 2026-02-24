@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import FluffyButton from './FluffyButton'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || ''
 
@@ -97,9 +98,8 @@ export default function FounderForm() {
         <input value={family} onChange={e => setFamily(e.target.value)} placeholder="e.g., Jane Doe, Bob Doe" />
       </label>
 
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button type="submit" className="btn">Submit Your Deal</button>
-        <div style={{ alignSelf: 'center' }}>{status === 'sending' ? 'Sending...' : ''}</div>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <FluffyButton type="submit" label="Submit Your Deal" width={175} height={42} strands={1000} strandLen={7} fontSize={14} />
       </div>
 
       {status && status.error && <pre className="error">{JSON.stringify(status.detail)}</pre>}

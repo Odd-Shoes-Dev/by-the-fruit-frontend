@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import FluffyButton from './FluffyButton'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || ''
 
@@ -88,9 +89,8 @@ export default function InvestorForm() {
         <input value={form.linkedin} onChange={e => update('linkedin', e.target.value)} placeholder="https://" />
       </label>
 
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button type="submit" className="btn">Join the Collective</button>
-        <div style={{ alignSelf: 'center' }}>{status === 'sending' ? 'Sending...' : ''}</div>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <FluffyButton type="submit" label="Join the Collective" width={185} height={42} strands={1000} strandLen={7} fontSize={14} />
       </div>
 
       {status && status.error && <pre className="error">{JSON.stringify(status.detail)}</pre>}

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import FamilyMemberEditor from './FamilyMemberEditor'
+import FluffyButton from './FluffyButton'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || ''
 
@@ -88,9 +89,8 @@ export default function FounderProfileForm({ initial = {}, onSave }) {
         <input value={postalCode} onChange={e => setPostalCode(e.target.value)} placeholder="e.g., 94102" />
       </label>
 
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button type="submit" className="btn">Save Profile</button>
-        <div style={{ alignSelf: 'center' }}>{status === 'saving' ? 'Saving...' : ''}</div>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <FluffyButton type="submit" disabled={status === 'saving'} label={status === 'saving' ? 'Saving…' : 'Save Profile'} width={140} height={42} strands={900} strandLen={7} fontSize={14} />
       </div>
     </form>
   )

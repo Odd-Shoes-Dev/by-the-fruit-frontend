@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
 import { setAuth, getToken, isApproved } from '../lib/api'
+import FluffyButton from '../components/FluffyButton'
 import styles from '../styles/Auth.module.css'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || ''
@@ -131,9 +132,16 @@ export default function Login() {
 
               {error && <div className={styles.errorBox}>{error}</div>}
 
-              <button className={styles.submitBtn} type="submit" disabled={loading}>
-                {loading ? 'Logging in…' : 'Log in'}
-              </button>
+              <FluffyButton
+                type="submit"
+                disabled={loading}
+                label={loading ? 'Logging in…' : 'Log in'}
+                fullWidth
+                height={48}
+                strands={1500}
+                strandLen={8}
+                fontSize={15}
+              />
 
               <p className={styles.forgotLink}>
                 <Link href="/forgot-password">Forgot your password?</Link>

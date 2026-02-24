@@ -6,16 +6,15 @@
 
 /* ── Post card ── */
 .postCard {
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.07);
+  background: #152318;
+  border: 1px solid rgba(244, 239, 230, 0.08);
   border-radius: 16px;
   padding: 18px 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
 .postCard:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border-color: rgba(232,96,26,0.22);
   transform: translateY(-1px);
 }
 
@@ -52,7 +51,7 @@
 
 .avatarFallback {
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+  background: linear-gradient(135deg, #E8601A 0%, #1A4A2E 100%);
   color: #fff;
   font-weight: 700;
   display: flex;
@@ -60,7 +59,7 @@
   justify-content: center;
   flex-shrink: 0;
   letter-spacing: 0.02em;
-  border: 2px solid rgba(0, 0, 0, 0.06);
+  border: 2px solid rgba(244,239,230,0.08);
 }
 
 /* ── Author info ── */
@@ -73,7 +72,7 @@
 .authorName {
   font-weight: 700;
   font-size: 0.95rem;
-  color: var(--dark);
+  color: #F4EFE6;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -82,7 +81,7 @@
 
 .postTime {
   font-size: 0.78rem;
-  color: var(--muted);
+  color: rgba(244,239,230,0.4);
   margin-top: 1px;
 }
 
@@ -103,7 +102,7 @@
 .postContent {
   font-size: 0.95rem;
   line-height: 1.65;
-  color: #2d2d2d;
+  color: rgba(244,239,230,0.85);
   margin: 0;
   white-space: pre-wrap;
   word-break: break-word;
@@ -143,7 +142,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--teal);
+  background: var(--orange);
   animation: bounce 1.2s infinite ease-in-out;
 }
 
@@ -157,18 +156,18 @@
 
 /* ── Post form card ── */
 .postFormCard {
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: var(--dark2);
+  border: 1px solid rgba(244,239,230,0.07);
   border-radius: 16px;
   padding: 16px 18px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
   margin-bottom: 6px;
   transition: box-shadow 0.2s;
 }
 
 .postFormCard:focus-within {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  border-color: rgba(42, 157, 143, 0.3);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  border-color: rgba(232,96,26,0.3);
 }
 
 .postFormTop {
@@ -185,7 +184,7 @@
   font-family: inherit;
   font-size: 0.95rem;
   line-height: 1.6;
-  color: var(--dark);
+  color: var(--cream);
   background: transparent;
   padding: 6px 0;
   min-width: 0;
@@ -193,7 +192,7 @@
 }
 
 .postFormTextarea::placeholder {
-  color: #aaa;
+  color: rgba(244,239,230,0.3);
 }
 
 .postFormFooter {
@@ -203,7 +202,7 @@
   gap: 10px;
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-top: 1px solid rgba(244,239,230,0.07);
   flex-wrap: wrap;
 }
 
@@ -211,9 +210,9 @@
   font-size: 0.82rem;
   padding: 6px 10px;
   border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background: #f9fafb;
-  color: var(--dark);
+  border: 1px solid rgba(244,239,230,0.1);
+  background: rgba(244,239,230,0.04);
+  color: var(--cream);
   cursor: pointer;
   font-family: inherit;
 }
@@ -250,7 +249,7 @@
   cursor: not-allowed;
 }
 
-.postSuccess { color: var(--teal); font-size: 0.85rem; font-weight: 500; }
+.postSuccess { color: #34d399; font-size: 0.85rem; font-weight: 500; }
 .postMuted   { color: var(--muted); font-size: 0.85rem; }
 .postError   { color: crimson; font-size: 0.85rem; }
 

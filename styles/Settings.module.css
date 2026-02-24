@@ -23,11 +23,10 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.07);
+  background: var(--dark2, #152318);
+  border: 1px solid rgba(244,239,230,0.08);
   border-radius: 14px;
   padding: 14px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .miniAvatar {
@@ -36,14 +35,14 @@
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
-  border: 2px solid rgba(0,0,0,0.06);
+  border: 2px solid rgba(232,96,26,0.3);
 }
 
 .miniAvatarFallback {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+  background: linear-gradient(135deg, #E8601A 0%, #1A4A2E 100%);
   color: #fff;
   font-size: 1rem;
   font-weight: 700;
@@ -58,7 +57,7 @@
 .miniName {
   font-size: 0.88rem;
   font-weight: 700;
-  color: var(--dark);
+  color: #F4EFE6;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -66,7 +65,7 @@
 
 .miniViewLink {
   font-size: 0.78rem;
-  color: var(--teal);
+  color: #E8601A;
   text-decoration: none;
   font-weight: 500;
 }
@@ -74,11 +73,10 @@
 
 /* Tab nav */
 .tabNav {
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.07);
+  background: #152318;
+  border: 1px solid rgba(244,239,230,0.08);
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .tabBtn {
@@ -92,7 +90,7 @@
   border-left: 3px solid transparent;
   font-size: 0.9rem;
   font-weight: 500;
-  color: #555;
+  color: rgba(244,239,230,0.5);
   cursor: pointer;
   font-family: inherit;
   text-align: left;
@@ -102,18 +100,18 @@
 .tabBtn svg { flex-shrink: 0; }
 
 .tabBtn:hover {
-  background: rgba(0,0,0,0.03);
-  color: var(--dark);
+  background: rgba(244,239,230,0.04);
+  color: #F4EFE6;
 }
 
 .tabBtnActive {
-  border-left-color: var(--orange);
-  color: var(--orange);
-  background: rgba(242,139,43,0.05);
+  border-left-color: #E8601A;
+  color: #E8601A;
+  background: rgba(232,96,26,0.07);
   font-weight: 700;
 }
 
-.tabBtnActive svg { color: var(--orange); }
+.tabBtnActive svg { color: #E8601A; }
 
 /* Mobile: tabs become a horizontal scroll row */
 @media (max-width: 700px) {
@@ -153,29 +151,29 @@
 
 /* ── Section cards ── */
 .sectionCard {
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.07);
+  background: var(--dark2);
+  border: 1px solid rgba(244,239,230,0.08);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.25);
 }
 
 .sectionHeader {
   padding: 16px 22px 12px;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-  background: #fafbfc;
+  border-bottom: 1px solid rgba(244,239,230,0.07);
+  background: rgba(14,31,20,0.5);
 }
 
 .sectionTitle {
   font-size: 0.95rem;
   font-weight: 700;
   margin: 0 0 2px;
-  color: var(--dark);
+  color: var(--cream);
 }
 
 .sectionSub {
   font-size: 0.82rem;
-  color: var(--muted);
+  color: rgba(244,239,230,0.55);
   margin: 0;
 }
 
@@ -201,7 +199,7 @@
   height: 72px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid rgba(0,0,0,0.07);
+  border: 3px solid rgba(244,239,230,0.12);
   display: block;
 }
 
@@ -209,7 +207,7 @@
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+  background: linear-gradient(135deg, #E8601A 0%, #1A4A2E 100%);
   color: #fff;
   font-size: 1.5rem;
   font-weight: 700;
@@ -228,7 +226,7 @@
   border-radius: 50%;
   background: var(--orange);
   color: #fff;
-  border: 2px solid #fff;
+  border: 2px solid var(--dark2);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -254,21 +252,21 @@
 .fieldLabel {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--dark);
+  color: var(--cream);
 }
 
-.optional { font-weight: 400; color: var(--muted); font-size: 0.8rem; }
+.optional { font-weight: 400; color: rgba(244,239,230,0.5); font-size: 0.8rem; }
 
-.fieldHint { font-size: 0.78rem; color: var(--muted); margin: 2px 0 0; }
+.fieldHint { font-size: 0.78rem; color: rgba(244,239,230,0.5); margin: 2px 0 0; }
 
 .fieldInput {
   padding: 0.58rem 0.8rem;
   border-radius: 9px;
-  border: 1.5px solid rgba(0,0,0,0.11);
+  border: 1.5px solid rgba(244,239,230,0.12);
   font-size: 0.92rem;
   font-family: inherit;
-  background: #fafafa;
-  color: var(--dark);
+  background: rgba(244,239,230,0.04);
+  color: var(--cream);
   transition: border-color 0.15s, box-shadow 0.15s;
   width: 100%;
   box-sizing: border-box;
@@ -277,9 +275,9 @@
 
 .fieldInput:focus {
   outline: none;
-  border-color: var(--teal);
-  box-shadow: 0 0 0 3px rgba(42,157,143,0.1);
-  background: #fff;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(232,96,26,0.15);
+  background: rgba(244,239,230,0.06);
 }
 
 /* ── Account info grid ── */
@@ -295,15 +293,15 @@
   flex-direction: column;
   gap: 3px;
   padding: 12px 14px;
-  background: #f9fafb;
+  background: rgba(244,239,230,0.04);
   border-radius: 10px;
-  border: 1px solid rgba(0,0,0,0.06);
+  border: 1px solid rgba(244,239,230,0.08);
 }
 
 .infoLabel {
   font-size: 0.72rem;
   font-weight: 600;
-  color: var(--muted);
+  color: rgba(244,239,230,0.45);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -326,12 +324,12 @@
   justify-content: space-between;
   gap: 16px;
   padding: 12px 0;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
+  border-bottom: 1px solid rgba(244,239,230,0.07);
 }
 .toggleRow:last-child { border-bottom: none; }
 
-.toggleLabel { font-size: 0.9rem; font-weight: 600; color: var(--dark); }
-.toggleSub { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+.toggleLabel { font-size: 0.9rem; font-weight: 600; color: var(--cream); }
+.toggleSub { font-size: 0.8rem; color: rgba(244,239,230,0.5); margin-top: 2px; }
 
 .toggle { position: relative; display: inline-block; width: 42px; height: 24px; flex-shrink: 0; }
 .toggle input { opacity: 0; width: 0; height: 0; }
@@ -339,7 +337,7 @@
 .toggleSlider {
   position: absolute;
   inset: 0;
-  background: #ddd;
+  background: rgba(244,239,230,0.15);
   border-radius: 999px;
   cursor: pointer;
   transition: background 0.2s;
@@ -351,12 +349,12 @@
   height: 18px;
   left: 3px;
   top: 3px;
-  background: #fff;
+  background: var(--cream);
   border-radius: 50%;
   transition: transform 0.2s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
-.toggle input:checked + .toggleSlider { background: var(--teal); }
+.toggle input:checked + .toggleSlider { background: var(--orange); }
 .toggle input:checked + .toggleSlider::before { transform: translateX(18px); }
 
 /* ── Privacy guidelines ── */
@@ -370,7 +368,7 @@
 }
 .guidelineList li {
   font-size: 0.88rem;
-  color: #444;
+  color: rgba(244,239,230,0.7);
   line-height: 1.55;
   padding-left: 18px;
   position: relative;
@@ -379,15 +377,15 @@
   content: '•';
   position: absolute;
   left: 4px;
-  color: var(--teal);
+  color: var(--orange);
   font-weight: 700;
 }
 
 /* ── Danger zone ── */
 .dangerBtn {
-  background: #fff0f0;
-  color: #c0392b;
-  border: 1.5px solid rgba(192,57,43,0.25);
+  background: rgba(248,113,113,0.08);
+  color: #f87171;
+  border: 1.5px solid rgba(248,113,113,0.25);
   border-radius: 9px;
   padding: 9px 20px;
   font-size: 0.9rem;
@@ -396,10 +394,10 @@
   font-family: inherit;
   transition: background 0.15s;
 }
-.dangerBtn:hover { background: #ffe0e0; }
+.dangerBtn:hover { background: rgba(248,113,113,0.14); }
 
 .deleteConfirm { display: flex; flex-direction: column; gap: 12px; }
-.deleteConfirm p { font-size: 0.9rem; color: #c0392b; margin: 0; }
+.deleteConfirm p { font-size: 0.9rem; color: #f87171; margin: 0; }
 
 /* ── Buttons ── */
 .saveBtn {
@@ -421,35 +419,35 @@
 
 .outlineBtn {
   background: transparent;
-  border: 1.5px solid rgba(0,0,0,0.15);
+  border: 1.5px solid rgba(244,239,230,0.18);
   border-radius: 8px;
   padding: 7px 16px;
   font-size: 0.88rem;
   font-family: inherit;
   cursor: pointer;
-  color: var(--dark);
+  color: var(--cream);
   font-weight: 500;
   transition: border-color 0.15s, background 0.15s;
   width: fit-content;
 }
-.outlineBtn:hover { border-color: var(--teal); background: rgba(42,157,143,0.04); }
+.outlineBtn:hover { border-color: var(--orange); background: rgba(232,96,26,0.06); }
 
 .formActions { padding-top: 4px; }
 
 /* ── Feedback ── */
 .errorBox {
-  background: #fff0f0;
-  border: 1px solid #fcc;
-  color: #a00;
+  background: rgba(248,113,113,0.08);
+  border: 1px solid rgba(248,113,113,0.2);
+  color: #f87171;
   padding: 0.65rem 0.9rem;
   border-radius: 9px;
   font-size: 0.88rem;
 }
 
 .successBox {
-  background: #f0faf9;
-  border: 1px solid rgba(42,157,143,0.25);
-  color: var(--teal-dark);
+  background: rgba(52,211,153,0.07);
+  border: 1px solid rgba(52,211,153,0.2);
+  color: #34d399;
   padding: 0.65rem 0.9rem;
   border-radius: 9px;
   font-size: 0.88rem;
@@ -462,7 +460,7 @@
 .loadingPulse {
   height: 16px;
   border-radius: 7px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, rgba(244,239,230,0.06) 25%, rgba(244,239,230,0.10) 50%, rgba(244,239,230,0.06) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 }

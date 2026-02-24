@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { apiFetch, getToken, getUserId } from '../lib/api'
+import FluffyButton from './FluffyButton'
 
 const unwrap = json => { const r = json?.data ?? json; return Array.isArray(r) ? r : Array.isArray(r?.results) ? r.results : r }
 
@@ -64,9 +65,7 @@ export default function ConnectionButtons({ targetUserId, viewerRole = 'investor
 
   if (!token) {
     return (
-      <Link href="/login">
-        <button className="btn">Log in to connect</button>
-      </Link>
+      <FluffyButton href="/login" label="Log in to connect" width={180} height={40} strands={800} strandLen={6} fontSize={14} />
     )
   }
 
@@ -78,9 +77,7 @@ export default function ConnectionButtons({ targetUserId, viewerRole = 'investor
     <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
       {error && <span style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>{error}</span>}
       {status === 'connected' && (
-        <Link href={`/channels?connection=${connection?.id}`}>
-          <button className="btn">View channel</button>
-        </Link>
+        <FluffyButton href={`/channels?connection=${connection?.id}`} label="View channel" width={150} height={40} strands={700} strandLen={6} fontSize={14} />
       )}
       {status === 'connect_pending' && viewerRole === 'investor' && (
         <span style={{ color: 'var(--muted)' }}>Connect request pending</span>
@@ -89,18 +86,9 @@ export default function ConnectionButtons({ targetUserId, viewerRole = 'investor
       {(!status || status === 'interested') && viewerRole === 'investor' && (
         <>
           {status !== 'interested' && (
-            <button className="btn" onClick={markInterested} disabled={loading}>
-              {loading ? '...' : 'Interested'}
-            </button>
+            <FluffyButton onClick={markInterested} disabled={loading} label={loading ? '...' : 'Interested'} width={120} height={40} strands={700} strandLen={6} fontSize={14} />
           )}
-          <button
-            className="btn"
-            style={{ background: status === 'interested' ? 'var(--orange)' : '#fff', color: status === 'interested' ? '#fff' : 'var(--orange)', border: '1px solid var(--orange)' }}
-            onClick={requestConnect}
-            disabled={loading}
-          >
-            {loading ? '...' : 'Connect'}
-          </button>
+          <FluffyButton onClick={requestConnect} disabled={loading} label={loading ? '...' : 'Connect'} width={120} height={40} strands={700} strandLen={6} fontSize={14} />
         </>
       )}
     </div>

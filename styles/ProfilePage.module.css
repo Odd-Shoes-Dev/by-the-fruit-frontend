@@ -23,16 +23,15 @@
 
 /* ── Identity card (left) ── */
 .identityCard {
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.07);
+  background: #152318;
+  border: 1px solid rgba(244,239,230,0.08);
   border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 }
 
 .coverStrip {
   height: 80px;
-  background: linear-gradient(135deg, var(--teal) 0%, #1a6b60 50%, var(--orange) 100%);
+  background: linear-gradient(135deg, #1A4A2E 0%, #235E3A 50%, #E8601A 100%);
 }
 
 .identityBody {
@@ -50,22 +49,22 @@
 .avatar {
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  border: 3px solid #0E1F14;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   display: block;
   flex-shrink: 0;
 }
 
 .avatarFallback {
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+  background: linear-gradient(135deg, #E8601A 0%, #1A4A2E 100%);
   color: #fff;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  border: 3px solid #0E1F14;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   flex-shrink: 0;
   letter-spacing: 0.02em;
 }
@@ -80,37 +79,38 @@
 }
 
 .roleBadge[data-type="founder"] {
-  background: rgba(42, 157, 143, 0.12);
-  color: var(--teal-dark);
-  border: 1px solid rgba(42, 157, 143, 0.25);
+  background: rgba(26, 74, 46, 0.25);
+  color: #6fcf97;
+  border: 1px solid rgba(26, 74, 46, 0.5);
 }
 
 .roleBadge[data-type="investor"] {
-  background: rgba(242, 139, 43, 0.12);
-  color: #c46a0a;
-  border: 1px solid rgba(242, 139, 43, 0.25);
+  background: rgba(232, 96, 26, 0.15);
+  color: #E8601A;
+  border: 1px solid rgba(232, 96, 26, 0.3);
 }
 
 .profileName {
+  font-family: 'Playfair Display', serif;
   font-size: 1.25rem;
   font-weight: 800;
   margin: 0 0 2px;
-  color: var(--dark);
+  color: #F4EFE6;
   line-height: 1.2;
 }
 
 .profileEmail {
   font-size: 0.82rem;
-  color: var(--muted);
+  color: rgba(244,239,230,0.55);
   margin: 0 0 12px;
 }
 
 .profileBio {
   font-size: 0.88rem;
   line-height: 1.6;
-  color: #444;
+  color: rgba(244,239,230,0.75);
   margin: 0 0 14px;
-  border-left: 3px solid var(--teal);
+  border-left: 3px solid var(--orange);
   padding-left: 10px;
 }
 
@@ -127,7 +127,7 @@
   align-items: center;
   gap: 8px;
   font-size: 0.85rem;
-  color: #444;
+  color: rgba(244,239,230,0.75);
   min-width: 0;
 }
 
@@ -139,7 +139,7 @@
 }
 
 .inlineLink {
-  color: var(--teal);
+  color: var(--orange);
   text-decoration: none;
   word-break: break-all;
 }
@@ -157,8 +157,8 @@
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  background: #f4f4f5;
-  color: #555;
+  background: rgba(244,239,230,0.06);
+  color: rgba(244,239,230,0.60);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -167,7 +167,7 @@
 }
 
 .socialLink:hover {
-  background: var(--teal);
+  background: var(--orange);
   color: #fff;
 }
 
@@ -198,11 +198,11 @@
 
 /* ── Detail cards (right) ── */
 .detailCard {
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.07);
+  background: var(--dark2);
+  border: 1px solid rgba(244,239,230,0.08);
   border-radius: 16px;
   padding: 22px 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.25);
 }
 
 .detailCardHeader {
@@ -216,7 +216,7 @@
   font-size: 1.05rem;
   font-weight: 700;
   margin: 0 0 4px;
-  color: var(--dark);
+  color: var(--cream);
 }
 
 .detailCardMeta {
@@ -229,7 +229,7 @@
 .detailText {
   font-size: 0.9rem;
   line-height: 1.65;
-  color: #444;
+  color: rgba(244,239,230,0.75);
   margin: 0 0 14px;
 }
 
@@ -270,9 +270,9 @@
   font-weight: 600;
   padding: 2px 9px;
   border-radius: 999px;
-  background: rgba(42, 157, 143, 0.1);
-  color: var(--teal-dark);
-  border: 1px solid rgba(42, 157, 143, 0.2);
+  background: rgba(232,96,26,0.12);
+  color: #E8601A;
+  border: 1px solid rgba(232,96,26,0.22);
   text-transform: capitalize;
 }
 
@@ -288,9 +288,8 @@
 
 /* ── Milestones ── */
 .subHeading {
-  font-size: 0.9rem;
   font-weight: 700;
-  color: var(--dark);
+  color: var(--orange);
   margin: 18px 0 10px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -316,27 +315,27 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--teal);
+  background: var(--orange);
   margin-top: 5px;
   flex-shrink: 0;
 }
 
 .milestoneDesc {
   font-size: 0.85rem;
-  color: var(--muted);
+  color: rgba(244,239,230,0.55);
   margin: 2px 0 0;
 }
 
 .milestoneDate {
   font-size: 0.78rem;
-  color: var(--muted);
+  color: rgba(244,239,230,0.45);
 }
 
 /* ── Investor stats ── */
 .philosophy {
   font-size: 0.9rem;
   font-style: italic;
-  color: #555;
+  color: rgba(244,239,230,0.65);
   border-left: 3px solid var(--orange);
   padding-left: 12px;
   margin: 0 0 16px;
@@ -351,8 +350,8 @@
 }
 
 .statBox {
-  background: #f9fafb;
-  border: 1px solid rgba(0, 0, 0, 0.07);
+  background: rgba(244,239,230,0.04);
+  border: 1px solid rgba(244,239,230,0.08);
   border-radius: 10px;
   padding: 10px 16px;
   display: flex;
@@ -364,7 +363,7 @@
 .statLabel {
   font-size: 0.72rem;
   font-weight: 600;
-  color: var(--muted);
+  color: rgba(244,239,230,0.45);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -372,7 +371,7 @@
 .statValue {
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--dark);
+  color: var(--cream);
   text-transform: capitalize;
 }
 
@@ -396,8 +395,8 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
-  color: #555;
+  background: linear-gradient(135deg, #E8601A, #1A4A2E);
+  color: var(--cream);
   font-weight: 700;
   font-size: 0.9rem;
   display: flex;
@@ -408,7 +407,7 @@
 
 .familyRel {
   font-size: 0.8rem;
-  color: var(--muted);
+  color: rgba(244,239,230,0.5);
   margin-left: 8px;
   text-transform: capitalize;
 }
@@ -425,7 +424,7 @@
   width: 88px;
   height: 88px;
   border-radius: 50%;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, rgba(244,239,230,0.06) 25%, rgba(244,239,230,0.10) 50%, rgba(244,239,230,0.06) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
   flex-shrink: 0;
@@ -442,7 +441,7 @@
 .skeletonLine {
   height: 14px;
   border-radius: 6px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, rgba(244,239,230,0.06) 25%, rgba(244,239,230,0.10) 50%, rgba(244,239,230,0.06) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 }
@@ -466,7 +465,7 @@
 .errorIcon { font-size: 2.5rem; }
 
 .backLink {
-  color: var(--teal);
+  color: var(--orange);
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
 import { getToken, isApproved } from '../../lib/api'
+import FluffyButton from '../../components/FluffyButton'
 import styles from '../../styles/Auth.module.css'
 
 export default function Signup() {
@@ -106,10 +107,8 @@ export default function Signup() {
               <p style={{ color: 'var(--muted)', fontSize: '0.95rem', marginBottom: 16 }}>
                 We review each request to keep the community trusted. We may contact you by email before approving. Once approved, you can log in and access the full app.
               </p>
-              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <Link href="/login" className={styles.submitBtn} style={{ textDecoration: 'none', textAlign: 'center' }}>
-                  Check your status
-                </Link>
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+                <FluffyButton href="/login" label="Check your status" width={185} height={44} strands={1000} strandLen={7} fontSize={14} />
                 <Link href="/" className={styles.authLink} style={{ alignSelf: 'center' }}>
                   Back to home
                 </Link>
@@ -204,9 +203,16 @@ export default function Signup() {
 
               {error && <div className={styles.errorBox}>{error}</div>}
 
-              <button className={styles.submitBtn} type="submit" disabled={loading}>
-                {loading ? 'Submitting…' : 'Submit application'}
-              </button>
+              <FluffyButton
+                type="submit"
+                disabled={loading}
+                label={loading ? 'Submitting…' : 'Submit application'}
+                fullWidth
+                height={48}
+                strands={1500}
+                strandLen={8}
+                fontSize={15}
+              />
             </form>
           )}
 

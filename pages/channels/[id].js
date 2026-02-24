@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { apiFetch, getToken } from '../../lib/api'
 import { useChannelChat } from '../../lib/useChannelChat'
+import FluffyButton from '../../components/FluffyButton'
 
 const unwrap = json => { const r = json?.data ?? json; return Array.isArray(r) ? r : Array.isArray(r?.results) ? r.results : r }
 
@@ -109,36 +110,36 @@ export default function ChannelDetailPage() {
       <div className="channel-detail-grid">
         <section>
           <h3>Messages</h3>
-          <div style={{ maxHeight: 300, overflowY: 'auto', border: '1.5px solid var(--border)', borderRadius: 'var(--radius)', padding: 12, marginBottom: 12, background: '#fafafa' }}>
+          <div style={{ maxHeight: 300, overflowY: 'auto', border: '1.5px solid var(--border)', borderRadius: 'var(--radius)', padding: 12, marginBottom: 12, background: 'var(--dark2)' }}>
             {messages.length === 0 ? <p className="meta">No messages yet.</p> : (
               messages.map(m => (
-                <div key={m.id} style={{ marginBottom: 8, padding: '8px 12px', background: '#fff', borderRadius: 8, border: '1px solid var(--border)' }}>
+                <div key={m.id} style={{ marginBottom: 8, padding: '8px 12px', background: 'rgba(244,239,230,0.04)', borderRadius: 8, border: '1px solid var(--border)' }}>
                   <strong>{m.sender_name}:</strong> {m.content}
                 </div>
               ))
             )}
           </div>
-          <form onSubmit={sendMessage} style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          <form onSubmit={sendMessage} style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
             <input value={newMsg} onChange={e => setNewMsg(e.target.value)} placeholder="Type a message..." style={{ flex: 1, minWidth: 0 }} />
-            <button type="submit" className="btn">Send</button>
+            <FluffyButton type="submit" label="Send" width={80} height={38} strands={500} strandLen={6} fontSize={13} />
           </form>
         </section>
 
         <section>
           <h3>Progress updates</h3>
           <p className="meta">Founders can post updates here (visible only to channel members).</p>
-          <div style={{ maxHeight: 300, overflowY: 'auto', border: '1.5px solid var(--border)', borderRadius: 'var(--radius)', padding: 12, marginBottom: 12, background: '#fafafa' }}>
+          <div style={{ maxHeight: 300, overflowY: 'auto', border: '1.5px solid var(--border)', borderRadius: 'var(--radius)', padding: 12, marginBottom: 12, background: 'var(--dark2)' }}>
             {updates.length === 0 ? <p className="meta">No updates yet.</p> : (
               updates.map(u => (
-                <div key={u.id} style={{ marginBottom: 8, padding: '8px 12px', background: '#fff', borderRadius: 8, border: '1.5px solid var(--teal)', borderLeftWidth: 3 }}>
+                <div key={u.id} style={{ marginBottom: 8, padding: '8px 12px', background: 'rgba(244,239,230,0.04)', borderRadius: 8, border: '1.5px solid var(--orange)', borderLeftWidth: 3 }}>
                   <strong>{u.posted_by_detail?.full_name}:</strong> {u.content}
                 </div>
               ))
             )}
           </div>
-          <form onSubmit={postUpdate} style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          <form onSubmit={postUpdate} style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
             <textarea value={newUpdate} onChange={e => setNewUpdate(e.target.value)} placeholder="Post progress update..." rows={2} style={{ flex: 1, minWidth: 0 }} />
-            <button type="submit" className="btn">Post</button>
+            <FluffyButton type="submit" label="Post" width={80} height={38} strands={500} strandLen={6} fontSize={13} />
           </form>
         </section>
       </div>

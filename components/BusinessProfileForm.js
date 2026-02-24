@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import FluffyButton from './FluffyButton'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || ''
 
@@ -115,9 +116,8 @@ export default function BusinessProfileForm({ initial = {}, onSave }) {
 
             {error && <div style={{ color: 'var(--danger, red)', marginTop: 8, fontSize: '0.9rem' }}>{error}</div>}
 
-            <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-                <button type="submit" className="btn" disabled={status === 'saving'}>Save Profile</button>
-                <div style={{ alignSelf: 'center' }}>{status === 'saving' ? 'Saving...' : ''}</div>
+            <div style={{ display: 'flex', gap: 8, marginTop: 16, alignItems: 'center' }}>
+                <FluffyButton type="submit" disabled={status === 'saving'} label={status === 'saving' ? 'Saving…' : 'Save Profile'} width={140} height={42} strands={900} strandLen={7} fontSize={14} />
             </div>
         </form>
     )

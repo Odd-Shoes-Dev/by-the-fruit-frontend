@@ -1,0 +1,55 @@
+.fluffyWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.18s ease, filter 0.18s ease;
+  background: none;
+  border: none;
+  padding: 0;
+  outline: none;
+}
+.fluffyWrap:not(.fluffyDisabled):not([disabled]):hover {
+  transform: translateY(-3px) scale(1.02);
+}
+.fluffyWrap:not(.fluffyDisabled):not([disabled]):active {
+  transform: translateY(1px) scale(0.98);
+}
+.fluffyWrap canvas {
+  display: block;
+  border-radius: 999px;
+}
+.fluffyDisabled,
+.fluffyWrap[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed !important;
+}
+
+.flLabel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  white-space: nowrap;
+}
+
+/* Floating animation */
+.fluffyFloat {
+  animation: fluffyFloat 3.5s ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+}
+
+@keyframes fluffyFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-7px); }
+}

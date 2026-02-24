@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import InvestorProfileForm from '../../components/InvestorProfileForm'
 import BusinessProfileForm from '../../components/BusinessProfileForm'
+import FluffyButton from '../../components/FluffyButton'
 import styles from '../../styles/Auth.module.css'
 
 export default function Profile() {
@@ -66,10 +67,8 @@ export default function Profile() {
                             <p style={{ color: 'var(--muted)', fontSize: '0.95rem', marginBottom: 16, marginTop: 16 }}>
                                 We review each request to keep the community trusted. We may contact you by email before approving. Once approved, you can log in and access the full app.
                             </p>
-                            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 24 }}>
-                                <Link href="/login" className={styles.submitBtn} style={{ textDecoration: 'none', textAlign: 'center' }}>
-                                    Check your status
-                                </Link>
+                            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 24, alignItems: 'center' }}>
+                                <FluffyButton href="/login" label="Check your status" width={190} height={44} strands={1000} strandLen={7} fontSize={14} />
                                 <Link href="/" className={styles.authLink} style={{ alignSelf: 'center' }}>
                                     Back to home
                                 </Link>

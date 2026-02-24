@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { apiFetch } from '../lib/api'
+import FluffyButton from '../components/FluffyButton'
 import styles from '../styles/Auth.module.css'
 
 export default function ResetPassword() {
@@ -75,9 +76,16 @@ export default function ResetPassword() {
           <div className={styles.errorBox}>Passwords do not match.</div>
         )}
         {status === 'error' && <div className={styles.errorBox}>Something went wrong. Please try again.</div>}
-        <button className={styles.submitBtn} type="submit" disabled={status === 'saving' || password !== confirm || password.length < 8}>
-          {status === 'saving' ? 'Saving...' : 'Save password'}
-        </button>
+        <FluffyButton
+          type="submit"
+          disabled={status === 'saving' || password !== confirm || password.length < 8}
+          label={status === 'saving' ? 'Saving…' : 'Save password'}
+          fullWidth
+          height={48}
+          strands={1500}
+          strandLen={8}
+          fontSize={15}
+        />
         <div className={styles.authFooter}>
           <Link href="/login" className={styles.authLink}>Back to login</Link>
         </div>

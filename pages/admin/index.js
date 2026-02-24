@@ -18,7 +18,7 @@ const STATUS_COLORS = {
 const STATUS_LABELS = { pending: 'Pending', approved: 'Approved', rejected: 'Rejected' }
 
 function StatusBadge({ status }) {
-  const cls = status === 'approved' ? 'badge badge--teal'
+  const cls = status === 'approved' ? 'badge badge--green'
     : status === 'rejected' ? 'badge badge--muted'
     : 'badge badge--orange'
   return <span className={cls}>{STATUS_LABELS[status] || status}</span>
@@ -211,7 +211,7 @@ export default function AdminIndex() {
                       borderRadius: 20,
                       border: waitlistFilter === f ? 'none' : '1px solid #e5e7eb',
                       background: waitlistFilter === f
-                        ? (f === 'pending' ? '#b45309' : f === 'approved' ? '#15803d' : f === 'rejected' ? '#be123c' : 'var(--teal)')
+                        ? (f === 'pending' ? '#d97706' : f === 'approved' ? '#34d399' : f === 'rejected' ? '#f87171' : 'var(--orange)')
                         : '#fff',
                       color: waitlistFilter === f ? '#fff' : 'var(--dark)',
                       fontWeight: 600,

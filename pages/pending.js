@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
 import { FiClock } from 'react-icons/fi'
 import { getToken, getStoredUser, clearAuth, isApproved } from '../lib/api'
+import FluffyButton from '../components/FluffyButton'
 import styles from '../styles/Auth.module.css'
 
 export default function Pending() {
@@ -44,7 +45,7 @@ export default function Pending() {
             <span>By The Fruit</span>
           </Link>
 
-          <div style={{ marginBottom: '0.5rem' }}><FiClock size={40} style={{ color: 'var(--teal)' }} /></div>
+          <div style={{ marginBottom: '0.5rem' }}><FiClock size={40} style={{ color: 'var(--orange)' }} /></div>
 
           <h1 className={styles.authTitle}>Request pending</h1>
           <p className={styles.authSub}>
@@ -55,18 +56,16 @@ export default function Pending() {
             <p style={{ margin: '0 0 0.5rem', fontSize: '0.9rem', color: 'var(--muted)' }}>
               We may reach out by email before approving. Once approved, you&apos;ll have full access to the feed, connections, channels, and events.
             </p>
-            <p style={{ margin: 0, fontWeight: 600, color: 'var(--teal)' }}>
+            <p style={{ margin: 0, fontWeight: 600, color: 'var(--orange)' }}>
               You&apos;re on the list. We&apos;ll be in touch.
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/" className={styles.submitBtn} style={{ textDecoration: 'none', display: 'inline-block', width: 'auto', padding: '0.65rem 1.5rem' }}>
-              Back to home
-            </Link>
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
+            <FluffyButton href="/" label="Back to home" width={160} height={44} strands={900} strandLen={7} fontSize={14} />
             <button
               type="button"
-              style={{ padding: '0.65rem 1.25rem', background: '#fff', color: 'var(--orange)', border: '1.5px solid var(--orange)', borderRadius: 10, fontWeight: 600, cursor: 'pointer', fontSize: '0.95rem' }}
+              style={{ padding: '0.65rem 1.25rem', background: 'transparent', color: 'var(--orange)', border: '1.5px solid var(--orange)', borderRadius: 10, fontWeight: 600, cursor: 'pointer', fontSize: '0.95rem' }}
               onClick={() => { clearAuth(); router.push('/login') }}
             >
               Log out

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { apiFetch, getToken, getUserId, getStoredUser, setAuth, clearAuth } from '../lib/api'
 import FamilyMemberEditor from '../components/FamilyMemberEditor'
+import FluffyButton from '../components/FluffyButton'
 import styles from '../styles/Settings.module.css'
 
 /* ─── Shared sub-components ─── */
@@ -179,7 +180,7 @@ function ProfileTab({ user, onUserUpdate }) {
       {error && <div className={styles.errorBox}>{error}</div>}
       {saved && <div className={styles.successBox}>✓ Profile saved successfully.</div>}
       <div className={styles.formActions}>
-        <button type="submit" className={styles.saveBtn} disabled={saving}>{saving ? 'Saving…' : 'Save changes'}</button>
+        <FluffyButton type="submit" disabled={saving} label={saving ? 'Saving…' : 'Save changes'} width={170} height={42} strands={1100} strandLen={7} fontSize={14} />
       </div>
     </form>
   )
@@ -245,9 +246,7 @@ function AccountTab({ user }) {
           </div>
           {pwError && <div className={styles.errorBox}>{pwError}</div>}
           {pwSaved && <div className={styles.successBox}>✓ Password updated.</div>}
-          <button type="submit" className={styles.saveBtn} disabled={pwSaving || !currentPw || !newPw || !confirmPw}>
-            {pwSaving ? 'Updating…' : 'Update password'}
-          </button>
+          <FluffyButton type="submit" disabled={pwSaving || !currentPw || !newPw || !confirmPw} label={pwSaving ? 'Updating…' : 'Update password'} width={185} height={42} strands={1100} strandLen={7} fontSize={14} />
         </form>
       </SectionCard>
 
@@ -360,7 +359,7 @@ function PrivacyTab({ user, onUserUpdate }) {
       {error && <div className={styles.errorBox}>{error}</div>}
       {saved && <div className={styles.successBox}>✓ Privacy settings saved.</div>}
       <div className={styles.formActions}>
-        <button type="submit" className={styles.saveBtn} disabled={saving}>{saving ? 'Saving…' : 'Save changes'}</button>
+        <FluffyButton type="submit" disabled={saving} label={saving ? 'Saving…' : 'Save changes'} width={170} height={42} strands={1100} strandLen={7} fontSize={14} />
       </div>
     </form>
   )

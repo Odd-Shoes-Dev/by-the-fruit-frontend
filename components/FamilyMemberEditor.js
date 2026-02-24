@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { apiFetch, getToken } from '../lib/api'
+import FluffyButton from './FluffyButton'
 
 const RELATIONSHIPS = ['spouse', 'child', 'parent', 'sibling', 'other']
 const unwrap = json => { const r = json?.data ?? json; return r }
@@ -83,7 +84,7 @@ export default function FamilyMemberEditor({ members = [], onChange, readOnly })
             style={{ minWidth: 100 }}
             type="number"
           />
-          <button type="button" onClick={addMember} className="btn" disabled={saving}>{saving ? '…' : 'Add'}</button>
+          <FluffyButton onClick={addMember} disabled={saving} label={saving ? '…' : 'Add'} width={72} height={38} strands={400} strandLen={5} fontSize={13} />
         </div>
       )}
 

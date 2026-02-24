@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getToken, isAdmin, isApproved, clearAuth, getUserId, getStoredUser, apiFetch } from '../lib/api'
 import NotificationBell from './NotificationBell'
+import FluffyButton from './FluffyButton'
 import styles from '../styles/Layout.module.css'
 
 function NavAvatar({ userId, photo, name, admin, onLogout }) {
@@ -195,7 +196,7 @@ export default function Layout({ children }) {
             )}
             {!token && (
               <>
-                <Link href="/signup" className={styles.navBtnPrimary}>Join the waitlist</Link>
+                <FluffyButton href="/signup" label="Join the waitlist" width={180} height={40} strands={900} strandLen={6} fontSize={14} />
                 <Link href="/login" className={styles.navLink}>Log in</Link>
               </>
             )}
@@ -242,7 +243,7 @@ export default function Layout({ children }) {
                 )}
                 {!token && (
                   <>
-                    <Link href="/signup" className={styles.navBtnPrimary}>Join the waitlist</Link>
+                    <FluffyButton href="/signup" label="Join the waitlist" width={180} height={40} strands={900} strandLen={6} fontSize={14} />
                     <Link href="/login" className={styles.navLink}>Log in</Link>
                   </>
                 )}

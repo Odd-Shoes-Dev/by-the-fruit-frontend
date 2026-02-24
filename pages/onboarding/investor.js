@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { apiFetch, getToken } from '../../lib/api'
+import FluffyButton from '../../components/FluffyButton'
 
 const CHECK_RANGES = ['1000-5000', '5000-10000', '10000-20000', '20000-50000', '50000-100000', '100000+']
 const CATEGORIES = ['technology', 'finance', 'retail', 'healthcare', 'education', 'manufacturing', 'agriculture', 'real_estate', 'hospitality', 'logistics', 'other']
@@ -81,8 +82,8 @@ export default function OnboardingInvestor() {
               </select>
             </label>
             {status === 'error' && <p className="error">Something went wrong. Try again.</p>}
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button className="btn" type="submit" disabled={status === 'saving'}>{status === 'saving' ? 'Saving…' : 'Save'}</button>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <FluffyButton type="submit" disabled={status === 'saving'} label={status === 'saving' ? 'Saving…' : 'Save'} width={100} height={42} strands={700} strandLen={6} fontSize={14} />
               <Link href="/profile/settings" className="btn-ghost">Skip for now</Link>
             </div>
           </form>

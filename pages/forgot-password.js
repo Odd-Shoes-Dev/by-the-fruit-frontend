@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { apiFetch } from '../lib/api'
+import FluffyButton from '../components/FluffyButton'
 import styles from '../styles/Auth.module.css'
 
 export default function ForgotPassword() {
@@ -60,9 +61,16 @@ export default function ForgotPassword() {
                 />
               </label>
               {status === 'error' && <div className={styles.errorBox}>Something went wrong. Please try again.</div>}
-              <button className={styles.submitBtn} type="submit" disabled={status === 'sending'}>
-                {status === 'sending' ? 'Sending…' : 'Send reset link'}
-              </button>
+              <FluffyButton
+                type="submit"
+                disabled={status === 'sending'}
+                label={status === 'sending' ? 'Sending…' : 'Send reset link'}
+                fullWidth
+                height={48}
+                strands={1500}
+                strandLen={8}
+                fontSize={15}
+              />
             </form>
           )}
 

@@ -51,12 +51,10 @@ export default function VerifyEmail() {
 
           {status === 'success' && (
             <>
-              <FiCheckCircle size={44} style={{ color: 'var(--teal)', margin: '0.5rem auto 1rem', display: 'block' }} />
-              <p style={{ color: 'var(--teal)', fontWeight: 600, marginBottom: 8 }}>{message}</p>
+              <FiCheckCircle size={44} style={{ color: 'var(--orange)', margin: '0.5rem auto 1rem', display: 'block' }} />
+              <p style={{ color: '#34d399', fontWeight: 600, marginBottom: 8 }}>{message}</p>
               <p className={styles.authSub} style={{ marginBottom: 16 }}>You can now log in to your account.</p>
-              <Link href="/login" className={styles.submitBtn} style={{ display: 'block', textDecoration: 'none', textAlign: 'center' }}>
-                Go to login
-              </Link>
+              <FluffyButton href="/login" label="Go to login" fullWidth height={48} strands={1500} strandLen={8} fontSize={15} />
             </>
           )}
 
