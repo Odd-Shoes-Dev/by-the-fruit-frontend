@@ -25,3 +25,4 @@ Thumbs.db
 # Logs and debug
 *.log
 npm-debug.log*
+.next/*
