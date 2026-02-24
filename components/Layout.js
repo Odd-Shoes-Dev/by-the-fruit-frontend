@@ -123,7 +123,7 @@ export default function Layout({ children }) {
       if (cached === 'true') setIsCreatorInfluencer(true)
     }
     if (t && a) {
-      apiFetch('/profiles/investment-profiles/me/')
+      apiFetch('/profiles/investments/me/')
         .then(res => res.ok ? res.json() : null)
         .then(data => {
           if (!data) return

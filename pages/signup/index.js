@@ -54,9 +54,10 @@ export default function Signup() {
         console.log('Registration response:', data)
         if (role === 'investor' || role === 'founder') {
           if (typeof window !== 'undefined') {
+            const userData = data.data ?? data  // Renderer wraps success as {"data": {...}}
             localStorage.setItem('btf_pending_role', role)
-            localStorage.setItem('btf_pending_token', data.token)
-            localStorage.setItem('btf_pending_user_id', data.id)
+            localStorage.setItem('btf_pending_token', userData.token)
+            localStorage.setItem('btf_pending_user_id', userData.id)
           }
           router.push('/signup/profile')
         } else {

@@ -28,7 +28,7 @@ export default function OnboardingInvestor() {
     e.preventDefault()
     setStatus('saving')
     try {
-      const res = await apiFetch('/profiles/investment-profiles/', {
+      const res = await apiFetch('/profiles/investments/', {
         method: 'POST',
         body: JSON.stringify({
           bio: bio || '',

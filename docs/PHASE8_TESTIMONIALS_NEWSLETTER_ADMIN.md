@@ -21,7 +21,7 @@
 | `/profiles/contact-messages/` | POST | Public | Submit message |
 | `/profiles/contact-messages/` | GET, etc. | Admin | List messages |
 | `/profiles/founders/` | GET | Admin only | List founders |
-| `/profiles/investment-profiles/` | GET | Admin only | List investors |
+| `/profiles/investments/` | GET | Admin only | List investors |
 
 ### Django Admin
 - **Testimonial**: list_display author_name, role, visible, order; list_editable visible, order
@@ -40,7 +40,7 @@
 - Use `apiFetch` with token
 
 ### Admin page
-- Fetches from: community-posts, events/upcoming, founders, investment-profiles, testimonials, contact-messages
+- Fetches from: community-posts, events/upcoming, founders, investments, testimonials, contact-messages
 - Link to Django admin for managing testimonials and messages
 
 ### Profile [id]

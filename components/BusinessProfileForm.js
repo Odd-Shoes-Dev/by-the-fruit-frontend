@@ -35,9 +35,11 @@ export default function BusinessProfileForm({ initial = {}, onSave }) {
         }
 
         try {
-            const token = typeof window !== 'undefined' ? localStorage.getItem('btf_pending_token') : null
+            const token = typeof window !== 'undefined'
+                ? (localStorage.getItem('btf_token') || localStorage.getItem('btf_pending_token'))
+                : null
             const headers = { 'Content-Type': 'application/json' }
-            if (token) headers['Authorization'] = `Bearer ${token}`
+            if (token) headers['Authorization'] = `Token ${token}`
 
             const res = await fetch(`${API_BASE}/profiles/businesses/`, {
                 method: 'POST',
@@ -71,7 +73,20 @@ export default function BusinessProfileForm({ initial = {}, onSave }) {
             </label>
 
             <label>Category
-                <input value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g., agriculture" required />
+                <select value={category} onChange={e => setCategory(e.target.value)} required>
+                    <option value="">— Select a category —</option>
+                    <option value="technology">Technology</option>
+                    <option value="finance">Finance</option>
+                    <option value="retail">Retail</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="education">Education</option>
+                    <option value="manufacturing">Manufacturing</option>
+                    <option value="agriculture">Agriculture</option>
+                    <option value="real_estate">Real Estate</option>
+                    <option value="hospitality">Hospitality</option>
+                    <option value="logistics">Logistics</option>
+                    <option value="other">Other</option>
+                </select>
             </label>
 
             <label>Description

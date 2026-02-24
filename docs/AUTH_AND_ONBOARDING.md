@@ -9,7 +9,7 @@
 | `/signup/investor` | Redirects to `/signup?role=investor`; after signup → login → `/onboarding/investor` |
 | `/login` | Login; if `btf_pending_role` is set, redirects to `/onboarding/founder` or `/onboarding/investor` |
 | `/onboarding/founder` | Complete founder profile: create a Business (POST `/profiles/businesses/`) |
-| `/onboarding/investor` | Complete investor profile: create InvestmentProfile (POST `/profiles/investment-profiles/`) |
+| `/onboarding/investor` | Complete investor profile: create InvestmentProfile (POST `/profiles/investments/`) |
 | `/forgot-password` | Request reset link; POST `/user/request-reset-password` |
 | `/reset-password?uidb64=...&token=...` | Set new password; validates via GET `/user/password-reset/uidb64/token`, then PATCH `/user/password-reset-complete` |
 | `/verify-email` | Stub; backend verify-email not yet enabled |
@@ -26,7 +26,7 @@
 
 1. User clicks “Sign up as Investor” → `/signup/investor` → `/signup?role=investor`.
 2. Signup → `btf_pending_role=investor` → login → redirect to `/onboarding/investor`.
-3. User submits bio, check size range, investment focus → POST `/profiles/investment-profiles/` (backend sets `user=request.user`).
+3. User submits bio, check size range, investment focus → POST `/profiles/investments/` (backend sets `user=request.user`).
 4. Redirect to `/profile/settings` or skip.
 
 ## Backend
@@ -34,7 +34,7 @@
 - `POST /user/register` — create user.
 - `POST /user/login` — returns user + token.
 - `POST /profiles/businesses/` — create business (auth required; user set server-side).
-- `POST /profiles/investment-profiles/` — create investment profile (auth required; user set server-side).
+- `POST /profiles/investments/` — create investment profile (auth required; user set server-side).
 - `POST /user/request-reset-password` — body `{ "email": "..." }`; sends email with reset link (link currently points to backend; see TODO_LATER for frontend link).
 - `GET /user/password-reset/<uidb64>/<token>` — validate token.
 - `PATCH /user/password-reset-complete` — body `{ "password", "token", "uidb64" }`.
