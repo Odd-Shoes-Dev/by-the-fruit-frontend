@@ -243,7 +243,7 @@ export default function Layout({ children }) {
                 )}
                 {!token && (
                   <>
-                    <FluffyButton href="/signup" label="Join the waitlist" width={180} height={40} strands={900} strandLen={6} fontSize={14} />
+                    <FluffyButton href="/signup" label="Join the waitlist" fullWidth height={40} strands={900} strandLen={6} fontSize={13} />
                     <Link href="/login" className={styles.navLink}>Log in</Link>
                   </>
                 )}
