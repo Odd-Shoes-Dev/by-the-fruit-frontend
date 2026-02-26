@@ -28,7 +28,7 @@ export default function PostForm({ onCreate }) {
   }, [])
 
   async function handleSubmit(e) {
-    e.preventDefault()
+    if (e && e.preventDefault) e.preventDefault()
     if (!content.trim()) return
     setStatus('sending')
     setError(null)
