@@ -200,7 +200,7 @@ export default function Home() {
 
             <div className={styles.heroCtas}>
               <FluffyButton
-                label="Fund a Project →"
+                label="Join as an Investor →"
                 color="#E8601A"
                 strands={2200}
                 strandLen={9}
@@ -419,7 +419,7 @@ export default function Home() {
                     <FluffyButton
                       type="submit"
                       disabled={newsletterStatus === 'sending' || !newsletterEmail || !newsletterAgree}
-                      label={newsletterStatus === 'sending' ? 'Sending…' : 'Join the Collective →'}
+                      label={newsletterStatus === 'sending' ? 'Subscribing…' : 'Stay Connected →'}
                       fullWidth
                       height={48}
                       strands={1500}
@@ -446,7 +446,7 @@ export default function Home() {
             </p>
             <div className={styles.ctaButtons}>
               <FluffyButton
-                label={<span style={{display:'flex',gap:6,alignItems:'center'}}><IconApple size={16}/> Fund a Project</span>}
+                label={<span style={{display:'flex',gap:6,alignItems:'center'}}><IconApple size={16}/> Join as an Investor</span>}
                 color="#E8601A"
                 strands={2800}
                 strandLen={10}

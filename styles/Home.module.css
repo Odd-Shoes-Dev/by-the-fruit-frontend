@@ -679,7 +679,7 @@
 }
 
 .ctaBlock {
-  background: #1E5C38;
+  background: var(--dark2);
   border: 1px solid rgba(244, 239, 230, 0.1);
   border-radius: 28px;
   padding: 4.5rem 3.5rem;
