@@ -1,11 +1,134 @@
 import Head from 'next/head'
-import { FiUsers, FiMapPin, FiCheck, FiX } from 'react-icons/fi'
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { useEffect, useMemo, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import Pagination from '../../components/Pagination'
 import { apiFetch, getToken, isAdmin } from '../../lib/api'
+import AdminLayout from '../../components/AdminLayout'
+import styles from '../../styles/Admin.module.css'
+
+const unwrap = json => json?.data ?? json
+
+export default function AdminDashboard() {
+  const router = useRouter()
+  const [stats, setStats] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!getToken() || !isAdmin()) { router.replace('/login'); return }
+    async function load() {
+      try {
+        const res = await apiFetch('/profiles/admin-stats/')
+        if (res.ok) setStats(unwrap(await res.json()))
+      } catch (e) {}
+      setLoading(false)
+    }
+    load()
+  }, [router])
+
+  if (loading) return <AdminLayout active="overview"><div className="spinner">Loading…</div></AdminLayout>
+
+  return (
+    <>
+      <Head><title>Admin Dashboard — By The Fruit</title></Head>
+      <AdminLayout active="overview">
+        <div className={styles.pageHeader}>
+          <div>
+            <p className={styles.eyebrow}>Admin</p>
+            <h1 className={styles.pageTitle}>Dashboard</h1>
+            <p className={styles.pageSub}>Platform overview at a glance.</p>
+          </div>
+        </div>
+
+        {stats && (
+          <>
+            {/* Users */}
+            <div className={styles.sectionCard} style={{ marginBottom: '1.5rem' }}>
+              <div className={styles.sectionCardHeader}>
+                <h3 className={styles.sectionCardTitle}>Users</h3>
+                <Link href="/admin/users" className={styles.viewAllLink}>View all →</Link>
+              </div>
+              <div className={styles.statsGrid} style={{ padding: '1.25rem' }}>
+                <StatCard val={stats.users.total} label="Total Members" />
+                <StatCard val={stats.users.pending} label="Pending Approval" accent="orange" />
+                <StatCard val={stats.users.approved} label="Approved" accent="green" />
+                <StatCard val={stats.users.rejected} label="Rejected" accent="red" />
+              </div>
+            </div>
+
+            {/* KYC */}
+            <div className={styles.sectionCard} style={{ marginBottom: '1.5rem' }}>
+              <div className={styles.sectionCardHeader}>
+                <h3 className={styles.sectionCardTitle}>KYC Documents</h3>
+                <Link href="/admin/kyc" className={styles.viewAllLink}>Review queue →</Link>
+              </div>
+              <div className={styles.statsGrid} style={{ padding: '1.25rem' }}>
+                <StatCard val={stats.kyc.pending} label="Pending Review" accent="orange" />
+                <StatCard val={stats.kyc.approved} label="Approved" accent="green" />
+                <StatCard val={stats.kyc.rejected} label="Rejected" accent="red" />
+              </div>
+            </div>
+
+            {/* Offerings */}
+            <div className={styles.sectionCard} style={{ marginBottom: '1.5rem' }}>
+              <div className={styles.sectionCardHeader}>
+                <h3 className={styles.sectionCardTitle}>Offerings & SPVs</h3>
+                <Link href="/admin/offerings" className={styles.viewAllLink}>View all →</Link>
+              </div>
+              <div className={styles.statsGrid} style={{ padding: '1.25rem' }}>
+                <StatCard val={stats.offerings.total} label="Total Offerings" />
+                <StatCard val={stats.offerings.live} label="Live" accent="green" />
+                <StatCard val={stats.offerings.draft} label="Draft" />
+                <StatCard val={stats.spvs.total} label="Total SPVs" />
+                <StatCard val={stats.spvs.open} label="Open SPVs" accent="green" />
+              </div>
+            </div>
+
+            {/* Capital */}
+            <div className={styles.sectionCard} style={{ marginBottom: '2rem' }}>
+              <div className={styles.sectionCardHeader}>
+                <h3 className={styles.sectionCardTitle}>Capital</h3>
+              </div>
+              <div className={styles.statsGrid} style={{ padding: '1.25rem' }}>
+                <StatCard val={stats.commitments.total} label="Total Commitments" />
+                <StatCard val={stats.commitments.funded} label="Funded" accent="green" />
+                <StatCard val={`$${Number(stats.commitments.total_raised).toLocaleString()}`} label="Total Raised (USD)" accent="orange" />
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div className={styles.quickGrid}>
+              <QuickCard href="/admin/waitlist" title="Waitlist Queue" sub={`${stats.users.pending} pending approval`} />
+              <QuickCard href="/admin/kyc" title="KYC Queue" sub={`${stats.kyc.pending} documents to review`} />
+              <QuickCard href="/admin/users" title="All Users" sub={`${stats.users.total} members`} />
+              <QuickCard href="/admin/offerings" title="All Offerings" sub={`${stats.offerings.total} total`} />
+              <QuickCard href="/admin/contacts" title="Contact Messages" sub={`${stats.contacts.total} messages`} />
+            </div>
+          </>
+        )}
+      </AdminLayout>
+    </>
+  )
+}
+
+function StatCard({ val, label, accent }) {
+  const cls = accent === 'orange' ? styles.statAccent : accent === 'green' ? styles.statGreen : accent === 'red' ? styles.statRed : ''
+  return (
+    <div className={styles.statCard}>
+      <span className={`${styles.statVal} ${cls}`}>{val}</span>
+      <span className={styles.statLabel}>{label}</span>
+    </div>
+  )
+}
+
+function QuickCard({ href, title, sub }) {
+  return (
+    <Link href={href} className={styles.quickCard}>
+      <span className={styles.quickTitle}>{title} →</span>
+      <span className={styles.quickSub}>{sub}</span>
+    </Link>
+  )
+}
+
 
 const PAGE_SIZE = 8
 

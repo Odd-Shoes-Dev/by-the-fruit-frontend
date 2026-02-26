@@ -170,6 +170,10 @@ export default function Layout({ children }) {
               <>
                 <Link href="/community" className={styles.navLink}>Feed</Link>
                 <Link href="/events" className={styles.navLink}>Events</Link>
+                <Link href="/offerings" className={styles.navLink}>Offerings</Link>
+                <Link href="/my-offerings" className={styles.navLink}>My Deals</Link>
+                <Link href="/portfolio" className={styles.navLink}>Portfolio</Link>
+                <Link href="/kyc" className={styles.navLink}>KYC</Link>
                 {isCreatorInfluencer && (
                   <Link href="/deals" className={styles.navLink}>Deals</Link>
                 )}
@@ -179,6 +183,7 @@ export default function Layout({ children }) {
                   <>
                     <Link href="/founders" className={styles.navLink}>Founders</Link>
                     <Link href="/investors" className={styles.navLink}>Investors</Link>
+                    <Link href="/admin" className={styles.navLink}>Admin</Link>
                   </>
                 )}
                 <span className={styles.navBell}><NotificationBell /></span>
@@ -216,6 +221,10 @@ export default function Layout({ children }) {
                   <>
                     <Link href="/community" className={styles.navLink}>Feed</Link>
                     <Link href="/events" className={styles.navLink}>Events</Link>
+                    <Link href="/offerings" className={styles.navLink}>Offerings</Link>
+                    <Link href="/my-offerings" className={styles.navLink}>My Deals</Link>
+                    <Link href="/portfolio" className={styles.navLink}>Portfolio</Link>
+                    <Link href="/kyc" className={styles.navLink}>KYC</Link>
                     {isCreatorInfluencer && (
                       <Link href="/deals" className={styles.navLink}>Deals</Link>
                     )}
