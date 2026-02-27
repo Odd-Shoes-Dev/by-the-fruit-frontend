@@ -182,3 +182,29 @@
   transition: color 0.15s;
 }
 .cancelLink:hover { color: var(--cream); }
+
+/* Business auto-select banner (founder with exactly one business) */
+.bizBanner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(26,74,46,0.35);
+  border: 1px solid rgba(26,74,46,0.6);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  color: var(--cream);
+  margin-bottom: 4px;
+}
+.bizBannerLabel {
+  color: rgba(244,239,230,0.5);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.fieldHint {
+  font-size: 0.83rem;
+  color: rgba(244,239,230,0.45);
+  margin: 4px 0 0;
+}

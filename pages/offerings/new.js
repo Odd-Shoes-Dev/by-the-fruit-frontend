@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
-import { apiFetch, getToken } from '../../lib/api'
+import { apiFetch, getToken, isAdmin } from '../../lib/api'
 import styles from '../../styles/OfferingForm.module.css'
 
 const unwrap = json => json?.data ?? json
@@ -18,6 +18,7 @@ const INITIAL = {
   terms_text: '',
   status: 'draft',
   is_public: false,
+  business: '',
 }
 
 export default function NewOfferingPage() {
@@ -26,9 +27,29 @@ export default function NewOfferingPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [fieldErrors, setFieldErrors] = useState({})
+  const [adminMode, setAdminMode] = useState(false)
+  const [businesses, setBusinesses] = useState([])
+  const [bizLoading, setBizLoading] = useState(true)
 
   useEffect(() => {
-    if (!getToken()) router.replace('/login')
+    if (!getToken()) { router.replace('/login'); return }
+    const admin = isAdmin()
+    setAdminMode(admin)
+    // Admins load all businesses; founders load only their own
+    const endpoint = admin ? '/profiles/businesses/' : '/profiles/businesses/mine/'
+    apiFetch(endpoint)
+      .then(r => r.json())
+      .then(d => {
+        const list = unwrap(d)
+        const arr = Array.isArray(list) ? list : list?.results ?? []
+        setBusinesses(arr)
+        // Auto-select if founder has exactly one business
+        if (!admin && arr.length === 1) {
+          setForm(f => ({ ...f, business: String(arr[0].id) }))
+        }
+      })
+      .catch(() => {})
+      .finally(() => setBizLoading(false))
   }, [router])
 
   function set(field, value) {
@@ -40,6 +61,7 @@ export default function NewOfferingPage() {
     e.preventDefault()
     if (!form.title.trim()) { setFieldErrors({ title: 'Title is required.' }); return }
     if (!form.target_raise || isNaN(Number(form.target_raise))) { setFieldErrors({ target_raise: 'Enter a valid target amount.' }); return }
+    if (businesses.length > 1 && !form.business) { setFieldErrors({ business: 'Select which business this offering is for.' }); return }
 
     setSaving(true)
     setError('')
@@ -51,6 +73,9 @@ export default function NewOfferingPage() {
         closing_date: form.closing_date || null,
         video_url: form.video_url || null,
       }
+      // Only include business when explicitly selected (admin); for founders backend auto-assigns
+      if (!form.business) delete payload.business
+
       const res = await apiFetch('/profiles/offerings/', {
         method: 'POST',
         body: JSON.stringify(payload),
@@ -83,6 +108,37 @@ export default function NewOfferingPage() {
               <p className={styles.sub}>Fill in the details below. You can save as a draft and publish later.</p>
 
               <form onSubmit={handleSubmit} className={styles.form}>
+                {/* Show business selector to admins always, and to founders who have 2+ businesses */}
+                {(adminMode || businesses.length > 1) && (
+                  <FieldGroup label="Business *" error={fieldErrors.business}>
+                    {bizLoading ? (
+                      <p className={styles.fieldHint}>Loading your businesses…</p>
+                    ) : businesses.length === 0 ? (
+                      <p className={styles.errorMsg}>
+                        No businesses found. <Link href="/onboarding/founder">Set up a founder profile first →</Link>
+                      </p>
+                    ) : (
+                      <select
+                        className={styles.select}
+                        value={form.business}
+                        onChange={e => set('business', e.target.value)}
+                      >
+                        <option value="">— Select a business —</option>
+                        {businesses.map(b => (
+                          <option key={b.id} value={b.id}>{b.name}</option>
+                        ))}
+                      </select>
+                    )}
+                  </FieldGroup>
+                )}
+                {/* Show which business is auto-selected when founder has exactly one */}
+                {!adminMode && businesses.length === 1 && (
+                  <div className={styles.bizBanner}>
+                    <span className={styles.bizBannerLabel}>Offering for:</span>
+                    <strong>{businesses[0].name}</strong>
+                  </div>
+                )}
+
                 <FieldGroup label="Offering Title *" error={fieldErrors.title}>
                   <input className={styles.input} type="text" placeholder="e.g. Seed Round — Bridge to Series A" value={form.title} onChange={e => set('title', e.target.value)} />
                 </FieldGroup>

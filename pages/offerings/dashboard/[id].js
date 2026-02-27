@@ -3,8 +3,8 @@ import Link from 'next/link'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
-import { apiFetch, getToken } from '../../lib/api'
-import styles from '../../styles/Dashboard.module.css'
+import { apiFetch, getToken } from '../../../lib/api'
+import styles from '../../../styles/Dashboard.module.css'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || ''
 const unwrap = json => json?.data ?? json
@@ -225,7 +225,7 @@ export default function OfferingDashboardPage() {
     } catch (e) {}
   }
 
-  if (loading) return <div className="container"><div className="spinner">Loadingâ€¦</div></div>
+  if (loading) return <div className="container"><div className="spinner">Loading&hellip;</div></div>
   if (!data) return null
 
   const targetRaise = Number(data.target_raise)
@@ -233,12 +233,12 @@ export default function OfferingDashboardPage() {
 
   return (
     <>
-      <Head><title>{data.title} â€” Pipeline Dashboard â€” By The Fruit</title></Head>
+      <Head><title>{data.title} &mdash; Pipeline Dashboard &mdash; By The Fruit</title></Head>
       <div className="container">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
 
           <div className={styles.nav}>
-            <Link href={`/offerings/${id}`} className={styles.backLink}>â† Back to Offering</Link>
+            <Link href={`/offerings/${id}`} className={styles.backLink}>&larr; Back to Offering</Link>
             <span className={styles.navTitle}>Pipeline Dashboard</span>
           </div>
 
@@ -387,11 +387,11 @@ export default function OfferingDashboardPage() {
                             <td>
                               {c.agreement_status
                                 ? <Pill label={c.agreement_status.replace(/_/g, ' ')} color={BADGE_COLORS[c.agreement_status] || '#555'} />
-                                : <span className={styles.na}>â€”</span>}
+                                : <span className={styles.na}>&mdash;</span>}
                             </td>
                             <td>
                               {c.agreement_status === 'counter_signed' ? (
-                                <span className={styles.counterSignedBadge}>âœ“ Counter-signed</span>
+                                <span className={styles.counterSignedBadge}>&#10003; Counter-signed</span>
                               ) : c.agreement_status === 'signed' && c.agreement_id ? (
                                 csState[c.id]?.open ? (
                                   <div>
@@ -407,7 +407,7 @@ export default function OfferingDashboardPage() {
                                         disabled={csState[c.id]?.saving}
                                         onClick={() => submitCounterSign(c.id, c.agreement_id)}
                                       >
-                                        {csState[c.id]?.saving ? 'â€¦' : 'âœ“'}
+                                        {csState[c.id]?.saving ? '...' : '✓'}
                                       </button>
                                     </div>
                                     {csState[c.id]?.error && (
@@ -420,13 +420,13 @@ export default function OfferingDashboardPage() {
                                   </button>
                                 )
                               ) : (
-                                <span className={styles.na}>â€”</span>
+                                <span className={styles.na}>&mdash;</span>
                               )}
                             </td>
                             <td className={styles.date}>
                               {c.committed_at
                                 ? new Date(c.committed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })
-                                : 'â€”'}
+                                : '—'}
                             </td>
                           </tr>
                         ))}
@@ -457,14 +457,14 @@ export default function OfferingDashboardPage() {
                       <div className={styles.pitchItemLabel}>{m.label}</div>
                       <div className={styles.pitchItemMeta}>
                         {m.created_at ? new Date(m.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
-                        {m.uploaded_by_name ? ` Â· ${m.uploaded_by_name}` : ''}
+                        {m.uploaded_by_name ? ` · ${m.uploaded_by_name}` : ''}
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                       <a href={m.file} target="_blank" rel="noopener noreferrer" className={styles.pitchDownloadLink}>
-                        Download â†—
+                        Download &nearr;
                       </a>
-                      <button className={styles.pitchDeleteBtn} onClick={() => deletePitchMaterial(m.id, m.label)}>âœ•</button>
+                      <button className={styles.pitchDeleteBtn} onClick={() => deletePitchMaterial(m.id, m.label)}>&#x2715;</button>
                     </div>
                   </li>
                 ))}
@@ -492,7 +492,7 @@ export default function OfferingDashboardPage() {
                 />
               </div>
               <button type="submit" className={styles.pitchUploadBtn} disabled={pitchUploading}>
-                {pitchUploading ? 'Uploadingâ€¦' : 'â†‘ Upload'}
+                {pitchUploading ? 'Uploading...' : '↑ Upload'}
               </button>
             </form>
             {pitchError && <p className={`${styles.pitchMsg} ${styles.pitchMsgError}`}>{pitchError}</p>}
@@ -506,12 +506,12 @@ export default function OfferingDashboardPage() {
               <input
                 className={styles.addSpvInput}
                 type="text"
-                placeholder="SPV name (e.g. Haiven SPV II)"
+                placeholder="SPV name (e.g. Blue Hive SPV II)"
                 value={addSpvName}
                 onChange={e => { setAddSpvName(e.target.value); setAddSpvError('') }}
               />
               <button type="submit" className={styles.addSpvBtn} disabled={addSpvSaving}>
-                {addSpvSaving ? 'Creatingâ€¦' : '+ Create SPV'}
+                {addSpvSaving ? 'Creating...' : '+ Create SPV'}
               </button>
             </form>
             {addSpvError && <p className={styles.addSpvError}>{addSpvError}</p>}

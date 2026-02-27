@@ -74,7 +74,17 @@ export default function Login() {
         }
       }
       const errData = await res.json().catch(() => ({}))
-      setError(errData?.error || 'Login failed. Check your email and password.')
+      // Renderer may wrap as { data: { error: true, errors: [...] } } OR { errors: {...} }
+      const inner = errData?.data ?? errData
+      const errs = inner?.errors ?? {}
+      const msg = Array.isArray(errs)
+        ? (errs.join(' · ') || 'Login failed. Check your email and password.')
+        : (errs?.detail
+            || errs?.non_field_errors?.[0]
+            || Object.entries(errs).filter(([k]) => k !== 'detail').map(([k, v]) => `${k}: ${Array.isArray(v) ? v[0] : v}`).join(' · ')
+            || inner?.error
+            || 'Login failed. Check your email and password.')
+      setError(msg)
     } catch (e) {
       setError('Network error — please try again.')
     } finally {

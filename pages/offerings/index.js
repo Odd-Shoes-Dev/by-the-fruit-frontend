@@ -25,8 +25,12 @@ export default function OfferingsPage() {
     let mounted = true
     async function load() {
       try {
-        const res = await apiFetch('/profiles/offerings/')
-        if (res.ok && mounted) setOfferings(unwrap(await res.json()))
+        const res = await apiFetch('/profiles/offerings/?status=live&is_public=true')
+        // Client-side guard: only show live + public in case backend scope changes
+        if (res.ok && mounted) {
+          const all = unwrap(await res.json())
+          setOfferings(all.filter(o => o.status === 'live' && o.is_public))
+        }
       } catch (e) {}
       if (mounted) setLoading(false)
     }
