@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { apiFetch, getToken } from '../lib/api'
+import VideoPlayer from './VideoPlayer'
 import styles from '../styles/PostList.module.css'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000'
@@ -148,9 +149,7 @@ export default function PostList({ refreshTrigger }) {
 
               {/* Video */}
               {p.video && (
-                <video controls className={styles.postVideo} style={{ width: '100%', borderRadius: 10, marginTop: 10 }}>
-                  <source src={absUrl(p.video)} />
-                </video>
+                <VideoPlayer src={absUrl(p.video)} poster={p.image ? absUrl(p.image) : undefined} />
               )}
             </motion.article>
           )
