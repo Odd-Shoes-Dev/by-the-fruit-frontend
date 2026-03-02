@@ -157,7 +157,7 @@ export default function Layout({ children }) {
         <div className={styles.navInner}>
           <Link href="/" className={styles.brand}>
             <Image src="/images/logo.png" alt="By The Fruit" width={36} height={36} className={styles.logo} />
-            <span className={styles.brandName}>By The Fruit</span>
+            <span className={styles.brandName} style={{ fontStyle: 'italic' }}><span style={{ fontSize: '1.2em' }}>B</span>y <span style={{ fontSize: '1.2em' }}>T</span>he <span style={{ fontSize: '1.2em' }}>F</span>ruit</span>
           </Link>
 
           <button

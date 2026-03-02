@@ -132,7 +132,7 @@ export default function Signup() {
         >
           <Link href="/" className={styles.authLogo}>
             <Image src="/images/logo.png" alt="By The Fruit" width={44} height={44} />
-            <span>By The Fruit</span>
+            <span style={{ fontStyle: 'italic' }}><span style={{ fontSize: '1.2em' }}>B</span>y <span style={{ fontSize: '1.2em' }}>T</span>he <span style={{ fontSize: '1.2em' }}>F</span>ruit</span>
           </Link>
 
           <h1 className={styles.authTitle}>

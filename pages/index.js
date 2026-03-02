@@ -138,7 +138,9 @@ export default function Home() {
               alt="By The Fruit Logo" 
               style={{ height: '40px', width: 'auto' }}
             />
-            <span className={styles.navBrandName}>By The Fruit</span>
+            <span className={styles.navBrandName}>
+              <span style={{ fontSize: '1.3em' }}>B</span>y <span style={{ fontSize: '1.3em' }}>T</span>he <span style={{ fontSize: '1.3em' }}>F</span>ruit
+            </span>
           </a>
 
           <ul className={styles.navLinks}>
@@ -183,14 +185,16 @@ export default function Home() {
             </div>
 
             <h1 className={styles.heroH1}>
-              Known<br />
-              By Its<br />
-              <em>Fruit.</em>
+              The VC<br />
+              System Is<br />
+              <em>Broken.</em>
             </h1>
+            <p className={styles.heroFixLine}>We&apos;re <span style={{ color: 'var(--orange)' }}>fixing</span> it.</p>
 
             <p className={styles.heroSub}>
-              <strong>Investing in Innovation.</strong> We curate a space where investors bring more than
-              capital — they bring their <strong>gifts, expertise, and commitment</strong> to the mission.
+              <strong style={{ fontStyle: 'italic' }}>Introducing <span style={{ fontSize: '1.1em' }}>B</span>y <span style={{ fontSize: '1.1em' }}>T</span>he <span style={{ fontSize: '1.1em' }}>F</span>ruit</strong> — a faith-rooted investment marketplace built for
+              Christian investors and purpose-driven founders. We connect capital with calling across Media,
+              Tech, and Entertainment, where every deal is built on <strong>trust, transparency, and Kingdom values</strong>.
             </p>
 
             <div className={styles.heroCtas}>
@@ -214,9 +218,10 @@ export default function Home() {
           <div className={styles.heroRight}>
             <FluffyButton
               label={
-                <span style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: 20, alignItems: 'center' }}>
-                  <span style={{ fontFamily: "'JetBrains Mono'", fontSize: 10, letterSpacing: '0.12em', opacity: 0.8 }}>THE VC SYSTEM IS BROKEN</span>
-                  <span style={{ fontFamily: "'Playfair Display'", fontSize: 28, fontWeight: 700, fontStyle: 'italic', lineHeight: 1.15 }}>We&apos;re fixing it.</span>
+                <span style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: 20, alignItems: 'center' }}>
+                  <span style={{ fontFamily: "'Playfair Display'", fontSize: 22, fontWeight: 700, lineHeight: 1.2 }}>Known</span>
+                  <span style={{ fontFamily: "'Playfair Display'", fontSize: 22, fontWeight: 700, lineHeight: 1.2 }}>by its</span>
+                  <span style={{ fontFamily: "'Playfair Display'", fontSize: 30, fontWeight: 700, fontStyle: 'italic', lineHeight: 1.15 }}>Fruits.</span>
                 </span>
               }
               color="#E8601A"

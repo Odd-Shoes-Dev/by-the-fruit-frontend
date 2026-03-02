@@ -69,6 +69,7 @@
   font-family: 'Playfair Display', serif;
   font-size: 1rem;
   font-weight: 700;
+  font-style: italic;
   color: var(--cream);
   letter-spacing: 0.02em;
   line-height: 1;
@@ -182,6 +183,16 @@
 .heroH1 em {
   color: var(--orange);
   font-style: italic;
+}
+
+.heroFixLine {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  font-style: italic;
+  color: var(--cream);
+  margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .heroSub {
