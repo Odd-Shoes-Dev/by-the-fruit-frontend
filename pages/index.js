@@ -132,8 +132,13 @@ export default function Home() {
 
         {/* ── NAV ─────────────────────────────────────────────────── */}
         <nav className={styles.nav}>
-          <a href="#" className={styles.navLogo}>
-            By the Fruit<span className={styles.dot}>.</span>
+          <a href="/" className={styles.navLogo}>
+            <img 
+              src="/images/logo.png" 
+              alt="By The Fruit Logo" 
+              style={{ height: '40px', width: 'auto' }}
+            />
+            <span className={styles.navBrandName}>By The Fruit</span>
           </a>
 
           <ul className={styles.navLinks}>
@@ -174,16 +179,6 @@ export default function Home() {
           {/* Left */}
           <div className={styles.heroLeft}>
             <div className={styles.heroEyebrow}>
-              <FluffyButton
-                label={<span style={{display:'flex',gap:6,alignItems:'center'}}><IconApple size={13}/> Redemptive Capital</span>}
-                color="#E8601A"
-                strands={1100}
-                strandLen={7}
-                width={190}
-                height={36}
-                fontSize={11}
-                float
-              />
               <span className={styles.eyebrowText}>· Media · Tech · Entertainment</span>
             </div>
 
@@ -472,7 +467,11 @@ export default function Home() {
         <footer className={styles.footer}>
           <div className={styles.footBrandWrap}>
             <div className={styles.footBrand}>
-              By the Fruit<span className={styles.dot}>.</span>
+              <img 
+                src="/images/logo.png" 
+                alt="By The Fruit Logo" 
+                style={{ height: '32px', width: 'auto' }}
+              />
             </div>
             <div className={styles.footSub}>bythefruit.com · © {new Date().getFullYear()} By the Fruit</div>
           </div>

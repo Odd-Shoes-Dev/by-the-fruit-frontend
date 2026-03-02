@@ -217,6 +217,55 @@
   font-family: inherit;
 }
 
+.postFormAttachRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.attachBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(244,239,230,0.12);
+  background: rgba(244,239,230,0.05);
+  color: var(--cream);
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.attachBtn:hover {
+  background: rgba(244,239,230,0.1);
+}
+
+.attachName {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.75;
+  font-size: 0.78rem;
+}
+
+.attachClear {
+  margin-left: 2px;
+  opacity: 0.5;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.attachClear:hover {
+  opacity: 1;
+}
+
 .postFormActions {
   display: flex;
   align-items: center;

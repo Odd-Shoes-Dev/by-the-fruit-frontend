@@ -4,6 +4,15 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { apiFetch, getToken } from '../lib/api'
 import styles from '../styles/PostList.module.css'
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000'
+
+// If the URL is a relative path (e.g. /media/...), prepend the backend base URL
+function absUrl(url) {
+  if (!url) return null
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  return `${API_BASE}${url}`
+}
+
 function Avatar({ src, name, size = 44 }) {
   const initials = (name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
   if (src) {
@@ -100,7 +109,7 @@ export default function PostList({ refreshTrigger }) {
         {posts.map((p, i) => {
           const author = p.author_detail
           const name = author?.full_name || author?.email || p.author || 'Anonymous'
-          const photo = author?.photo || null
+          const photo = absUrl(author?.photo)
           const authorId = author?.id || p.author
           const catColor = CATEGORY_COLORS[p.category] || CATEGORY_COLORS.other
 
@@ -134,7 +143,14 @@ export default function PostList({ refreshTrigger }) {
 
               {/* Image */}
               {p.image && (
-                <img src={p.image} alt="post attachment" className={styles.postImage} />
+                <img src={absUrl(p.image)} alt="post attachment" className={styles.postImage} />
+              )}
+
+              {/* Video */}
+              {p.video && (
+                <video controls className={styles.postVideo} style={{ width: '100%', borderRadius: 10, marginTop: 10 }}>
+                  <source src={absUrl(p.video)} />
+                </video>
               )}
             </motion.article>
           )

@@ -53,14 +53,26 @@
 }
 
 .navLogo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.navLogo:hover { opacity: 0.85; }
+.navLogo img {
+  max-height: 40px;
+  width: auto;
+}
+
+.navBrandName {
   font-family: 'Playfair Display', serif;
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--cream);
-  text-decoration: none;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.02em;
+  line-height: 1;
 }
-.dot { color: var(--orange); }
 
 .navLinks {
   display: flex;
@@ -760,11 +772,12 @@
 }
 
 .footBrand {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--cream);
-  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+}
+.footBrand img {
+  max-height: 32px;
+  width: auto;
 }
 
 .footSub {
@@ -827,6 +840,15 @@
   .ctaBlock { padding: 3rem 1.5rem; }
   .nav { padding: 14px 24px; }
   .navLinks { display: none; }
+  /* Hide Sign In, keep Join button */
+  .navCta { gap: 0; }
+  .navCta .navGhostBtn { display: none; }
+}
+
+@media (max-width: 640px) {
+  .nav { padding: 12px 16px; }
+  .navBrandName { font-size: 0.9rem; }
+  .navCta { gap: 0; }
   .footer {
     flex-direction: column;
     text-align: center;
