@@ -136,7 +136,16 @@ export default function PostForm({ onCreate }) {
             type="file"
             accept="video/*"
             style={{ display: 'none' }}
-            onChange={e => setVideo(e.target.files[0] || null)}
+            onChange={e => {
+              const file = e.target.files[0] || null
+              if (file && file.size > 100 * 1024 * 1024) {
+                setError('Video must be under 100 MB.')
+                e.target.value = ''
+                return
+              }
+              setError(null)
+              setVideo(file)
+            }}
           />
 
           <div className={styles.postFormAttachRow}>
