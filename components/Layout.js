@@ -79,6 +79,10 @@ function NavAvatar({ userId, photo, name, admin, onLogout }) {
               <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2}><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
               Notifications
             </Link>
+            <Link href="/saved" className={styles.dropdownItem}>
+              <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              Saved Posts
+            </Link>
             {admin && (
               <Link href="/admin" className={styles.dropdownItem}>
                 <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -242,6 +246,7 @@ export default function Layout({ children }) {
                     <div className={styles.mobileMenuDivider} />
                     {userId && <Link href={`/profile/${userId}`} className={styles.navLink}>My Profile</Link>}
                     <Link href="/settings" className={styles.navLink}>Settings</Link>
+                    <Link href="/saved" className={styles.navLink}>Saved Posts</Link>
                     <span className={styles.navBell}><NotificationBell /></span>
                     <button onClick={handleLogout} className={styles.navLogout}>Log out</button>
                   </>
