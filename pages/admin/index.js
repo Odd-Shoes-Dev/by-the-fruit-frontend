@@ -2,12 +2,17 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
-import { FiUsers } from 'react-icons/fi'
+import { FiUsers, FiFileText, FiShield, FiTrendingUp, FiMessageSquare, FiCalendar, FiMapPin, FiCheck, FiX } from 'react-icons/fi'
 import { motion, AnimatePresence } from 'framer-motion'
+import dynamic from 'next/dynamic'
 import { apiFetch, getToken, isAdmin } from '../../lib/api'
 import AdminLayout from '../../components/AdminLayout'
 import Pagination from '../../components/Pagination'
 import styles from '../../styles/Admin.module.css'
+
+// Dynamically import recharts to avoid SSR issues
+const { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } =
+  typeof window !== 'undefined' ? require('recharts') : {}
 
 const unwrap = json => json?.data ?? json
 
@@ -45,6 +50,9 @@ export default function AdminIndex() {
   const [testimonials, setTestimonials] = useState([])
   const [messages, setMessages] = useState([])
 
+  // Stats: all users for overview counts
+  const [allUsers, setAllUsers] = useState([])
+
   // KYC / Offerings / Commitments
   const [kyc, setKyc] = useState([])
   const [kycLoading, setKycLoading] = useState(false)
@@ -69,6 +77,14 @@ export default function AdminIndex() {
     loadKyc()
     loadOfferings()
     loadCommitments()
+    // Load all users for stats overview
+    apiFetch('/user/waitlist?status=all').then(async r => {
+      if (r.ok) {
+        const json = await r.json()
+        const raw = json?.data ?? json
+        setAllUsers(Array.isArray(raw) ? raw : raw?.results ?? [])
+      }
+    }).catch(() => {})
   }, [router])
 
   async function loadContent() {
@@ -212,6 +228,15 @@ export default function AdminIndex() {
 
   const pendingKycCount = kyc.filter(k => k.status === 'pending').length
 
+  // Stats for overview cards
+  const totalUsers    = allUsers.length
+  const pendingUsers  = allUsers.filter(u => u.approval_status === 'pending').length
+  const approvedUsers = allUsers.filter(u => u.approval_status === 'approved').length
+  const rejectedUsers = allUsers.filter(u => u.approval_status === 'rejected').length
+  const liveOfferings = offerings.filter(o => o.status === 'live').length
+  const totalCommitted = commitments.reduce((sum, c) => sum + (parseFloat(c.amount) || 0), 0)
+  const pendingCommitments = commitments.filter(c => c.status === 'pending').length
+
   const TABS = [
     { key: 'waitlist',     label: <><FiUsers size={14} style={{ marginRight: 5, verticalAlign: 'middle' }} />Waitlist</> },
     { key: 'kyc',         label: 'KYC', badge: pendingKycCount },
@@ -236,6 +261,149 @@ export default function AdminIndex() {
             </a>
           </p>
         </header>
+
+        {/* ── Summary stats ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12, marginBottom: 28 }}>
+          {[
+            { icon: FiUsers,        label: 'Total users',     value: totalUsers,    sub: `${pendingUsers} pending`,                                              onClick: () => { setTab('waitlist'); changeWaitlistFilter('all') } },
+            { icon: FiShield,       label: 'Pending KYC',     value: pendingKycCount, sub: `${kyc.length} total`,                                                 onClick: () => setTab('kyc') },
+            { icon: FiTrendingUp,   label: 'Live offerings',  value: liveOfferings, sub: `${offerings.length} total`,                                             onClick: () => setTab('offerings') },
+            { icon: FiFileText,     label: 'Commitments',     value: commitments.length, sub: pendingCommitments > 0 ? `${pendingCommitments} pending` : 'all signed', onClick: () => setTab('commitments') },
+            { icon: FiMessageSquare,label: 'Posts',           value: posts.length,  sub: 'community feed',                                                        onClick: () => setTab('posts') },
+            { icon: FiCalendar,     label: 'Events',          value: events.length, sub: 'upcoming',                                                              onClick: () => setTab('events') },
+          ].map(({ icon: Icon, label, value, sub, onClick }) => (
+            <motion.div
+              key={label}
+              whileHover={{ y: -2 }}
+              onClick={onClick}
+              style={{
+                background: 'rgba(244,239,230,0.04)',
+                border: '1px solid rgba(244,239,230,0.08)',
+                borderRadius: 14,
+                padding: '16px 18px',
+                cursor: 'pointer',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              {/* accent bar at top */}
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: '#E8601A', borderRadius: '14px 14px 0 0' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                <Icon size={15} style={{ color: '#E8601A', flexShrink: 0 }} />
+                <span style={{ fontSize: '0.78rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</span>
+              </div>
+              <div style={{ fontSize: '1.9rem', fontWeight: 800, color: 'var(--cream)', lineHeight: 1, fontFamily: "'Playfair Display', serif" }}>
+                {value ?? '—'}
+              </div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--muted)', marginTop: 4 }}>{sub}</div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* ── Charts row ── */}
+        {totalUsers > 0 && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16, marginBottom: 28 }}>
+
+            {/* Donut: user status */}
+            <div style={{ background: 'rgba(244,239,230,0.04)', border: '1px solid rgba(244,239,230,0.08)', borderRadius: 14, padding: '20px 18px' }}>
+              <p style={{ margin: '0 0 14px', fontSize: '0.8rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>User Status</p>
+              {PieChart && (
+                <ResponsiveContainer width="100%" height={180}>
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Approved', value: approvedUsers },
+                        { name: 'Pending',  value: pendingUsers  },
+                        { name: 'Rejected', value: rejectedUsers },
+                      ].filter(d => d.value > 0)}
+                      cx="50%" cy="50%"
+                      innerRadius={50} outerRadius={75}
+                      paddingAngle={3}
+                      dataKey="value"
+                    >
+                      <Cell fill="#34d399" />
+                      <Cell fill="#E8601A" />
+                      <Cell fill="#f87171" />
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{ background: '#0e2019', border: '1px solid rgba(244,239,230,0.1)', borderRadius: 8, fontSize: '0.82rem', color: '#F4EFE6' }}
+                      itemStyle={{ color: '#F4EFE6' }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 4, flexWrap: 'wrap' }}>
+                {[['Approved', approvedUsers, '#34d399'], ['Pending', pendingUsers, '#E8601A'], ['Rejected', rejectedUsers, '#f87171']].map(([lbl, count, color]) => (
+                  <span key={lbl} style={{ fontSize: '0.78rem', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: color, display: 'inline-block', flexShrink: 0 }} />
+                    {lbl} <strong style={{ color: 'var(--cream)' }}>{count}</strong>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Bar: offerings by status */}
+            <div style={{ background: 'rgba(244,239,230,0.04)', border: '1px solid rgba(244,239,230,0.08)', borderRadius: 14, padding: '20px 18px' }}>
+              <p style={{ margin: '0 0 14px', fontSize: '0.8rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Offerings by Status</p>
+              {BarChart && (
+                <ResponsiveContainer width="100%" height={180}>
+                  <BarChart
+                    data={['draft', 'live', 'closed', 'cancelled'].map(s => ({
+                      name: s.charAt(0).toUpperCase() + s.slice(1),
+                      count: offerings.filter(o => o.status === s).length,
+                    })).filter(d => d.count > 0)}
+                    margin={{ top: 4, right: 8, bottom: 4, left: -20 }}
+                    barSize={28}
+                  >
+                    <XAxis dataKey="name" tick={{ fill: '#8a9e8d', fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fill: '#8a9e8d', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
+                    <Tooltip
+                      contentStyle={{ background: '#0e2019', border: '1px solid rgba(244,239,230,0.1)', borderRadius: 8, fontSize: '0.82rem', color: '#F4EFE6' }}
+                      cursor={{ fill: 'rgba(244,239,230,0.04)' }}
+                    />
+                    <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+                      {['draft', 'live', 'closed', 'cancelled'].map((s, i) => (
+                        <Cell key={s} fill={['#8a9e8d', '#34d399', '#a78bfa', '#f87171'][i]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+
+            {/* Bar: commitments by status */}
+            {commitments.length > 0 && (
+              <div style={{ background: 'rgba(244,239,230,0.04)', border: '1px solid rgba(244,239,230,0.08)', borderRadius: 14, padding: '20px 18px' }}>
+                <p style={{ margin: '0 0 14px', fontSize: '0.8rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Commitments by Status</p>
+                {BarChart && (
+                  <ResponsiveContainer width="100%" height={180}>
+                    <BarChart
+                      data={['pending', 'signed', 'countersigned', 'rejected'].map(s => ({
+                        name: s.charAt(0).toUpperCase() + s.slice(1),
+                        count: commitments.filter(c => c.status === s).length,
+                      })).filter(d => d.count > 0)}
+                      margin={{ top: 4, right: 8, bottom: 4, left: -20 }}
+                      barSize={28}
+                    >
+                      <XAxis dataKey="name" tick={{ fill: '#8a9e8d', fontSize: 11 }} axisLine={false} tickLine={false} />
+                      <YAxis tick={{ fill: '#8a9e8d', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
+                      <Tooltip
+                        contentStyle={{ background: '#0e2019', border: '1px solid rgba(244,239,230,0.1)', borderRadius: 8, fontSize: '0.82rem', color: '#F4EFE6' }}
+                        cursor={{ fill: 'rgba(244,239,230,0.04)' }}
+                      />
+                      <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+                        {['pending','signed','countersigned','rejected'].map((s, i) => (
+                          <Cell key={s} fill={['#E8601A', '#34d399', '#a78bfa', '#f87171'][i]} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                )}
+              </div>
+            )}
+
+          </div>
+        )}
 
         {/* Tab bar */}
         <div className="tabs" style={{ flexWrap: 'wrap', marginBottom: 20 }}>

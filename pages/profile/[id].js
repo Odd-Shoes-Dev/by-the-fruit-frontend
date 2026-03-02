@@ -141,6 +141,9 @@ export default function ProfilePage() {
               <div className={styles.avatarWrap}>
                 <Avatar src={profile.photo} name={name} size={88} />
                 {type && <RoleBadge type={type} />}
+                {!type && profile.is_staff && (
+                  <span className={styles.roleBadge} data-type="admin">⚙ Admin</span>
+                )}
               </div>
 
               <h1 className={styles.profileName}>{name}</h1>
@@ -309,8 +312,8 @@ export default function ProfilePage() {
             </motion.section>
           )}
 
-          {/* No role yet */}
-          {!type && isOwnProfile && (
+          {/* No role yet — only show to non-admin users */}
+          {!type && isOwnProfile && !profile.is_staff && (
             <motion.section
               className={styles.detailCard}
               initial={{ opacity: 0, y: 8 }}
@@ -324,6 +327,23 @@ export default function ProfilePage() {
                 <FluffyButton href="/onboarding/founder" label="Set up as Founder" width={165} height={40} strands={850} strandLen={6} fontSize={13} />
                 <FluffyButton href="/onboarding/investor" label="Set up as Investor" width={165} height={40} strands={850} strandLen={6} fontSize={13} color="#1A4A2E" />
               </div>
+            </motion.section>
+          )}
+
+          {/* Admin overview card */}
+          {profile.is_staff && (
+            <motion.section
+              className={styles.detailCard}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 }}
+            >
+              <p className={styles.sectionEyebrow} style={{ color: 'var(--orange)' }}>
+                ⚙ Platform Administrator
+              </p>
+              <p className={styles.detailText} style={{ color: 'var(--muted)', marginTop: 8 }}>
+                This account oversees the platform — reviewing deals, moderating the community, and supporting founders and investors.
+              </p>
             </motion.section>
           )}
 

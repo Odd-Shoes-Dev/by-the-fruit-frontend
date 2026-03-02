@@ -90,6 +90,12 @@
   border: 1px solid rgba(232, 96, 26, 0.3);
 }
 
+.roleBadge[data-type="admin"] {
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
 .profileName {
   font-family: 'Playfair Display', serif;
   font-size: 1.25rem;
