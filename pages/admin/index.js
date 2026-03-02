@@ -1,11 +1,15 @@
 import Head from 'next/head'
-import { FiUsers, FiMapPin, FiCheck, FiX } from 'react-icons/fi'
 import Link from 'next/link'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
-import { useEffect, useMemo, useState } from 'react'
+import { FiUsers } from 'react-icons/fi'
 import { motion, AnimatePresence } from 'framer-motion'
-import Pagination from '../../components/Pagination'
 import { apiFetch, getToken, isAdmin } from '../../lib/api'
+import AdminLayout from '../../components/AdminLayout'
+import Pagination from '../../components/Pagination'
+import styles from '../../styles/Admin.module.css'
+
+const unwrap = json => json?.data ?? json
 
 const PAGE_SIZE = 8
 
@@ -40,6 +44,16 @@ export default function AdminIndex() {
   const [events, setEvents] = useState([])
   const [testimonials, setTestimonials] = useState([])
   const [messages, setMessages] = useState([])
+
+  // KYC / Offerings / Commitments
+  const [kyc, setKyc] = useState([])
+  const [kycLoading, setKycLoading] = useState(false)
+  const [kycAction, setKycAction] = useState({})
+  const [offerings, setOfferings] = useState([])
+  const [offeringsLoading, setOfferingsLoading] = useState(false)
+  const [commitments, setCommitments] = useState([])
+  const [commitmentsLoading, setCommitmentsLoading] = useState(false)
+
   const [q, setQ] = useState('')
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
@@ -52,6 +66,9 @@ export default function AdminIndex() {
     setMounted(true)
     loadContent()
     loadWaitlist('pending')
+    loadKyc()
+    loadOfferings()
+    loadCommitments()
   }, [router])
 
   async function loadContent() {
@@ -72,6 +89,57 @@ export default function AdminIndex() {
       if (messagesRes.ok) setMessages(toArr(await messagesRes.json()))
     } catch (e) {}
     setLoading(false)
+  }
+
+  async function loadKyc() {
+    setKycLoading(true)
+    try {
+      const res = await apiFetch('/profiles/kyc-documents/')
+      if (res.ok) {
+        const json = await res.json()
+        const raw = json?.data ?? json
+        setKyc(Array.isArray(raw) ? raw : raw?.results ?? [])
+      }
+    } catch (e) {}
+    setKycLoading(false)
+  }
+
+  async function handleKycAction(id, action) {
+    setKycAction(prev => ({ ...prev, [id]: action }))
+    try {
+      const res = await apiFetch(`/profiles/kyc-documents/${id}/${action}/`, {
+        method: 'POST',
+        body: JSON.stringify({})
+      })
+      if (res.ok) loadKyc()
+    } catch (e) {}
+    setKycAction(prev => { const n = { ...prev }; delete n[id]; return n })
+  }
+
+  async function loadOfferings() {
+    setOfferingsLoading(true)
+    try {
+      const res = await apiFetch('/profiles/offerings/?all=true')
+      if (res.ok) {
+        const json = await res.json()
+        const raw = json?.data ?? json
+        setOfferings(Array.isArray(raw) ? raw : raw?.results ?? [])
+      }
+    } catch (e) {}
+    setOfferingsLoading(false)
+  }
+
+  async function loadCommitments() {
+    setCommitmentsLoading(true)
+    try {
+      const res = await apiFetch('/profiles/spv-commitments/')
+      if (res.ok) {
+        const json = await res.json()
+        const raw = json?.data ?? json
+        setCommitments(Array.isArray(raw) ? raw : raw?.results ?? [])
+      }
+    } catch (e) {}
+    setCommitmentsLoading(false)
   }
 
   async function loadWaitlist(statusFilter) {
@@ -142,12 +210,17 @@ export default function AdminIndex() {
 
   if (!mounted) return <div className="container"><div className="spinner">Loading…</div></div>
 
+  const pendingKycCount = kyc.filter(k => k.status === 'pending').length
+
   const TABS = [
-    { key: 'waitlist', label: <><FiUsers size={14} style={{ marginRight: 5, verticalAlign: 'middle' }} />Waitlist</> },
-    { key: 'posts',    label: 'Posts' },
-    { key: 'events',   label: 'Events' },
-    { key: 'testimonials', label: 'Testimonials' },
-    { key: 'messages', label: 'Messages' },
+    { key: 'waitlist',     label: <><FiUsers size={14} style={{ marginRight: 5, verticalAlign: 'middle' }} />Waitlist</> },
+    { key: 'kyc',         label: 'KYC', badge: pendingKycCount },
+    { key: 'offerings',   label: 'Offerings' },
+    { key: 'commitments', label: 'Commitments' },
+    { key: 'posts',       label: 'Posts' },
+    { key: 'events',      label: 'Events' },
+    { key: 'testimonials',label: 'Testimonials' },
+    { key: 'messages',    label: 'Messages' },
   ]
 
   return (
@@ -183,6 +256,17 @@ export default function AdminIndex() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center'
                 }}>
                   {waitlist.length}
+                </span>
+              )}
+              {t.badge > 0 && (
+                <span style={{
+                  position: 'absolute', top: -6, right: -6,
+                  background: '#ef4444', color: '#fff',
+                  borderRadius: '50%', width: 18, height: 18,
+                  fontSize: '0.7rem', fontWeight: 700,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }}>
+                  {t.badge}
                 </span>
               )}
             </button>
@@ -294,8 +378,103 @@ export default function AdminIndex() {
             </motion.div>
           )}
 
+          {/* ── KYC TAB ── */}
+          {tab === 'kyc' && (
+            <motion.div key="kyc" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+              {kycLoading ? <div className="spinner">Loading KYC submissions…</div> : kyc.length === 0 ? (
+                <div className="card" style={{ textAlign: 'center', padding: '2rem', color: 'var(--muted)' }}>No KYC submissions yet.</div>
+              ) : (
+                <div style={{ display: 'grid', gap: 10 }}>
+                  {kyc.map(k => (
+                    <div key={k.id} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                          <strong>{k.user_name || k.user_email}</strong>
+                          <StatusBadge status={k.status} />
+                        </div>
+                        <p className="meta" style={{ margin: '3px 0 0' }}>{k.user_email} &mdash; {k.document_type || 'ID document'}</p>
+                        {k.submitted_at && <p className="meta" style={{ margin: '2px 0 0', fontSize: '0.8rem' }}>Submitted {new Date(k.submitted_at).toLocaleDateString()}</p>}
+                      </div>
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                        {k.front_image && <a href={k.front_image} target="_blank" rel="noreferrer" className="btn-ghost btn-sm">View ID</a>}
+                        {k.status !== 'approved' && (
+                          <button className="btn btn-sm" style={{ background: '#15803d' }} disabled={!!kycAction[k.id]} onClick={() => handleKycAction(k.id, 'approve')}>
+                            {kycAction[k.id] === 'approve' ? 'Approving…' : 'Approve'}
+                          </button>
+                        )}
+                        {k.status !== 'rejected' && (
+                          <button className="btn-danger btn-sm" disabled={!!kycAction[k.id]} onClick={() => handleKycAction(k.id, 'reject')}>
+                            {kycAction[k.id] === 'reject' ? 'Rejecting…' : 'Reject'}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
+
+          {/* ── OFFERINGS TAB ── */}
+          {tab === 'offerings' && (
+            <motion.div key="offerings" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+              {offeringsLoading ? <div className="spinner">Loading offerings…</div> : offerings.length === 0 ? (
+                <div className="card" style={{ textAlign: 'center', padding: '2rem', color: 'var(--muted)' }}>No offerings yet.</div>
+              ) : (
+                <div style={{ display: 'grid', gap: 10 }}>
+                  {offerings.map(o => (
+                    <div key={o.id} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                          <strong>{o.title}</strong>
+                          <span className={`badge badge--${o.status === 'live' ? 'green' : o.status === 'draft' ? 'orange' : 'muted'}`}>{o.status}</span>
+                          {o.is_public && <span className="badge badge--green">Public</span>}
+                        </div>
+                        <p className="meta" style={{ margin: '3px 0 0' }}>{o.business_name} &mdash; Target: ${Number(o.target_raise).toLocaleString()}</p>
+                        {o.closing_date && <p className="meta" style={{ margin: '2px 0 0', fontSize: '0.8rem' }}>Closes {new Date(o.closing_date).toLocaleDateString()}</p>}
+                      </div>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <Link href={`/offerings/${o.id}`} className="btn-ghost btn-sm">View</Link>
+                        <Link href={`/offerings/dashboard/${o.id}`} className="btn-ghost btn-sm">Pipeline</Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
+
+          {/* ── COMMITMENTS TAB ── */}
+          {tab === 'commitments' && (
+            <motion.div key="commitments" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+              {commitmentsLoading ? <div className="spinner">Loading commitments…</div> : commitments.length === 0 ? (
+                <div className="card" style={{ textAlign: 'center', padding: '2rem', color: 'var(--muted)' }}>No commitments yet.</div>
+              ) : (
+                <div style={{ display: 'grid', gap: 10 }}>
+                  {commitments.map(c => (
+                    <div key={c.id} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                          <strong>{c.investor_detail?.full_name || c.investor_detail?.email || `Investor #${c.investor}`}</strong>
+                          <StatusBadge status={c.status} />
+                        </div>
+                        <p className="meta" style={{ margin: '3px 0 0' }}>
+                          ${Number(c.amount).toLocaleString()} &mdash; {c.offering_title || `Offering #${c.spv_offering_id}`} &mdash; {c.spv_name}
+                        </p>
+                        {c.committed_at && <p className="meta" style={{ margin: '2px 0 0', fontSize: '0.8rem' }}>{new Date(c.committed_at).toLocaleDateString()}</p>}
+                      </div>
+                      {c.spv_offering_id && (
+                        <Link href={`/offerings/dashboard/${c.spv_offering_id}`} className="btn-ghost btn-sm">Pipeline</Link>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
+
           {/* ── CONTENT TABS ── */}
-          {tab !== 'waitlist' && (
+          {tab !== 'waitlist' && tab !== 'kyc' && tab !== 'offerings' && tab !== 'commitments' && (
             <motion.div
               key={tab}
               initial={{ opacity: 0, y: 8 }}

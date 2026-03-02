@@ -205,6 +205,7 @@ export default function ProfilePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 }}
             >
+              <p className={styles.sectionEyebrow}><FiFeather size={12} style={{ marginRight: 5, verticalAlign: 'middle' }} />Founder Profile</p>
               <div className={styles.detailCardHeader}>
                 {business.logo ? (
                   <img src={business.logo} alt={business.name} className={styles.businessLogo} />
@@ -266,6 +267,7 @@ export default function ProfilePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 }}
             >
+              <p className={styles.sectionEyebrow}><FiTrendingUp size={12} style={{ marginRight: 5, verticalAlign: 'middle' }} />Investor Profile</p>
               <h2 className={styles.detailCardTitle}>Investment profile</h2>
 
               {investorProfile.bio && <p className={styles.detailText}>{investorProfile.bio}</p>}

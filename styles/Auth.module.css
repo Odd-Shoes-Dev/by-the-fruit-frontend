@@ -161,6 +161,20 @@ select.fieldInput option { background: #152318; color: #F4EFE6; }
   font-family: 'DM Sans', sans-serif;
 }
 
+/* Inline field-level error (below a specific input) */
+.fieldError {
+  color: #fca5a5;
+  font-size: 0.8rem;
+  margin: 4px 0 0;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* Red border on the input that has an error */
+.fieldInputError {
+  border-color: rgba(248, 113, 113, 0.6) !important;
+  box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.15);
+}
+
 .successBox {
   background: rgba(26,74,46,0.3);
   border: 1px solid rgba(76,175,110,0.2);
@@ -248,3 +262,20 @@ select.fieldInput option { background: #152318; color: #F4EFE6; }
 }
 .authPageBar a { color: rgba(244,239,230,0.4); text-decoration: none; }
 .authPageBar a:hover { color: #E8601A; }
+
+/* ── Role-specific field sections ── */
+.roleSection {
+  background: rgba(26,74,46,0.15);
+  border: 1px solid rgba(26,74,46,0.35);
+  border-radius: 12px;
+  padding: 1rem 1.2rem 1.2rem;
+  margin-bottom: 0.5rem;
+}
+.roleSectionLabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(244,239,230,0.45);
+  margin: 0 0 0.75rem;
+}

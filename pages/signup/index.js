@@ -26,9 +26,18 @@ export default function Signup() {
   const [phone, setPhone] = useState('')
   const [postalCode, setPostalCode] = useState('')
   const [newsletterOptIn, setNewsletterOptIn] = useState(false)
+
+  // Role-specific fields
+  const [linkedinUrl, setLinkedinUrl] = useState('')
+  const [companyName, setCompanyName] = useState('')
+  const [raiseStage, setRaiseStage] = useState('')
+  const [investmentRange, setInvestmentRange] = useState('')
+  const [isAccredited, setIsAccredited] = useState(false)
+
   const [saved, setSaved] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState({})
 
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || ''
 
@@ -43,10 +52,16 @@ export default function Signup() {
         body: JSON.stringify({
           email, full_name: name, password,
           newsletter_opt_in: newsletterOptIn,
+          intended_role: role || 'general',
           ...(location && { location }),
           ...(address && { address }),
           ...(phone && { phone }),
-          ...(postalCode && { postal_code: postalCode })
+          ...(postalCode && { postal_code: postalCode }),
+          ...(linkedinUrl && { linkedin_url: linkedinUrl }),
+          ...(companyName && { company_name: companyName }),
+          ...(raiseStage && { raise_stage: raiseStage }),
+          ...(investmentRange && { investment_range: investmentRange }),
+          ...(role === 'investor' && { is_accredited: isAccredited }),
         })
       })
       if (res.ok) {
@@ -68,7 +83,33 @@ export default function Signup() {
       }
       const errData = await res.json().catch(() => ({}))
       console.error('Registration error response:', errData)
-      setError(errData?.error || errData?.email?.[0] || 'Registration failed. Please try again.')
+      // Renderer wraps as { data: { error: true, errors: [...] } } OR { errors: {...} }
+      const inner = errData?.data ?? errData
+      const errs = inner?.errors ?? {}
+
+      // errors can be an array of plain strings  ["Email already exists"]
+      if (Array.isArray(errs)) {
+        setError(errs.join(' · ') || 'Registration failed. Please try again.')
+      } else {
+        // errors is an object  { email: [...], password: [...] }
+        const fieldErrs = {}
+        for (const [k, v] of Object.entries(errs)) {
+          if (k !== 'detail' && k !== 'non_field_errors') {
+            fieldErrs[k] = Array.isArray(v) ? v[0] : v
+          }
+        }
+        if (Object.keys(fieldErrs).length > 0) {
+          setFieldErrors(fieldErrs)
+          setError(Object.values(fieldErrs).join(' · '))
+        } else {
+          setError(
+            errs?.detail ||
+            errs?.non_field_errors?.[0] ||
+            inner?.error ||    // { error: "..." } top-level string
+            'Registration failed. Please try again.'
+          )
+        }
+      }
     } catch (err) {
       console.error('Registration network error:', err)
       setError('Network error — please try again.')
@@ -121,34 +162,37 @@ export default function Signup() {
                   Full name
                   <input
                     value={name}
-                    onChange={e => setName(e.target.value)}
+                    onChange={e => { setName(e.target.value); setFieldErrors(f => ({ ...f, full_name: undefined })) }}
                     required
                     placeholder="Your full name"
-                    className={styles.fieldInput}
+                    className={`${styles.fieldInput}${fieldErrors.full_name ? ' '+styles.fieldInputError : ''}`}
                   />
+                  {fieldErrors.full_name && <p className={styles.fieldError}>{fieldErrors.full_name}</p>}
                 </label>
                 <label className={styles.fieldLabel}>
                   Email address
                   <input
                     type="email"
                     value={email}
-                    onChange={e => setEmail(e.target.value)}
+                    onChange={e => { setEmail(e.target.value); setFieldErrors(f => ({ ...f, email: undefined })) }}
                     required
                     placeholder="you@example.com"
-                    className={styles.fieldInput}
+                    className={`${styles.fieldInput}${fieldErrors.email ? ' '+styles.fieldInputError : ''}`}
                   />
+                  {fieldErrors.email && <p className={styles.fieldError}>{fieldErrors.email}</p>}
                 </label>
                 <label className={styles.fieldLabel}>
                   Password
                   <input
                     type="password"
                     value={password}
-                    onChange={e => setPassword(e.target.value)}
+                    onChange={e => { setPassword(e.target.value); setFieldErrors(f => ({ ...f, password: undefined })) }}
                     minLength={8}
                     required
                     placeholder="Min. 8 characters"
-                    className={styles.fieldInput}
+                    className={`${styles.fieldInput}${fieldErrors.password ? ' '+styles.fieldInputError : ''}`}
                   />
+                  {fieldErrors.password && <p className={styles.fieldError}>{fieldErrors.password}</p>}
                 </label>
                 <label className={styles.fieldLabel}>
                   Location <span className={styles.optional}>(optional)</span>
@@ -159,6 +203,87 @@ export default function Signup() {
                     className={styles.fieldInput}
                   />
                 </label>
+              </div>
+
+              {/* ── Founder-specific fields ── */}
+              {role === 'founder' && (
+                <div className={styles.roleSection}>
+                  <p className={styles.roleSectionLabel}>About your venture</p>
+                  <div className={styles.fieldGrid}>
+                    <label className={styles.fieldLabel}>
+                      Company / Project name <span className={styles.optional}>(optional)</span>
+                      <input
+                        value={companyName}
+                        onChange={e => setCompanyName(e.target.value)}
+                        placeholder="e.g. Haiven Finance"
+                        className={styles.fieldInput}
+                      />
+                    </label>
+                    <label className={styles.fieldLabel}>
+                      LinkedIn profile <span className={styles.optional}>(optional)</span>
+                      <input
+                        type="url"
+                        value={linkedinUrl}
+                        onChange={e => setLinkedinUrl(e.target.value)}
+                        placeholder="https://linkedin.com/in/yourname"
+                        className={styles.fieldInput}
+                      />
+                    </label>
+                    <label className={styles.fieldLabel}>
+                      Fundraising stage <span className={styles.optional}>(optional)</span>
+                      <select value={raiseStage} onChange={e => setRaiseStage(e.target.value)} className={styles.fieldInput}>
+                        <option value="">Select stage…</option>
+                        <option value="idea">Idea / Pre-product</option>
+                        <option value="pre-seed">Pre-Seed</option>
+                        <option value="seed">Seed</option>
+                        <option value="series-a">Series A</option>
+                        <option value="growth">Growth / Series B+</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* ── Investor-specific fields ── */}
+              {role === 'investor' && (
+                <div className={styles.roleSection}>
+                  <p className={styles.roleSectionLabel}>About your investing</p>
+                  <div className={styles.fieldGrid}>
+                    <label className={styles.fieldLabel}>
+                      LinkedIn profile <span className={styles.optional}>(optional)</span>
+                      <input
+                        type="url"
+                        value={linkedinUrl}
+                        onChange={e => setLinkedinUrl(e.target.value)}
+                        placeholder="https://linkedin.com/in/yourname"
+                        className={styles.fieldInput}
+                      />
+                    </label>
+                    <label className={styles.fieldLabel}>
+                      Typical investment range <span className={styles.optional}>(optional)</span>
+                      <select value={investmentRange} onChange={e => setInvestmentRange(e.target.value)} className={styles.fieldInput}>
+                        <option value="">Select range…</option>
+                        <option value="under-1k">Under $1,000</option>
+                        <option value="1k-10k">$1,000 – $10,000</option>
+                        <option value="10k-50k">$10,000 – $50,000</option>
+                        <option value="50k-250k">$50,000 – $250,000</option>
+                        <option value="250k-plus">$250,000+</option>
+                      </select>
+                    </label>
+                  </div>
+                  <label className={styles.checkboxLabel} style={{ marginTop: 12 }}>
+                    <input
+                      type="checkbox"
+                      checked={isAccredited}
+                      onChange={e => setIsAccredited(e.target.checked)}
+                      className={styles.checkbox}
+                    />
+                    <span>I am an accredited investor</span>
+                  </label>
+                </div>
+              )}
+
+              <div className={styles.fieldGrid}>
                 <label className={styles.fieldLabel}>
                   Phone <span className={styles.optional}>(optional)</span>
                   <input

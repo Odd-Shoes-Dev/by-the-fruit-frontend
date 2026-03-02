@@ -1,0 +1,167 @@
+/* =====================
+   My Offerings Page
+   ===================== */
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin: 0 0 6px;
+}
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--cream);
+  margin: 0 0 4px;
+}
+.sub {
+  font-size: 0.84rem;
+  color: rgba(244,239,230,0.4);
+  margin: 0;
+}
+
+.newBtn {
+  display: inline-block;
+  padding: 0.6rem 1.25rem;
+  background: var(--orange);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-radius: 10px;
+  text-decoration: none;
+  white-space: nowrap;
+  align-self: flex-start;
+  margin-top: 6px;
+  transition: opacity 0.15s;
+}
+.newBtn:hover { opacity: 0.85; }
+
+/* Empty state */
+.empty {
+  text-align: center;
+  padding: 4rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: rgba(244,239,230,0.35);
+  font-size: 0.9rem;
+}
+.emptyBtn {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--orange);
+  text-decoration: none;
+  border: 1px solid rgba(232,96,26,0.35);
+  border-radius: 9px;
+  padding: 0.55rem 1.25rem;
+  transition: background 0.15s;
+}
+.emptyBtn:hover { background: rgba(232,96,26,0.1); }
+
+/* Offering cards */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--dark2);
+  border: 1px solid rgba(244,239,230,0.07);
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  transition: border-color 0.15s;
+}
+.card:hover { border-color: rgba(232,96,26,0.2); }
+
+.cardLeft { flex: 1; min-width: 0; }
+
+.cardTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.cardTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--cream);
+  margin: 0;
+}
+.statusPill {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: rgba(0,0,0,0.75);
+  white-space: nowrap;
+}
+
+.cardTagline {
+  font-size: 0.84rem;
+  color: rgba(244,239,230,0.5);
+  margin: 0 0 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cardMeta {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.77rem;
+  color: rgba(244,239,230,0.35);
+  flex-wrap: wrap;
+}
+.cardMeta strong { color: rgba(244,239,230,0.7); font-weight: 600; }
+
+/* Card actions */
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+.editBtn, .dashBtn, .viewBtn {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 5px 11px;
+  border-radius: 7px;
+  border: 1px solid;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.editBtn {
+  color: var(--orange);
+  border-color: rgba(232,96,26,0.35);
+}
+.editBtn:hover { background: rgba(232,96,26,0.1); }
+
+.dashBtn {
+  color: rgba(244,239,230,0.55);
+  border-color: rgba(244,239,230,0.1);
+}
+.dashBtn:hover { color: var(--cream); border-color: rgba(244,239,230,0.25); }
+
+.viewBtn {
+  color: rgba(244,239,230,0.4);
+  border-color: rgba(244,239,230,0.08);
+}
+.viewBtn:hover { color: rgba(244,239,230,0.75); }
