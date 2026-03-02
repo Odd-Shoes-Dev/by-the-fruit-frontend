@@ -158,16 +158,18 @@ export default function Home() {
             ) : (
               <>
                 <Link href="/login" className={styles.navGhostBtn}>Sign In</Link>
-                <FluffyButton
-                  label="Join the Collective →"
-                  color="#E8601A"
-                  strands={900}
-                  strandLen={6}
-                  width={160}
-                  height={38}
-                  fontSize={12}
-                  href="/signup"
-                />
+                <div className={styles.navCtaButton}>
+                  <FluffyButton
+                    label="Join the Collective →"
+                    color="#E8601A"
+                    strands={900}
+                    strandLen={6}
+                    width={160}
+                    height={38}
+                    fontSize={12}
+                    href="/signup"
+                  />
+                </div>
               </>
             )}
           </div>
