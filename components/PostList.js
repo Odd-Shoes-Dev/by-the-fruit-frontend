@@ -1,9 +1,55 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, Component } from 'react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { motion, AnimatePresence } from 'framer-motion'
 import { apiFetch, getToken, getUserId } from '../lib/api'
-import VideoPlayer from './VideoPlayer'
 import styles from '../styles/PostList.module.css'
+
+// VideoPlayer uses IntersectionObserver, videoRef.muted, and a module-level
+// singleton — all browser-only APIs that crash during Next.js SSR.
+// ssr: false skips server rendering entirely, so no SSR crash, no hydration
+// mismatch, and no silently-dropped post cards for video posts.
+const VideoPlayer = dynamic(() => import('./VideoPlayer'), {
+  ssr: false,
+  loading: () => (
+    <div style={{
+      width: '100%', borderRadius: 12, marginTop: 14,
+      background: '#0a0f0c', height: 200,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      <span style={{ color: '#aaa', fontSize: 13 }}>Loading video…</span>
+    </div>
+  ),
+})
+
+// ── VideoPlayer error boundary ─────────────────────────────────────
+// VideoPlayer uses IntersectionObserver, refs, and multiple effects.
+// If it throws (e.g. during hydration or on a specific codec/format),
+// React would silently drop the entire PostCard without this guard.
+class VideoErrorBoundary extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { error: false }
+  }
+  static getDerivedStateFromError() {
+    return { error: true }
+  }
+  render() {
+    if (this.state.error) {
+      // Fallback: native <video> — always works regardless of JS errors
+      return (
+        <video
+          src={this.props.src}
+          controls
+          playsInline
+          preload="metadata"
+          style={{ width: '100%', borderRadius: 12, marginTop: 14, background: '#000', display: 'block' }}
+        />
+      )
+    }
+    return this.props.children
+  }
+}
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000'
 
@@ -239,7 +285,9 @@ export function PostCard({ p, i, onSaveChange }) {
 
       {/* Video */}
       {p.video && (
-        <VideoPlayer src={absUrl(p.video)} poster={p.image ? absUrl(p.image) : undefined} />
+        <VideoErrorBoundary src={absUrl(p.video)}>
+          <VideoPlayer src={absUrl(p.video)} poster={p.image ? absUrl(p.image) : undefined} />
+        </VideoErrorBoundary>
       )}
 
       {/* ── Engagement bar ── */}

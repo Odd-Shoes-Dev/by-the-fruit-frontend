@@ -32,6 +32,15 @@ export default function VideoPlayer({ src, poster }) {
   const [showControls, setShowControls] = useState(true)
   const hideTimer = useRef(null)
 
+  // Set muted as a DOM property, not a JSX prop — React 19 SSR/hydration
+  // treats the `muted` attribute on <video> inconsistently, which causes a
+  // hydration mismatch that silently removes the component from the tree.
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = muted
+    }
+  }, [muted])
+
   // ── IntersectionObserver: auto-pause when out of view ──
   useEffect(() => {
     const video = videoRef.current
@@ -159,7 +168,6 @@ export default function VideoPlayer({ src, poster }) {
         ref={videoRef}
         src={src}
         poster={poster}
-        muted={muted}
         playsInline
         preload="metadata"
         onTimeUpdate={onTimeUpdate}

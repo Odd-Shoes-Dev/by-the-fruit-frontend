@@ -32,7 +32,7 @@ export default function SavedPosts() {
         .filter(Boolean)
         .map(p => ({ ...p, is_saved: true }))
       setSavedPosts(posts)
-    } catch {
+    } catch (err) {
       setError('Could not load saved posts.')
     } finally {
       setLoading(false)
