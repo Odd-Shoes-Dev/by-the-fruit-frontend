@@ -1,12 +1,12 @@
 ﻿/* ── Auth pages (login, signup, reset, forgot) ── */
 .authPage {
   min-height: 100vh;
-  background: #f2ede8;
+  background: #F5EFE6;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem 1.25rem;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Source Sans 3', sans-serif;
 }
 
 .authCard {
@@ -35,22 +35,22 @@
   border-radius: 6px;
 }
 .authBrandName {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Oswald', 'Franklin Gothic Heavy', sans-serif;
   font-weight: 500;
   font-size: 1.15rem;
-  color: #1a1208;
-  letter-spacing: -0.01em;
+  color: #2D3B51;
+  letter-spacing: 0.02em;
 }
 
 /* Title block */
 .authTitle {
-  font-family: 'Playfair Display', serif;
-  font-weight: 500;
+  font-family: 'Oswald', 'Franklin Gothic Heavy', sans-serif;
+  font-weight: 600;
   font-size: 1.65rem;
-  color: #1a1208;
+  color: #2D3B51;
   text-align: center;
   margin: 0 0 0.5rem;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.02em;
   line-height: 1.25;
 }
 .authSubtitle {
@@ -81,8 +81,8 @@
 }
 .fieldInput::placeholder { color: rgba(26,18,8,0.35); }
 .fieldInput:focus {
-  border-color: #c0431a;
-  box-shadow: 0 0 0 3px rgba(192,67,26,0.12);
+  border-color: #4F6BD9;
+  box-shadow: 0 0 0 3px rgba(79,107,217,0.12);
   background: #fff;
 }
 
@@ -107,14 +107,14 @@
 .authSubmit {
   margin-top: 0.5rem; width: 100%;
   padding: 0.75rem 1.5rem;
-  background: #c0431a; color: #fff;
+  background: #F5A623; color: #fff;
   border: none; border-radius: 999px;
   font-size: 1rem; font-weight: 700;
   cursor: pointer; font-family: inherit;
   transition: background 0.15s, transform 0.15s;
   min-height: unset;
 }
-.authSubmit:hover { background: #a83815; transform: translateY(-1px); }
+.authSubmit:hover { background: #E89512; transform: translateY(-1px); }
 .authSubmit:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 
 /* Links */
@@ -124,7 +124,7 @@
   margin-top: 1.25rem;
   font-size: 0.88rem;
 }
-.authLink { color: #c0431a; text-decoration: none; font-weight: 600; }
+.authLink { color: #4F6BD9; text-decoration: none; font-weight: 600; }
 .authLink:hover { text-decoration: underline; }
 .authMuted { color: rgba(26,18,8,0.5); }
 
@@ -173,8 +173,8 @@
   outline: none; transition: border-color 0.15s, box-shadow 0.15s;
 }
 .otpInput:focus {
-  border-color: #c0431a;
-  box-shadow: 0 0 0 3px rgba(192,67,26,0.12);
+  border-color: #4F6BD9;
+  box-shadow: 0 0 0 3px rgba(79,107,217,0.12);
   background: #fff;
 }
 
@@ -182,7 +182,7 @@
 .checkRow { display: flex; align-items: flex-start; gap: 0.6rem; }
 .checkRow input[type="checkbox"] {
   width: 17px; height: 17px; flex-shrink: 0;
-  accent-color: #c0431a; margin-top: 2px; cursor: pointer;
+  accent-color: #F5A623; margin-top: 2px; cursor: pointer;
 }
 .checkRow label { font-size: 0.88rem; color: rgba(26,18,8,0.65); cursor: pointer; line-height: 1.5; }
 
@@ -193,15 +193,15 @@
   padding: 1rem; cursor: pointer; transition: border-color 0.15s, background 0.15s;
   background: #faf8f5; text-align: center;
 }
-.roleCard:hover { border-color: rgba(192,67,26,0.4); background: rgba(192,67,26,0.04); }
-.roleCardActive { border-color: #c0431a; background: rgba(192,67,26,0.07); }
+.roleCard:hover { border-color: rgba(79,107,217,0.4); background: rgba(79,107,217,0.04); }
+.roleCardActive { border-color: #4F6BD9; background: rgba(79,107,217,0.07); }
 .roleLabel { font-size: 0.88rem; font-weight: 700; color: #1a1208; }
 .roleDesc { font-size: 0.78rem; color: rgba(26,18,8,0.5); margin-top: 0.25rem; }
 
 /* Step indicator */
 .stepsRow { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; }
 .stepDot { width: 8px; height: 8px; border-radius: 50%; background: rgba(0,0,0,0.15); transition: background 0.2s; }
-.stepDotActive { background: #c0431a; }
+.stepDotActive { background: #F5A623; }
 
 /* Loading spinner */
 .spinner {

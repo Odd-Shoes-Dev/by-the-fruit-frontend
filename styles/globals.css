@@ -1,22 +1,23 @@
 ﻿/* ═══════════════════════════════════════════════════════════════
    BY THE FRUIT — Global Design System
-   Cream theme · Playfair Display · DM Sans
-   Outhop-style: cream bg, dark text, terracotta orange
+   Brand Blue · Harvest Orange · Growth Green · Oswald · Source Sans 3
 ═══════════════════════════════════════════════════════════════ */
 :root {
-  /* ----- INVERTED for cream theme ----- */
-  --dark:         #f2ede8;   /* page background (was dark green)  */
-  --dark2:        #ffffff;   /* card background (was dark2)       */
-  --green:        #f5f1ec;   /* subtle section bg                 */
-  --green-mid:    #ece6df;   /* slightly darker section bg        */
-  --green-light:  #e5dfd8;   /* hover states                      */
-  --orange:       #c0431a;   /* primary accent (terracotta)       */
-  --orange2:      #d95220;   /* lighter orange                    */
-  --cream:        #1a1208;   /* main text (was cream/light)       */
-  --cream2:       #5a4e44;   /* secondary text                    */
-  --muted:        rgba(26,18,8,0.5);
-  --border:       rgba(0,0,0,0.09);
-  --border-hover: rgba(192,67,26,0.35);
+  --dark:         #F5EFE6;   /* page background (warm ivory)      */
+  --dark2:        #ffffff;   /* card background                   */
+  --blue:         #4F6BD9;   /* primary brand blue                */
+  --blue-dark:    #2F3E63;   /* deep slate blue                   */
+  --blue-light:   #E9EEFF;   /* soft blue section bg              */
+  --green:        #E9EEFF;   /* subtle section bg                 */
+  --green-mid:    #dce4ff;   /* slightly darker section bg        */
+  --green-light:  #d0daff;   /* hover states                      */
+  --orange:       #F5A623;   /* harvest orange accent             */
+  --orange2:      #F57C00;   /* inner orange                      */
+  --cream:        #2D3B51;   /* main text                         */
+  --cream2:       #5C637E;   /* secondary text                    */
+  --muted:        rgba(45,59,81,0.5);
+  --border:       rgba(79,107,217,0.1);
+  --border-hover: rgba(245,166,35,0.35);
   --radius:       12px;
   --radius-lg:    18px;
   --shadow-sm:    0 1px 6px rgba(0,0,0,0.07);
@@ -26,7 +27,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 html { overflow-x: hidden; scroll-behavior: smooth; }
 body {
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
   margin: 0;
   color: var(--cream);
   background: var(--dark);
@@ -44,7 +45,7 @@ a { color: inherit; text-decoration: none; }
 /* ── Page header ───────────────────────────────────────── */
 .page-header { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
 .page-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Oswald', 'Franklin Gothic Heavy', sans-serif;
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   margin: 0 0 0.35rem;
   color: var(--cream);
@@ -56,14 +57,14 @@ a { color: inherit; text-decoration: none; }
 .page-sub { color: var(--muted); font-size: 0.95rem; margin: 0; line-height: 1.5; }
 
 header h1 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Oswald', 'Franklin Gothic Heavy', sans-serif;
   font-size: clamp(1.5rem, 4vw, 2rem);
   margin: 0 0 0.35rem;
   color: var(--cream);
   font-weight: 500;
 }
 header h2 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Oswald', 'Franklin Gothic Heavy', sans-serif;
   font-size: clamp(1.3rem, 3.5vw, 1.75rem);
   margin: 0 0 0.35rem;
   color: var(--cream);
@@ -73,7 +74,7 @@ header h2 {
 /* ── Section dividers ──────────────────────────────────── */
 .section-header { margin: 0 0 16px; }
 .section-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Oswald', 'Franklin Gothic Heavy', sans-serif;
   font-size: 1.1rem;
   font-weight: 500;
   margin: 0 0 4px;
@@ -90,7 +91,7 @@ header h2 {
   box-shadow: var(--shadow-sm);
   transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
 }
-.card:hover { border-color: rgba(192,67,26,0.22); box-shadow: var(--shadow-md); }
+.card:hover { border-color: rgba(79,107,217,0.22); box-shadow: var(--shadow-md); }
 .card--lg { padding: 28px 24px; }
 .card--accent-orange { border-left: 3px solid var(--orange); }
 .card--accent-teal { border-left: 3px solid #1a6b3a; }
@@ -120,7 +121,7 @@ header h2 {
   text-decoration: none; display: inline-flex;
   align-items: center; justify-content: center; gap: 6px;
 }
-.btn:hover { background: #a83815; transform: translateY(-1px); }
+.btn:hover { background: #E89512; transform: translateY(-1px); }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
 .btn-outline {
@@ -180,11 +181,11 @@ input, textarea, select {
   transition: border-color var(--transition), box-shadow var(--transition);
   margin-top: 0;
 }
-input::placeholder, textarea::placeholder { color: rgba(26,18,8,0.3); }
+input::placeholder, textarea::placeholder { color: rgba(45,59,81,0.35); }
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: var(--orange);
-  box-shadow: 0 0 0 3px rgba(192,67,26,0.12);
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(79,107,217,0.12);
 }
 select option { background: #fff; color: var(--cream); }
 .success { color: #1a8a3c; margin-top: 8px; font-weight: 500; }
@@ -206,7 +207,7 @@ select option { background: #fff; color: var(--cream); }
 .spinner::before {
   content: ''; width: 18px; height: 18px;
   border: 2px solid var(--border);
-  border-top-color: var(--orange);
+  border-top-color: var(--blue);
   border-radius: 50%;
   animation: spin 0.7s linear infinite; flex-shrink: 0;
 }
@@ -214,7 +215,7 @@ select option { background: #fff; color: var(--cream); }
 .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
 .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
 .empty-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Oswald', 'Franklin Gothic Heavy', sans-serif;
   font-weight: 500; color: var(--cream);
   margin: 0 0 6px; font-size: 1.05rem;
 }
@@ -230,7 +231,7 @@ select option { background: #fff; color: var(--cream); }
   transition: color var(--transition), border-color var(--transition);
 }
 .tab-btn:hover { color: var(--cream); }
-.tab-btn.active { color: var(--orange); border-bottom-color: var(--orange); }
+.tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
 
 /* ── Filters / search row ───────────────────────────────── */
 .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: center; }
@@ -242,8 +243,8 @@ select option { background: #fff; color: var(--cream); }
   background: #fff; color: var(--cream);
   transition: border-color var(--transition);
 }
-.search::placeholder { color: rgba(26,18,8,0.3); }
-.search:focus { outline: none; border-color: var(--orange); }
+.search::placeholder { color: rgba(45,59,81,0.35); }
+.search:focus { outline: none; border-color: var(--blue); }
 
 /* ── Lists ──────────────────────────────────────────────── */
 .list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1px; }

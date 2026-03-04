@@ -68,6 +68,11 @@ export default function Home() {
   useEffect(() => {
     setToken(!!getToken())
     setApproved(isApproved())
+    // Scroll to top on page load and disable browser scroll restoration
+    window.scrollTo(0, 0)
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual'
+    }
   }, [])
 
   useEffect(() => {

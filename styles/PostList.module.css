@@ -51,7 +51,7 @@
 
 .avatarFallback {
   border-radius: 50%;
-  background: linear-gradient(135deg, #c0431a 0%, #1A4A2E 100%);
+  background: linear-gradient(135deg, #F5A623 0%, #4F6BD9 100%);
   color: #fff;
   font-weight: 700;
   display: flex;
@@ -352,11 +352,11 @@
 }
 
 .engageBtnSaved {
-  color: var(--orange, #c0431a) !important;
+  color: var(--orange, #F5A623) !important;
 }
 
 .engageBtnSaved svg {
-  color: var(--orange, #c0431a);
+  color: var(--orange, #F5A623);
 }
 
 /* â”€â”€ Comment section â”€â”€ */
@@ -452,14 +452,14 @@
 }
 
 .commentInput:focus {
-  border-color: rgba(232,96,26,0.4);
+  border-color: rgba(79,107,217,0.4);
 }
 
 .commentSubmit {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--orange, #c0431a);
+  background: var(--orange, #F5A623);
   border: none;
   cursor: pointer;
   display: flex;

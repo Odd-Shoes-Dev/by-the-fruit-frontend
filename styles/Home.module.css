@@ -1,6 +1,6 @@
 ﻿/* ═══════════════════════════════════════════════════════════════
    BY THE FRUIT — Landing Page (Institutional Faith Capital)
-   Brand Blue · Harvest Orange · Growth Green · Playfair Display · DM Sans
+   Brand Blue · Harvest Orange · Growth Green · Oswald · Source Sans 3
 ═══════════════════════════════════════════════════════════════ */
 
 /* ─── Root ──────────────────────────────────────────────────── */
@@ -19,8 +19,8 @@
   --text-light:    #7D8899;
   --border-light:  rgba(79,107,217,0.1);
   --border-dark:   rgba(0,0,0,0.08);
-  --serif:         'Playfair Display', Georgia, serif;
-  --sans:          'DM Sans', sans-serif;
+  --serif:         'Oswald', 'Franklin Gothic Heavy', 'Arial Narrow', sans-serif;
+  --sans:          'Source Sans 3', 'Myriad Pro', 'Gill Sans', sans-serif;
 
   background: var(--ivory);
   color: var(--text-dark);
