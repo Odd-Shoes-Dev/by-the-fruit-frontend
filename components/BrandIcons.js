@@ -6,7 +6,7 @@
  * prop (default 44).
  */
 
-const C = '#E8601A'   // brand orange
+const C = '#F5A623'   // brand orange
 const S = 1.6         // default stroke-width
 
 /* ── helpers ── */

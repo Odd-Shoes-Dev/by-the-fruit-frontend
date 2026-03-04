@@ -29,6 +29,7 @@
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  padding-top: 70px;
 }
 
 .main * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,8 +42,10 @@
   justify-content: space-between;
   padding: 18px 60px;
   background: var(--ivory);
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
   border-bottom: 1px solid transparent;
   transition: all .3s ease;
@@ -52,6 +55,16 @@
   background: rgba(245,239,230,0.96);
   backdrop-filter: blur(8px);
   box-shadow: 0 2px 12px rgba(0,0,0,.05);
+}
+.navHidden {
+  transform: translateY(-100%);
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nav {
+    transition: transform .35s cubic-bezier(0.33, 0.66, 0.66, 1), box-shadow .3s ease, border-color .3s ease, background .3s ease;
+  }
 }
 
 .navLogo {
@@ -68,7 +81,7 @@
   font-family: var(--serif);
   font-size: 1.1rem;
   font-weight: 500;
-  color: var(--blue-dark);
+  color: var(--blue);
   letter-spacing: -0.01em;
 }
 
@@ -310,7 +323,7 @@
   position: relative;
   z-index: 1;
   margin-top: 28px;
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: rgba(255,255,255,0.85);
   max-width: 520px;
   line-height: 1.75;
@@ -344,14 +357,20 @@
 /* ─── STATS STRIP ───────────────────────────────────────────── */
 .statsStrip {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   border-bottom: 1px solid var(--border-dark);
   background: var(--ivory);
 }
 
 .statCell {
-  padding: 36px 32px;
+  padding: 48px 32px;
   border-right: 1px solid var(--border-dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
 }
 .statCell:last-child { border-right: none; }
 
@@ -401,7 +420,7 @@
 .sectionH2 em { color: var(--orange); font-style: italic; }
 
 .secDesc {
-  font-size: .925rem;
+  font-size: 1rem;
   color: var(--text-mid);
   line-height: 1.75;
   max-width: 560px;
@@ -455,7 +474,7 @@
 }
 
 .stepCardP {
-  font-size: .875rem;
+  font-size: .95rem;
   color: var(--text-mid);
   line-height: 1.75;
   margin: 0;
@@ -503,7 +522,7 @@
 .featureH3 em { color: var(--orange); font-style: italic; }
 
 .featureP {
-  font-size: .925rem;
+  font-size: 1rem;
   color: var(--text-mid);
   line-height: 1.75;
   max-width: 400px;
@@ -707,7 +726,7 @@
 
 .manifestoQuote {
   font-style: italic;
-  font-size: .9rem;
+  font-size: 1rem;
   color: var(--text-mid);
   border-left: 3px solid var(--orange);
   padding-left: 16px;
@@ -738,7 +757,7 @@
   font-size: .9rem; font-weight: 600; color: var(--text-dark);
 }
 .pillarTxtSpan {
-  font-size: .82rem; color: var(--text-mid); line-height: 1.65;
+  font-size: .9rem; color: var(--text-mid); line-height: 1.65;
 }
 
 /* ─── NEWSLETTER ────────────────────────────────────────────── */
@@ -765,7 +784,7 @@
 }
 .newsletterLeftH2 em { color: var(--orange); font-style: italic; }
 .newsletterLeftP {
-  font-size: .875rem; color: var(--text-mid); line-height: 1.75;
+  font-size: .95rem; color: var(--text-mid); line-height: 1.75;
 }
 
 .formStack { display: flex; flex-direction: column; gap: 16px; }
@@ -842,7 +861,7 @@
 }
 .ctaH2 em { color: var(--orange); font-style: italic; }
 .ctaP {
-  font-size: 1rem; color: rgba(255,255,255,0.85);
+  font-size: 1.1rem; color: rgba(255,255,255,0.85);
   margin-bottom: 40px; max-width: 500px;
   margin-left: auto; margin-right: auto;
 }
