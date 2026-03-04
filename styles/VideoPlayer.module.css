@@ -1,4 +1,4 @@
-/* ── Video player container ── */
+﻿/* â”€â”€ Video player container â”€â”€ */
 .videoContainer {
   position: relative;
   width: 100%;
@@ -19,7 +19,7 @@
   background: #000;
 }
 
-/* ── Big play overlay ── */
+/* â”€â”€ Big play overlay â”€â”€ */
 .playOverlay {
   position: absolute;
   inset: 0;
@@ -55,7 +55,7 @@
   background: rgba(232, 96, 26, 1);
 }
 
-/* ── Bottom controls bar ── */
+/* â”€â”€ Bottom controls bar â”€â”€ */
 .controls {
   position: absolute;
   bottom: 0;
@@ -73,7 +73,7 @@
   pointer-events: auto;
 }
 
-/* ── Progress bar ── */
+/* â”€â”€ Progress bar â”€â”€ */
 .progressBar {
   width: 100%;
   padding: 6px 0;
@@ -95,12 +95,12 @@
 
 .progressFill {
   height: 100%;
-  background: var(--orange, #E8601A);
+  background: var(--orange, #c0431a);
   border-radius: 4px;
   transition: width 0.1s linear;
 }
 
-/* ── Controls row ── */
+/* â”€â”€ Controls row â”€â”€ */
 .controlsRow {
   display: flex;
   align-items: center;
@@ -133,7 +133,7 @@
   user-select: none;
 }
 
-/* ── Mobile adjustments ── */
+/* â”€â”€ Mobile adjustments â”€â”€ */
 @media (max-width: 480px) {
   .videoContainer {
     border-radius: 8px;

@@ -1,4 +1,4 @@
-/* ── Layout ── */
+﻿/* â”€â”€ Layout â”€â”€ */
 .profileGrid {
   display: grid;
   grid-template-columns: 1fr;
@@ -21,17 +21,17 @@
 .sidebar { position: sticky; top: 80px; }
 .mainCol { display: flex; flex-direction: column; gap: 16px; }
 
-/* ── Identity card (left) ── */
+/* â”€â”€ Identity card (left) â”€â”€ */
 .identityCard {
-  background: #152318;
-  border: 1px solid rgba(244,239,230,0.08);
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.07);
   border-radius: 18px;
   overflow: hidden;
 }
 
 .coverStrip {
   height: 80px;
-  background: linear-gradient(135deg, #1A4A2E 0%, #235E3A 50%, #E8601A 100%);
+  background: linear-gradient(135deg, #1A4A2E 0%, #235E3A 50%, #c0431a 100%);
 }
 
 .identityBody {
@@ -49,7 +49,7 @@
 .avatar {
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #0E1F14;
+  border: 3px solid #f2ede8;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   display: block;
   flex-shrink: 0;
@@ -57,13 +57,13 @@
 
 .avatarFallback {
   border-radius: 50%;
-  background: linear-gradient(135deg, #E8601A 0%, #1A4A2E 100%);
+  background: linear-gradient(135deg, #c0431a 0%, #1A4A2E 100%);
   color: #fff;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid #0E1F14;
+  border: 3px solid #f2ede8;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   flex-shrink: 0;
   letter-spacing: 0.02em;
@@ -86,7 +86,7 @@
 
 .roleBadge[data-type="investor"] {
   background: rgba(232, 96, 26, 0.15);
-  color: #E8601A;
+  color: #c0431a;
   border: 1px solid rgba(232, 96, 26, 0.3);
 }
 
@@ -101,26 +101,26 @@
   font-size: 1.25rem;
   font-weight: 800;
   margin: 0 0 2px;
-  color: #F4EFE6;
+  color: #1a1208;
   line-height: 1.2;
 }
 
 .profileEmail {
   font-size: 0.82rem;
-  color: rgba(244,239,230,0.55);
+  color: rgba(26,18,8,0.55);
   margin: 0 0 12px;
 }
 
 .profileBio {
   font-size: 0.88rem;
   line-height: 1.6;
-  color: rgba(244,239,230,0.75);
+  color: rgba(26,18,8,0.75);
   margin: 0 0 14px;
   border-left: 3px solid var(--orange);
   padding-left: 10px;
 }
 
-/* ── Info rows ── */
+/* â”€â”€ Info rows â”€â”€ */
 .infoList {
   display: flex;
   flex-direction: column;
@@ -133,7 +133,7 @@
   align-items: center;
   gap: 8px;
   font-size: 0.85rem;
-  color: rgba(244,239,230,0.75);
+  color: rgba(26,18,8,0.75);
   min-width: 0;
 }
 
@@ -151,7 +151,7 @@
 }
 .inlineLink:hover { text-decoration: underline; }
 
-/* ── Social icons ── */
+/* â”€â”€ Social icons â”€â”€ */
 .socialRow {
   display: flex;
   gap: 8px;
@@ -163,8 +163,8 @@
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  background: rgba(244,239,230,0.06);
-  color: rgba(244,239,230,0.60);
+  background: rgba(0,0,0,0.05);
+  color: rgba(26,18,8,0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -177,7 +177,7 @@
   color: #fff;
 }
 
-/* ── Action row ── */
+/* â”€â”€ Action row â”€â”€ */
 .actionRow {
   margin-top: 4px;
 }
@@ -202,10 +202,10 @@
   transform: translateY(-1px);
 }
 
-/* ── Detail cards (right) ── */
+/* â”€â”€ Detail cards (right) â”€â”€ */
 .detailCard {
   background: var(--dark2);
-  border: 1px solid rgba(244,239,230,0.08);
+  border: 1px solid rgba(0,0,0,0.07);
   border-radius: 16px;
   padding: 22px 24px;
   box-shadow: 0 2px 16px rgba(0,0,0,0.25);
@@ -235,7 +235,7 @@
 .detailText {
   font-size: 0.9rem;
   line-height: 1.65;
-  color: rgba(244,239,230,0.75);
+  color: rgba(26,18,8,0.75);
   margin: 0 0 14px;
 }
 
@@ -246,7 +246,7 @@
   margin-top: 10px;
 }
 
-/* ── Business logo ── */
+/* â”€â”€ Business logo â”€â”€ */
 .businessLogo {
   width: 52px;
   height: 52px;
@@ -270,14 +270,14 @@
   flex-shrink: 0;
 }
 
-/* ── Badges ── */
+/* â”€â”€ Badges â”€â”€ */
 .categoryPill {
   font-size: 0.72rem;
   font-weight: 600;
   padding: 2px 9px;
   border-radius: 999px;
   background: rgba(232,96,26,0.12);
-  color: #E8601A;
+  color: #c0431a;
   border: 1px solid rgba(232,96,26,0.22);
   text-transform: capitalize;
 }
@@ -292,7 +292,7 @@
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
-/* ── Section eyebrow ── */
+/* â”€â”€ Section eyebrow â”€â”€ */
 .sectionEyebrow {
   font-size: 0.72rem;
   font-weight: 700;
@@ -305,7 +305,7 @@
   gap: 4px;
 }
 
-/* ── Milestones ── */
+/* â”€â”€ Milestones â”€â”€ */
 .subHeading {
   font-weight: 700;
   color: var(--orange);
@@ -341,20 +341,20 @@
 
 .milestoneDesc {
   font-size: 0.85rem;
-  color: rgba(244,239,230,0.55);
+  color: rgba(26,18,8,0.55);
   margin: 2px 0 0;
 }
 
 .milestoneDate {
   font-size: 0.78rem;
-  color: rgba(244,239,230,0.45);
+  color: rgba(26,18,8,0.45);
 }
 
-/* ── Investor stats ── */
+/* â”€â”€ Investor stats â”€â”€ */
 .philosophy {
   font-size: 0.9rem;
   font-style: italic;
-  color: rgba(244,239,230,0.65);
+  color: rgba(26,18,8,0.65);
   border-left: 3px solid var(--orange);
   padding-left: 12px;
   margin: 0 0 16px;
@@ -369,8 +369,8 @@
 }
 
 .statBox {
-  background: rgba(244,239,230,0.04);
-  border: 1px solid rgba(244,239,230,0.08);
+  background: rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.07);
   border-radius: 10px;
   padding: 10px 16px;
   display: flex;
@@ -382,7 +382,7 @@
 .statLabel {
   font-size: 0.72rem;
   font-weight: 600;
-  color: rgba(244,239,230,0.45);
+  color: rgba(26,18,8,0.45);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -394,7 +394,7 @@
   text-transform: capitalize;
 }
 
-/* ── Family ── */
+/* â”€â”€ Family â”€â”€ */
 .familyList {
   list-style: none;
   padding: 0;
@@ -414,7 +414,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #E8601A, #1A4A2E);
+  background: linear-gradient(135deg, #c0431a, #1A4A2E);
   color: var(--cream);
   font-weight: 700;
   font-size: 0.9rem;
@@ -426,12 +426,12 @@
 
 .familyRel {
   font-size: 0.8rem;
-  color: rgba(244,239,230,0.5);
+  color: rgba(26,18,8,0.5);
   margin-left: 8px;
   text-transform: capitalize;
 }
 
-/* ── Loading skeleton ── */
+/* â”€â”€ Loading skeleton â”€â”€ */
 .skeleton {
   display: flex;
   gap: 20px;
@@ -443,7 +443,7 @@
   width: 88px;
   height: 88px;
   border-radius: 50%;
-  background: linear-gradient(90deg, rgba(244,239,230,0.06) 25%, rgba(244,239,230,0.10) 50%, rgba(244,239,230,0.06) 75%);
+  background: linear-gradient(90deg, rgba(0,0,0,0.05) 25%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.05) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
   flex-shrink: 0;
@@ -460,7 +460,7 @@
 .skeletonLine {
   height: 14px;
   border-radius: 6px;
-  background: linear-gradient(90deg, rgba(244,239,230,0.06) 25%, rgba(244,239,230,0.10) 50%, rgba(244,239,230,0.06) 75%);
+  background: linear-gradient(90deg, rgba(0,0,0,0.05) 25%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.05) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 }
@@ -470,7 +470,7 @@
   100% { background-position: -200% 0; }
 }
 
-/* ── Error state ── */
+/* â”€â”€ Error state â”€â”€ */
 .errorState {
   display: flex;
   flex-direction: column;
@@ -492,7 +492,7 @@
 
 .backLink:hover { text-decoration: underline; }
 
-/* ── Mobile ── */
+/* â”€â”€ Mobile â”€â”€ */
 @media (max-width: 767px) {
   .sidebar { position: static; }
   .detailCard { padding: 16px; }

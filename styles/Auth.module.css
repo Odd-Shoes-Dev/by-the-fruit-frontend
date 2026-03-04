@@ -1,281 +1,215 @@
-/* ═══════════════════════════════════════════════════════════════
-   BY THE FRUIT — Auth pages (login / signup / pending / forgot)
-   Dark theme · matches bythefruit_fluffy.html design system
-═══════════════════════════════════════════════════════════════ */
-
-/* Full-page wrapper */
+﻿/* ── Auth pages (login, signup, reset, forgot) ── */
 .authPage {
   min-height: 100vh;
+  background: #f2ede8;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1rem;
-  background: #0E1F14;
-  background-image:
-    radial-gradient(ellipse 60% 50% at 20% 60%, rgba(26,74,46,0.35) 0%, transparent 70%),
-    radial-gradient(ellipse 45% 45% at 80% 20%, rgba(232,96,26,0.08) 0%, transparent 65%);
+  padding: 2rem 1.25rem;
+  font-family: 'DM Sans', sans-serif;
 }
 
-/* Card */
 .authCard {
-  background: #152318;
-  border: 1px solid rgba(244,239,230,0.08);
-  border-radius: 20px;
-  box-shadow: 0 8px 48px rgba(0,0,0,0.5);
-  padding: 2.75rem 2.25rem;
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 18px;
+  box-shadow: 0 4px 40px rgba(0,0,0,0.08);
+  padding: 2.5rem 2rem;
   width: 100%;
-  max-width: 460px;
-  position: relative;
+  max-width: 440px;
 }
-.authCard::before {
-  content: '';
-  position: absolute;
-  top: -1px; left: -1px; right: -1px; bottom: -1px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, rgba(232,96,26,0.12), transparent 50%);
-  pointer-events: none;
-  z-index: 0;
-}
-.authCard > * { position: relative; z-index: 1; }
 
-.authCardWide { max-width: 660px; }
-
-/* Logo / brand */
-.authLogo {
+/* Brand header */
+.authBrand {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  justify-content: center;
+  gap: 0.55rem;
   text-decoration: none;
-  font-family: 'Playfair Display', serif;
-  font-weight: 700;
-  font-size: 1.15rem;
-  color: #F4EFE6;
   margin-bottom: 2rem;
+}
+.authLogo {
+  width: 36px !important;
+  height: 36px !important;
+  object-fit: contain;
+  border-radius: 6px;
+}
+.authBrandName {
+  font-family: 'Playfair Display', serif;
+  font-weight: 500;
+  font-size: 1.15rem;
+  color: #1a1208;
   letter-spacing: -0.01em;
 }
-.authLogo img { border-radius: 8px; }
 
-/* Headings */
+/* Title block */
 .authTitle {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(1.5rem, 4vw, 2rem);
-  font-weight: 700;
-  margin: 0 0 0.4rem;
-  color: #F4EFE6;
-  line-height: 1.15;
+  font-weight: 500;
+  font-size: 1.65rem;
+  color: #1a1208;
+  text-align: center;
+  margin: 0 0 0.5rem;
   letter-spacing: -0.02em;
+  line-height: 1.25;
 }
-.authTitle em { color: #E8601A; font-style: italic; }
-
-.authSub {
-  color: rgba(244,239,230,0.5);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.95rem;
-  margin: 0 0 1.75rem;
-  line-height: 1.55;
+.authSubtitle {
+  text-align: center;
+  font-size: 0.92rem;
+  color: rgba(26,18,8,0.55);
+  margin: 0 0 2rem;
+  line-height: 1.5;
 }
 
 /* Form */
-.authForm {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+.authForm { display: flex; flex-direction: column; gap: 1rem; }
 
-.fieldGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.875rem;
-}
-@media (max-width: 520px) {
-  .fieldGrid { grid-template-columns: 1fr; }
-}
-
-.fieldLabel {
-  display: flex;
-  flex-direction: column;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 600;
-  font-size: 0.83rem;
-  color: rgba(244,239,230,0.75);
-  gap: 0.4rem;
-  letter-spacing: 0.01em;
-}
-
-.optional {
-  font-weight: 400;
-  color: rgba(244,239,230,0.35);
-  font-size: 0.78rem;
-}
+.fieldGroup { display: flex; flex-direction: column; gap: 0.4rem; }
+.fieldLabel { font-size: 0.83rem; font-weight: 600; color: #1a1208; letter-spacing: 0.01em; }
 
 .fieldInput {
-  padding: 0.7rem 0.9rem;
+  width: 100%; padding: 0.65rem 0.9rem;
+  background: #faf8f5;
+  border: 1px solid rgba(0,0,0,0.13);
   border-radius: 10px;
-  border: 1.5px solid rgba(244,239,230,0.1);
   font-size: 0.95rem;
-  font-family: 'DM Sans', sans-serif;
-  background: rgba(244,239,230,0.04);
-  color: #F4EFE6;
-  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-  margin-top: 0;
-  width: 100%;
-}
-.fieldInput::placeholder { color: rgba(244,239,230,0.25); }
-.fieldInput:focus {
+  color: #1a1208;
+  font-family: inherit;
   outline: none;
-  border-color: #E8601A;
-  box-shadow: 0 0 0 3px rgba(232,96,26,0.15);
-  background: rgba(244,239,230,0.06);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
 }
-select.fieldInput option { background: #152318; color: #F4EFE6; }
-
-/* Checkbox */
-.checkboxLabel {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 0.6rem;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.9rem;
-  color: rgba(244,239,230,0.65);
-  font-weight: 400;
-  cursor: pointer;
-  line-height: 1.5;
-}
-.checkbox {
-  margin-top: 2px;
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  accent-color: #E8601A;
+.fieldInput::placeholder { color: rgba(26,18,8,0.35); }
+.fieldInput:focus {
+  border-color: #c0431a;
+  box-shadow: 0 0 0 3px rgba(192,67,26,0.12);
+  background: #fff;
 }
 
-/* Error / success */
-.errorBox {
-  background: rgba(248,113,113,0.1);
-  border: 1px solid rgba(248,113,113,0.25);
-  color: #fca5a5;
-  padding: 0.7rem 0.9rem;
-  border-radius: 9px;
-  font-size: 0.9rem;
-  font-family: 'DM Sans', sans-serif;
+/* Password wrapper */
+.passwordWrap { position: relative; }
+.passwordWrap .fieldInput { padding-right: 2.75rem; }
+.passwordToggle {
+  position: absolute; right: 0.7rem; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  color: rgba(26,18,8,0.4); display: flex; align-items: center;
+  padding: 0; min-height: unset;
+  transition: color 0.15s;
 }
+.passwordToggle:hover { color: #1a1208; }
 
-/* Inline field-level error (below a specific input) */
-.fieldError {
-  color: #fca5a5;
-  font-size: 0.8rem;
-  margin: 4px 0 0;
-  font-family: 'DM Sans', sans-serif;
-}
-
-/* Red border on the input that has an error */
-.fieldInputError {
-  border-color: rgba(248, 113, 113, 0.6) !important;
-  box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.15);
-}
-
-.successBox {
-  background: rgba(26,74,46,0.3);
-  border: 1px solid rgba(76,175,110,0.2);
-  border-radius: 12px;
-  padding: 1.25rem;
-  margin-bottom: 0.5rem;
-  color: rgba(244,239,230,0.85);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
+/* Row helpers */
+.fieldRow { display: flex; gap: 0.75rem; }
+.fieldRow .fieldGroup { flex: 1; }
 
 /* Submit button */
-.submitBtn {
-  display: block;
-  width: 100%;
-  padding: 0.85rem 1rem;
-  background: #E8601A;
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 700;
-  font-family: 'DM Sans', sans-serif;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.15s, opacity 0.15s;
-  min-height: 50px;
-  margin-top: 0.25rem;
-  letter-spacing: 0.01em;
+.authSubmit {
+  margin-top: 0.5rem; width: 100%;
+  padding: 0.75rem 1.5rem;
+  background: #c0431a; color: #fff;
+  border: none; border-radius: 999px;
+  font-size: 1rem; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+  transition: background 0.15s, transform 0.15s;
+  min-height: unset;
 }
-.submitBtn:hover:not(:disabled) {
-  background: #FF7030;
-  transform: translateY(-1px);
-}
-.submitBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+.authSubmit:hover { background: #a83815; transform: translateY(-1px); }
+.authSubmit:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 
-/* Forgot password link */
-.forgotLink {
-  text-align: center;
-  font-family: 'DM Sans', sans-serif;
+/* Links */
+.authLinks {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 0.5rem;
+  margin-top: 1.25rem;
   font-size: 0.88rem;
-  color: rgba(244,239,230,0.4);
-  margin: 0;
 }
-.forgotLink a { color: #E8601A; text-decoration: none; }
-.forgotLink a:hover { text-decoration: underline; }
-
-/* Footer (switch to login / signup) */
-.authFooter {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1.75rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid rgba(244,239,230,0.07);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.9rem;
-  color: rgba(244,239,230,0.4);
-  flex-wrap: wrap;
-}
-
-.authLink {
-  color: #E8601A;
-  font-weight: 600;
-  text-decoration: none;
-}
+.authLink { color: #c0431a; text-decoration: none; font-weight: 600; }
 .authLink:hover { text-decoration: underline; }
+.authMuted { color: rgba(26,18,8,0.5); }
 
-/* Page-level mini bar at bottom */
-.authPageBar {
-  text-align: center;
-  padding: 1rem 1.5rem;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  color: rgba(244,239,230,0.25);
-  background: #0E1F14;
-  border-top: 1px solid rgba(244,239,230,0.05);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
+/* Divider */
+.authDivider {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin: 0.25rem 0; color: rgba(26,18,8,0.35); font-size: 0.82rem;
 }
-.authPageBar a { color: rgba(244,239,230,0.4); text-decoration: none; }
-.authPageBar a:hover { color: #E8601A; }
+.authDivider::before,
+.authDivider::after { content: ''; flex: 1; height: 1px; background: rgba(0,0,0,0.1); }
 
-/* ── Role-specific field sections ── */
-.roleSection {
-  background: rgba(26,74,46,0.15);
-  border: 1px solid rgba(26,74,46,0.35);
-  border-radius: 12px;
-  padding: 1rem 1.2rem 1.2rem;
-  margin-bottom: 0.5rem;
+/* Social auth buttons */
+.socialBtn {
+  width: 100%; padding: 0.6rem 1rem;
+  background: #fff; border: 1px solid rgba(0,0,0,0.13);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+  font-size: 0.9rem; font-weight: 600; color: #1a1208;
+  cursor: pointer; font-family: inherit;
+  transition: background 0.15s, border-color 0.15s;
+  min-height: unset;
 }
-.roleSectionLabel {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(244,239,230,0.45);
-  margin: 0 0 0.75rem;
+.socialBtn:hover { background: #faf8f5; border-color: rgba(0,0,0,0.2); }
+
+/* Alerts */
+.authError {
+  background: rgba(192,57,43,0.08);
+  border: 1px solid rgba(192,57,43,0.25);
+  border-radius: 10px; padding: 0.7rem 0.9rem;
+  font-size: 0.88rem; color: #c0392b;
 }
+.authSuccess {
+  background: rgba(26,107,58,0.08);
+  border: 1px solid rgba(26,107,58,0.22);
+  border-radius: 10px; padding: 0.7rem 0.9rem;
+  font-size: 0.88rem; color: #1a6b3a;
+}
+
+/* OTP / code inputs */
+.otpRow { display: flex; gap: 0.5rem; justify-content: center; }
+.otpInput {
+  width: 52px; height: 56px; text-align: center;
+  font-size: 1.4rem; font-weight: 700; color: #1a1208;
+  background: #faf8f5; border: 1.5px solid rgba(0,0,0,0.13);
+  border-radius: 10px; font-family: 'JetBrains Mono', monospace;
+  outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+}
+.otpInput:focus {
+  border-color: #c0431a;
+  box-shadow: 0 0 0 3px rgba(192,67,26,0.12);
+  background: #fff;
+}
+
+/* Checkbox */
+.checkRow { display: flex; align-items: flex-start; gap: 0.6rem; }
+.checkRow input[type="checkbox"] {
+  width: 17px; height: 17px; flex-shrink: 0;
+  accent-color: #c0431a; margin-top: 2px; cursor: pointer;
+}
+.checkRow label { font-size: 0.88rem; color: rgba(26,18,8,0.65); cursor: pointer; line-height: 1.5; }
+
+/* Role select cards */
+.roleGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.roleCard {
+  border: 1.5px solid rgba(0,0,0,0.12); border-radius: 12px;
+  padding: 1rem; cursor: pointer; transition: border-color 0.15s, background 0.15s;
+  background: #faf8f5; text-align: center;
+}
+.roleCard:hover { border-color: rgba(192,67,26,0.4); background: rgba(192,67,26,0.04); }
+.roleCardActive { border-color: #c0431a; background: rgba(192,67,26,0.07); }
+.roleLabel { font-size: 0.88rem; font-weight: 700; color: #1a1208; }
+.roleDesc { font-size: 0.78rem; color: rgba(26,18,8,0.5); margin-top: 0.25rem; }
+
+/* Step indicator */
+.stepsRow { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; }
+.stepDot { width: 8px; height: 8px; border-radius: 50%; background: rgba(0,0,0,0.15); transition: background 0.2s; }
+.stepDotActive { background: #c0431a; }
+
+/* Loading spinner */
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

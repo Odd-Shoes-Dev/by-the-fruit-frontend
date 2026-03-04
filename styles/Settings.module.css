@@ -1,4 +1,4 @@
-/* ── Layout ── */
+﻿/* â”€â”€ Layout â”€â”€ */
 .settingsLayout {
   display: grid;
   grid-template-columns: 220px 1fr;
@@ -10,7 +10,7 @@
   .settingsLayout { grid-template-columns: 1fr; }
 }
 
-/* ── Sidebar ── */
+/* â”€â”€ Sidebar â”€â”€ */
 .tabSidebar {
   position: sticky;
   top: 80px;
@@ -23,8 +23,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: var(--dark2, #152318);
-  border: 1px solid rgba(244,239,230,0.08);
+  background: var(--dark2, #ffffff);
+  border: 1px solid rgba(0,0,0,0.07);
   border-radius: 14px;
   padding: 14px;
 }
@@ -42,7 +42,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #E8601A 0%, #1A4A2E 100%);
+  background: linear-gradient(135deg, #c0431a 0%, #1A4A2E 100%);
   color: #fff;
   font-size: 1rem;
   font-weight: 700;
@@ -57,7 +57,7 @@
 .miniName {
   font-size: 0.88rem;
   font-weight: 700;
-  color: #F4EFE6;
+  color: #1a1208;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -65,7 +65,7 @@
 
 .miniViewLink {
   font-size: 0.78rem;
-  color: #E8601A;
+  color: #c0431a;
   text-decoration: none;
   font-weight: 500;
 }
@@ -73,8 +73,8 @@
 
 /* Tab nav */
 .tabNav {
-  background: #152318;
-  border: 1px solid rgba(244,239,230,0.08);
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.07);
   border-radius: 14px;
   overflow: hidden;
 }
@@ -90,7 +90,7 @@
   border-left: 3px solid transparent;
   font-size: 0.9rem;
   font-weight: 500;
-  color: rgba(244,239,230,0.5);
+  color: rgba(26,18,8,0.5);
   cursor: pointer;
   font-family: inherit;
   text-align: left;
@@ -100,18 +100,18 @@
 .tabBtn svg { flex-shrink: 0; }
 
 .tabBtn:hover {
-  background: rgba(244,239,230,0.04);
-  color: #F4EFE6;
+  background: rgba(0,0,0,0.03);
+  color: #1a1208;
 }
 
 .tabBtnActive {
-  border-left-color: #E8601A;
-  color: #E8601A;
+  border-left-color: #c0431a;
+  color: #c0431a;
   background: rgba(232,96,26,0.07);
   font-weight: 700;
 }
 
-.tabBtnActive svg { color: #E8601A; }
+.tabBtnActive svg { color: #c0431a; }
 
 /* Mobile: tabs become a horizontal scroll row */
 @media (max-width: 700px) {
@@ -140,7 +140,7 @@
   }
 }
 
-/* ── Tab content ── */
+/* â”€â”€ Tab content â”€â”€ */
 .tabContent { min-width: 0; }
 
 .tabForm {
@@ -149,10 +149,10 @@
   gap: 18px;
 }
 
-/* ── Section cards ── */
+/* â”€â”€ Section cards â”€â”€ */
 .sectionCard {
   background: var(--dark2);
-  border: 1px solid rgba(244,239,230,0.08);
+  border: 1px solid rgba(0,0,0,0.07);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 2px 16px rgba(0,0,0,0.25);
@@ -160,8 +160,8 @@
 
 .sectionHeader {
   padding: 16px 22px 12px;
-  border-bottom: 1px solid rgba(244,239,230,0.07);
-  background: rgba(14,31,20,0.5);
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  background: rgba(242,237,232,0.8);
 }
 
 .sectionTitle {
@@ -173,7 +173,7 @@
 
 .sectionSub {
   font-size: 0.82rem;
-  color: rgba(244,239,230,0.55);
+  color: rgba(26,18,8,0.55);
   margin: 0;
 }
 
@@ -184,7 +184,7 @@
   gap: 14px;
 }
 
-/* ── Photo ── */
+/* â”€â”€ Photo â”€â”€ */
 .photoRow {
   display: flex;
   align-items: center;
@@ -199,7 +199,7 @@
   height: 72px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid rgba(244,239,230,0.12);
+  border: 3px solid rgba(0,0,0,0.08);
   display: block;
 }
 
@@ -207,7 +207,7 @@
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #E8601A 0%, #1A4A2E 100%);
+  background: linear-gradient(135deg, #c0431a 0%, #1A4A2E 100%);
   color: #fff;
   font-size: 1.5rem;
   font-weight: 700;
@@ -238,7 +238,7 @@
 
 .photoHint { font-size: 0.8rem; color: var(--muted); margin: 0 0 8px; }
 
-/* ── Fields ── */
+/* â”€â”€ Fields â”€â”€ */
 .fieldGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -255,17 +255,17 @@
   color: var(--cream);
 }
 
-.optional { font-weight: 400; color: rgba(244,239,230,0.5); font-size: 0.8rem; }
+.optional { font-weight: 400; color: rgba(26,18,8,0.5); font-size: 0.8rem; }
 
-.fieldHint { font-size: 0.78rem; color: rgba(244,239,230,0.5); margin: 2px 0 0; }
+.fieldHint { font-size: 0.78rem; color: rgba(26,18,8,0.5); margin: 2px 0 0; }
 
 .fieldInput {
   padding: 0.58rem 0.8rem;
   border-radius: 9px;
-  border: 1.5px solid rgba(244,239,230,0.12);
+  border: 1.5px solid rgba(0,0,0,0.08);
   font-size: 0.92rem;
   font-family: inherit;
-  background: rgba(244,239,230,0.04);
+  background: rgba(0,0,0,0.03);
   color: var(--cream);
   transition: border-color 0.15s, box-shadow 0.15s;
   width: 100%;
@@ -277,10 +277,10 @@
   outline: none;
   border-color: var(--orange);
   box-shadow: 0 0 0 3px rgba(232,96,26,0.15);
-  background: rgba(244,239,230,0.06);
+  background: rgba(0,0,0,0.05);
 }
 
-/* ── Account info grid ── */
+/* â”€â”€ Account info grid â”€â”€ */
 .infoGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -293,15 +293,15 @@
   flex-direction: column;
   gap: 3px;
   padding: 12px 14px;
-  background: rgba(244,239,230,0.04);
+  background: rgba(0,0,0,0.03);
   border-radius: 10px;
-  border: 1px solid rgba(244,239,230,0.08);
+  border: 1px solid rgba(0,0,0,0.07);
 }
 
 .infoLabel {
   font-size: 0.72rem;
   font-weight: 600;
-  color: rgba(244,239,230,0.45);
+  color: rgba(26,18,8,0.45);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -315,7 +315,7 @@
 .statusBadge[data-status="pending"]  { color: #d97706; }
 .statusBadge[data-status="rejected"] { color: #dc2626; }
 
-/* ── Notification toggles ── */
+/* â”€â”€ Notification toggles â”€â”€ */
 .toggleList { display: flex; flex-direction: column; gap: 0; }
 
 .toggleRow {
@@ -324,12 +324,12 @@
   justify-content: space-between;
   gap: 16px;
   padding: 12px 0;
-  border-bottom: 1px solid rgba(244,239,230,0.07);
+  border-bottom: 1px solid rgba(0,0,0,0.04);
 }
 .toggleRow:last-child { border-bottom: none; }
 
 .toggleLabel { font-size: 0.9rem; font-weight: 600; color: var(--cream); }
-.toggleSub { font-size: 0.8rem; color: rgba(244,239,230,0.5); margin-top: 2px; }
+.toggleSub { font-size: 0.8rem; color: rgba(26,18,8,0.5); margin-top: 2px; }
 
 .toggle { position: relative; display: inline-block; width: 42px; height: 24px; flex-shrink: 0; }
 .toggle input { opacity: 0; width: 0; height: 0; }
@@ -337,7 +337,7 @@
 .toggleSlider {
   position: absolute;
   inset: 0;
-  background: rgba(244,239,230,0.15);
+  background: rgba(0,0,0,0.09);
   border-radius: 999px;
   cursor: pointer;
   transition: background 0.2s;
@@ -357,7 +357,7 @@
 .toggle input:checked + .toggleSlider { background: var(--orange); }
 .toggle input:checked + .toggleSlider::before { transform: translateX(18px); }
 
-/* ── Privacy guidelines ── */
+/* â”€â”€ Privacy guidelines â”€â”€ */
 .guidelineList {
   list-style: none;
   padding: 0;
@@ -368,20 +368,20 @@
 }
 .guidelineList li {
   font-size: 0.88rem;
-  color: rgba(244,239,230,0.7);
+  color: rgba(26,18,8,0.7);
   line-height: 1.55;
   padding-left: 18px;
   position: relative;
 }
 .guidelineList li::before {
-  content: '•';
+  content: 'â€¢';
   position: absolute;
   left: 4px;
   color: var(--orange);
   font-weight: 700;
 }
 
-/* ── Danger zone ── */
+/* â”€â”€ Danger zone â”€â”€ */
 .dangerBtn {
   background: rgba(248,113,113,0.08);
   color: #f87171;
@@ -399,7 +399,7 @@
 .deleteConfirm { display: flex; flex-direction: column; gap: 12px; }
 .deleteConfirm p { font-size: 0.9rem; color: #f87171; margin: 0; }
 
-/* ── Buttons ── */
+/* â”€â”€ Buttons â”€â”€ */
 .saveBtn {
   background: var(--orange);
   color: #fff;
@@ -419,7 +419,7 @@
 
 .outlineBtn {
   background: transparent;
-  border: 1.5px solid rgba(244,239,230,0.18);
+  border: 1.5px solid rgba(0,0,0,0.08);
   border-radius: 8px;
   padding: 7px 16px;
   font-size: 0.88rem;
@@ -434,7 +434,7 @@
 
 .formActions { padding-top: 4px; }
 
-/* ── Feedback ── */
+/* â”€â”€ Feedback â”€â”€ */
 .errorBox {
   background: rgba(248,113,113,0.08);
   border: 1px solid rgba(248,113,113,0.2);
@@ -454,13 +454,13 @@
   font-weight: 500;
 }
 
-/* ── Loading skeleton ── */
+/* â”€â”€ Loading skeleton â”€â”€ */
 .loadingRow { display: flex; flex-direction: column; gap: 12px; max-width: 720px; margin-top: 12px; }
 
 .loadingPulse {
   height: 16px;
   border-radius: 7px;
-  background: linear-gradient(90deg, rgba(244,239,230,0.06) 25%, rgba(244,239,230,0.10) 50%, rgba(244,239,230,0.06) 75%);
+  background: linear-gradient(90deg, rgba(0,0,0,0.05) 25%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.05) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 }

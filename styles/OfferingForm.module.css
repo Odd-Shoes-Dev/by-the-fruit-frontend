@@ -1,4 +1,4 @@
-/* =====================
+﻿/* =====================
    Offering Create / Edit Form
    ===================== */
 
@@ -23,7 +23,7 @@
 }
 .backLink {
   font-size: 0.82rem;
-  color: rgba(244,239,230,0.5);
+  color: rgba(26,18,8,0.5);
   text-decoration: none;
   transition: color 0.15s;
 }
@@ -31,7 +31,7 @@
 
 .dashLink {
   font-size: 0.77rem;
-  color: rgba(244,239,230,0.4);
+  color: rgba(26,18,8,0.4);
   text-decoration: none;
   transition: color 0.15s;
 }
@@ -40,7 +40,7 @@
 .deleteBtn {
   font-size: 0.77rem;
   font-weight: 600;
-  color: #ff8a80;
+  color: #c0392b;
   background: transparent;
   border: 1px solid rgba(229,57,53,0.3);
   border-radius: 7px;
@@ -74,7 +74,7 @@
 }
 .sub {
   font-size: 0.84rem;
-  color: rgba(244,239,230,0.45);
+  color: rgba(26,18,8,0.45);
   margin: 0 0 1.75rem;
 }
 
@@ -100,15 +100,15 @@
 .label {
   font-size: 0.78rem;
   font-weight: 600;
-  color: rgba(244,239,230,0.6);
+  color: rgba(26,18,8,0.6);
   letter-spacing: 0.02em;
 }
 .input, .select, .textarea {
   width: 100%;
   box-sizing: border-box;
   padding: 0.65rem 0.9rem;
-  background: rgba(244,239,230,0.04);
-  border: 1px solid rgba(244,239,230,0.12);
+  background: rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.08);
   border-radius: 9px;
   color: var(--cream);
   font-size: 0.9rem;
@@ -119,9 +119,9 @@
 .input:focus, .select:focus, .textarea:focus {
   border-color: rgba(232,96,26,0.5);
 }
-.input::placeholder, .textarea::placeholder { color: rgba(244,239,230,0.2); }
+.input::placeholder, .textarea::placeholder { color: rgba(0,0,0,0.1); }
 .select { appearance: none; cursor: pointer; }
-.select option { background: #152318; }
+.select option { background: #ffffff; }
 .textarea { resize: vertical; line-height: 1.55; }
 
 /* Checkbox */
@@ -130,7 +130,7 @@
   align-items: center;
   gap: 9px;
   font-size: 0.83rem;
-  color: rgba(244,239,230,0.58);
+  color: rgba(26,18,8,0.5);
   cursor: pointer;
 }
 .checkbox { accent-color: var(--orange); width: 15px; height: 15px; flex-shrink: 0; }
@@ -138,7 +138,7 @@
 /* Messages */
 .errorMsg {
   font-size: 0.83rem;
-  color: #ff8a80;
+  color: #c0392b;
   margin: 0;
 }
 .successMsg {
@@ -148,7 +148,7 @@
 }
 .fieldError {
   font-size: 0.75rem;
-  color: #ff8a80;
+  color: #c0392b;
   margin: 2px 0 0;
 }
 
@@ -177,7 +177,7 @@
 
 .cancelLink {
   font-size: 0.85rem;
-  color: rgba(244,239,230,0.4);
+  color: rgba(26,18,8,0.4);
   text-decoration: none;
   transition: color 0.15s;
 }
@@ -197,7 +197,7 @@
   margin-bottom: 4px;
 }
 .bizBannerLabel {
-  color: rgba(244,239,230,0.5);
+  color: rgba(26,18,8,0.5);
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -205,6 +205,6 @@
 
 .fieldHint {
   font-size: 0.83rem;
-  color: rgba(244,239,230,0.45);
+  color: rgba(26,18,8,0.45);
   margin: 4px 0 0;
 }

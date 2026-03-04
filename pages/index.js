@@ -1,8 +1,7 @@
-import Head from 'next/head'
+﻿import Head from 'next/head'
 import Link from 'next/link'
 import styles from '../styles/Home.module.css'
-import FluffyButton from '../components/FluffyButton'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getToken, isApproved, apiFetch } from '../lib/api'
 import {
   IconSprout, IconTree, IconApple,
@@ -13,60 +12,42 @@ import {
 const STEPS = [
   {
     n: '01',
-    ico: <IconSprout size={44} />,
+    ico: <IconSprout size={28} />,
     title: 'Share Your Story',
     text: "Founders share their mission and empty chairs. Investors share their gifts and expertise. Relationship before transaction.",
   },
   {
     n: '02',
-    ico: <IconTree size={44} />,
+    ico: <IconTree size={28} />,
     title: 'The Orchard Matches',
     text: 'Our alignment engine maps founder needs to investor gifts — skills, domains, stage fit, and capital range.',
   },
   {
     n: '03',
-    ico: <IconApple size={44} />,
+    ico: <IconApple size={28} />,
     title: 'Come to the Table',
     text: "Curated introductions lead to genuine conversation. Every connection is intentional. The founder's mission is the north star.",
   },
 ]
 
-const SECTORS = [
-  {
-    ico: <IconMedia size={42} />,
-    title: 'Media',
-    text: 'Stories that shape culture. Platforms and content that amplify truth, beauty, and redemptive narratives for the world.',
-  },
-  {
-    ico: <IconTech size={42} />,
-    title: 'Tech',
-    text: 'Tools that empower. Software, AI, and infrastructure built to serve communities and solve real problems with Kingdom purpose.',
-  },
-  {
-    ico: <IconEntertainment size={42} />,
-    title: 'Entertainment',
-    text: 'Experiences that connect. Film, music, gaming, and live events that bring people together around shared values.',
-  },
-]
-
 const PILLARS = [
   {
-    dot: <IconDollar size={18} />,
+    dot: <IconDollar size={16} />,
     title: 'Redemptive Capital',
     text: 'Investments measured not just by ROI, but by their capacity to restore, renew, and rebuild.',
   },
   {
-    dot: <IconInfinity size={18} />,
+    dot: <IconInfinity size={16} />,
     title: 'Radical Hospitality',
     text: 'Every founder has an empty chair. We help fill it with wisdom, networks, and genuine support.',
   },
   {
-    dot: <IconLeaf size={18} />,
+    dot: <IconLeaf size={16} />,
     title: 'Ecosystem Growth',
     text: 'Ventures cross-pollinate, share roots, and bear fruit together in our orchard.',
   },
   {
-    dot: <IconStar size={18} />,
+    dot: <IconStar size={16} />,
     title: 'Founder-First',
     text: "Transparent terms, no dark patterns. The founder's mission is always the north star.",
   },
@@ -80,10 +61,29 @@ export default function Home() {
   const [newsletterEmail, setNewsletterEmail] = useState('')
   const [newsletterMessage, setNewsletterMessage] = useState('')
   const [newsletterAgree, setNewsletterAgree] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
     setToken(!!getToken())
     setApproved(isApproved())
+  }, [])
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // Fade-up on scroll
+  useEffect(() => {
+    const els = document.querySelectorAll('.' + styles.fadeUp)
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add(styles.fadeUpVisible)
+      })
+    }, { threshold: 0.12 })
+    els.forEach(el => obs.observe(el))
+    return () => obs.disconnect()
   }, [])
 
   useEffect(() => {
@@ -131,16 +131,10 @@ export default function Home() {
       <div className={styles.main}>
 
         {/* ── NAV ─────────────────────────────────────────────────── */}
-        <nav className={styles.nav}>
+        <nav className={`${styles.nav}${scrolled ? ' ' + styles.navScrolled : ''}`}>
           <a href="/" className={styles.navLogo}>
-            <img 
-              src="/images/logo.png" 
-              alt="By The Fruit Logo" 
-              style={{ height: '40px', width: 'auto' }}
-            />
-            <span className={styles.navBrandName}>
-              <span style={{ fontSize: '1.3em' }}>B</span>y <span style={{ fontSize: '1.3em' }}>T</span>he <span style={{ fontSize: '1.3em' }}>F</span>ruit
-            </span>
+            <img src="/images/logo.png" alt="By The Fruit" />
+            <span className={styles.navBrandName}>By The Fruit</span>
           </a>
 
           <ul className={styles.navLinks}>
@@ -152,97 +146,49 @@ export default function Home() {
 
           <div className={styles.navCta}>
             {token && approved ? (
-              <Link href="/community" className={styles.navGhostBtn}>Dashboard →</Link>
+              <Link href="/community" className={styles.navGhostBtn}>Dashboard</Link>
             ) : token ? (
               <Link href="/pending" className={styles.navGhostBtn}>Pending Approval</Link>
             ) : (
               <>
-                <Link href="/login" className={styles.navGhostBtn}>Sign In</Link>
-                <div className={styles.navCtaButton}>
-                  <FluffyButton
-                    label="Join the Collective →"
-                    color="#E8601A"
-                    strands={900}
-                    strandLen={6}
-                    width={160}
-                    height={38}
-                    fontSize={12}
-                    href="/signup"
-                  />
-                </div>
+                <Link href="/login" className={styles.navGhostBtn}>Log in</Link>
+                <Link href="/signup" className={styles.navPrimaryBtn}>Get Started</Link>
               </>
             )}
           </div>
         </nav>
 
         {/* ── HERO ────────────────────────────────────────────────── */}
-        <div className={styles.hero} id="vision">
-          <div className={styles.heroBg} />
-          <div className={styles.heroTexture} />
+        <section className={styles.hero} id="vision">
+          <div className={styles.heroEyebrow}>· Media · Tech · Entertainment</div>
 
-          {/* Left */}
-          <div className={styles.heroLeft}>
-            <div className={styles.heroEyebrow}>
-              <span className={styles.eyebrowText}>· Media · Tech · Entertainment</span>
-            </div>
+          <h1 className={styles.heroH1}>
+            The VC System Is<br />
+            <em>Broken.</em>{' '}
+            <span style={{ color: 'var(--text-dark)' }}>We&apos;re</span>{' '}
+            <span style={{ color: 'var(--orange)' }}>Fixing</span>{' '}
+            <span style={{ color: 'var(--text-dark)' }}>It.</span>
+          </h1>
 
-            <h1 className={styles.heroH1}>
-              The VC<br />
-              System Is<br />
-              <em>Broken.</em>
-            </h1>
-            <p className={styles.heroFixLine}>We&apos;re <span style={{ color: 'var(--orange)' }}>fixing</span> it.</p>
+          <p className={styles.heroSub}>
+            <strong>By The Fruit</strong> — a faith-rooted investment marketplace built for
+            Christian investors and purpose-driven founders. Capital meets calling across
+            Media, Tech, and Entertainment, built on{' '}
+            <strong>trust, transparency, and Kingdom values</strong>.
+          </p>
 
-            <p className={styles.heroSub}>
-              <strong style={{ fontStyle: 'italic' }}>Introducing <span style={{ fontSize: '1.1em' }}>B</span>y <span style={{ fontSize: '1.1em' }}>T</span>he <span style={{ fontSize: '1.1em' }}>F</span>ruit</strong> — a faith-rooted investment marketplace built for
-              Christian investors and purpose-driven founders. We connect capital with calling across Media,
-              Tech, and Entertainment, where every deal is built on <strong>trust, transparency, and Kingdom values</strong>.
-            </p>
-
-            <div className={styles.heroCtas}>
-              <FluffyButton
-                label="Join as an Investor →"
-                color="#E8601A"
-                strands={2200}
-                strandLen={9}
-                width={200}
-                height={54}
-                fontSize={15}
-                href={token && approved ? '/deals' : '/signup?role=investor'}
-              />
-              <a href="/signup?role=founder" className={styles.ghostBtn}>
-                Join as a Founder
-              </a>
-            </div>
+          <div className={styles.heroCtas}>
+            <Link
+              href={token && approved ? '/deals' : '/signup?role=investor'}
+              className={styles.btnPrimary}
+            >
+              Join as an Investor
+            </Link>
+            <Link href="/signup?role=founder" className={styles.btnOutline}>
+              Join as a Founder
+            </Link>
           </div>
-
-          {/* Right */}
-          <div className={styles.heroRight}>
-            <FluffyButton
-              label={
-                <span style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: 20, alignItems: 'center' }}>
-                  <span style={{ fontFamily: "'Playfair Display'", fontSize: 22, fontWeight: 700, lineHeight: 1.2 }}>Known</span>
-                  <span style={{ fontFamily: "'Playfair Display'", fontSize: 22, fontWeight: 700, lineHeight: 1.2 }}>by its</span>
-                  <span style={{ fontFamily: "'Playfair Display'", fontSize: 30, fontWeight: 700, fontStyle: 'italic', lineHeight: 1.15 }}>Fruits.</span>
-                </span>
-              }
-              color="#E8601A"
-              strands={4000}
-              strandLen={12}
-              radius={22}
-              width={300}
-              height={150}
-              float
-              floatDelay="0s"
-            />
-
-            <div className={styles.heroTags}>
-              <FluffyButton label={<span style={{display:'flex',gap:5,alignItems:'center'}}><IconMedia size={13}/> Media</span>}          color="#1E6B3A" strands={800} strandLen={6} width={140} height={36} fontSize={12} float floatDelay="0.5s" />
-              <FluffyButton label={<span style={{display:'flex',gap:5,alignItems:'center'}}><IconTech size={13}/> Tech</span>}             color="#1E6B3A" strands={800} strandLen={6} width={110} height={36} fontSize={12} float floatDelay="1s"   />
-              <FluffyButton label={<span style={{display:'flex',gap:5,alignItems:'center'}}><IconEntertainment size={13}/> Entertainment</span>} color="#1E6B3A" strands={900} strandLen={6} width={165} height={36} fontSize={12} float floatDelay="1.5s" />
-            </div>
-          </div>
-        </div>
+        </section>
 
         {/* ── STATS ───────────────────────────────────────────────── */}
         <div className={styles.statsStrip}>
@@ -277,7 +223,7 @@ export default function Home() {
 
           <div className={styles.stepsGrid}>
             {STEPS.map(s => (
-              <div className={styles.stepCard} key={s.n}>
+              <div className={`${styles.stepCard} ${styles.fadeUp}`} key={s.n}>
                 <div className={styles.stepNum}>{s.n}</div>
                 <span className={styles.stepIco}>{s.ico}</span>
                 <h3 className={styles.stepCardH3}>{s.title}</h3>
@@ -290,32 +236,123 @@ export default function Home() {
         <div className={styles.hdiv} />
 
         {/* ── SECTORS ─────────────────────────────────────────────── */}
-        <div className={styles.section} id="sectors">
-          <div className={styles.secLabel}>Our Sectors</div>
-          <h2 className={styles.sectionH2}>Media · Tech · <em>Entertainment.</em></h2>
-          <p className={styles.secDesc}>
-            We invest exclusively in founders building Kingdom-aligned ventures across three
-            interconnected sectors that shape culture, connection, and creativity.
-          </p>
+        <div id="sectors">
+          <div className={styles.featuresHeaderWrap}>
+            <div className={styles.secLabel}>Our Sectors</div>
+            <h2 className={styles.sectionH2}>Media · Tech · <em>Entertainment.</em></h2>
+          </div>
 
-          <div className={styles.sectorsGrid}>
-            {SECTORS.map(s => (
-              <div className={styles.sectorCard} key={s.title}>
-                <span className={styles.sectorIco}>{s.ico}</span>
-                <h3 className={styles.sectorCardH3}>{s.title}</h3>
-                <p className={styles.sectorCardP}>{s.text}</p>
+          {/* Sector 1: Media */}
+          <div className={`${styles.featureRow} ${styles.fadeUp}`}>
+            <div className={styles.featureText}>
+              <span className={styles.featureLabel}>Media</span>
+              <h3 className={styles.featureH3}>Stories that<br /><em>shape culture.</em></h3>
+              <p className={styles.featureP}>
+                Platforms and content that amplify truth, beauty, and redemptive narratives for the world.
+                We back founders building the next generation of media that matters.
+              </p>
+            </div>
+            {/* Mock: Founder discovery */}
+            <div className={styles.uiCard}>
+              <div className={styles.mockSearch}>
+                <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{color:'var(--text-light)',flexShrink:0}}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <span>Media founders · Faith-aligned · Seed–Series A</span>
               </div>
-            ))}
+              {[
+                { init: 'SC', name: 'Sarah Chen', sub: 'Documentary Filmmaker', badge: 'badgeMedia', bl: 'Media' },
+                { init: 'JW', name: 'James Wright', sub: 'Podcast Network CEO', badge: 'badgeMedia', bl: 'Media' },
+                { init: 'MO', name: 'Maria Okonkwo', sub: 'Christian Streaming Co-founder', badge: 'badgeMedia', bl: 'Media' },
+              ].map((f, i) => (
+                <div className={styles.founderRow} key={i}>
+                  <div className={styles.founderAvatar}>{f.init}</div>
+                  <div className={styles.founderInfo}>
+                    <div className={styles.founderName}>
+                      {f.name}
+                      <span className={`${styles.founderBadge} ${styles[f.badge]}`}>{f.bl}</span>
+                    </div>
+                    <div className={styles.founderSub}>{f.sub}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.hdiv} />
+
+          {/* Sector 2: Tech */}
+          <div className={`${styles.featureRow} ${styles.featureRowReverse} ${styles.fadeUp}`} style={{paddingTop:80}}>
+            <div className={styles.featureText}>
+              <span className={styles.featureLabel}>Tech</span>
+              <h3 className={styles.featureH3}>Tools that <em>empower.</em></h3>
+              <p className={styles.featureP}>
+                Software, AI, and infrastructure built to serve communities and solve real problems
+                with Kingdom purpose. We connect capital to founders building what matters.
+              </p>
+            </div>
+            {/* Mock: Channel message */}
+            <div className={styles.channelCard}>
+              <div className={styles.channelHeader}>
+                <span className={styles.channelTitle}>Channel · TechVenture × Investor</span>
+                <span className={styles.channelStatus}>
+                  <span style={{width:6,height:6,borderRadius:'50%',background:'#2e7d32',display:'inline-block'}} />
+                  Connected
+                </span>
+              </div>
+              <div className={styles.msgRow}>
+                <div className={styles.msgAvatar}>TV</div>
+                <div className={styles.msgBubble}>We just hit 10k MAU and are raising our seed round. Would love your perspective on go-to-market.</div>
+              </div>
+              <div className={`${styles.msgRow} ${styles.msgRowReverse}`}>
+                <div className={styles.msgAvatar}>IN</div>
+                <div className={`${styles.msgBubble} ${styles.msgBubbleOwn}`}>Congratulations! Let&apos;s set up a call this week. I have experience scaling B2B SaaS in this space.</div>
+              </div>
+              <div className={styles.msgRow}>
+                <div className={styles.msgAvatar}>TV</div>
+                <div className={styles.msgBubble}>That would be amazing. Thursday at 2pm EST?</div>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.hdiv} />
+
+          {/* Sector 3: Entertainment */}
+          <div className={`${styles.featureRow} ${styles.fadeUp}`} style={{paddingTop:80}}>
+            <div className={styles.featureText}>
+              <span className={styles.featureLabel}>Entertainment</span>
+              <h3 className={styles.featureH3}>Experiences that <em>connect.</em></h3>
+              <p className={styles.featureP}>
+                Film, music, gaming, and live events that bring people together around shared values.
+                We fund the experiences that define a generation.
+              </p>
+            </div>
+            {/* Mock: Offering card */}
+            <div className={styles.offeringCard}>
+              <div className={styles.offeringName}>Redemption Pictures — Seed Round</div>
+              <div className={styles.offeringTagline}>Faith-forward film studio · Series of 4 feature films</div>
+              <div className={styles.offeringMeta}>
+                <span className={styles.offeringMetaLabel}>Target Raise</span>
+                <span className={styles.offeringMetaVal}>$2,500,000</span>
+              </div>
+              <div className={styles.offeringMeta}>
+                <span className={styles.offeringMetaLabel}>Min. Investment</span>
+                <span className={styles.offeringMetaVal}>$5,000</span>
+              </div>
+              <div style={{marginBottom:6,fontSize:'.78rem',color:'var(--text-light)'}}>62% funded</div>
+              <div className={styles.progressBar}>
+                <div className={styles.progressFill} />
+              </div>
+              <div className={styles.offeringCommit}>Commit Capital →</div>
+            </div>
           </div>
         </div>
 
         <div className={styles.hdiv} />
 
         {/* ── MANIFESTO ───────────────────────────────────────────── */}
-        <div className={styles.section} id="manifesto" style={{ paddingBottom: 0 }}>
-          <div className={styles.secLabel}>The Manifesto</div>
+        <div id="manifesto">
           <div className={styles.manifestoBlock}>
             <div>
+              <div className={styles.secLabel}>The Manifesto</div>
               <h2 className={styles.manifestoH2}>
                 The Redemptive<br />Tech <em>Manifesto.</em>
               </h2>
@@ -341,17 +378,17 @@ export default function Home() {
         {/* ── TESTIMONIALS (if any) ────────────────────────────────── */}
         {testimonials.length > 0 && (
           <>
-            <div className={styles.hdiv} style={{ marginTop: 88 }} />
+            <div className={styles.hdiv} />
             <div className={styles.section}>
               <div className={styles.secLabel}>Community Voices</div>
               <h2 className={styles.sectionH2}>What Members <em>Say.</em></h2>
               <div className={styles.stepsGrid}>
                 {testimonials.slice(0, 3).map((t, i) => (
-                  <div className={styles.sectorCard} key={i}>
+                  <div className={`${styles.sectorCard} ${styles.fadeUp}`} key={i}>
                     <p className={styles.sectorCardP} style={{ lineHeight: 1.75, fontStyle: 'italic', marginBottom: 16 }}>
                       &ldquo;{t.content || t.text || t.quote}&rdquo;
                     </p>
-                    <span className={styles.pillarTxtStrong} style={{ fontSize: '0.82rem', opacity: 0.7 }}>
+                    <span className={styles.pillarTxtStrong} style={{ fontSize: '.82rem', opacity: .7 }}>
                       — {t.author || t.name || 'Community Member'}
                     </span>
                   </div>
@@ -379,7 +416,7 @@ export default function Home() {
               <form className={styles.formStack} onSubmit={handleNewsletterSubmit}>
                 {newsletterStatus === 'sent' ? (
                   <div className={styles.formSuccess}>
-                    You&apos;re in. Welcome to the orchard. <IconApple size={16} />
+                    You&apos;re in. Welcome to the orchard.
                   </div>
                 ) : (
                   <>
@@ -418,16 +455,13 @@ export default function Home() {
                     {newsletterStatus === 'error' && (
                       <div className={styles.formError}>Something went wrong. Please try again.</div>
                     )}
-                    <FluffyButton
+                    <button
                       type="submit"
+                      className={styles.formSubmitBtn}
                       disabled={newsletterStatus === 'sending' || !newsletterEmail || !newsletterAgree}
-                      label={newsletterStatus === 'sending' ? 'Subscribing…' : 'Stay Connected →'}
-                      fullWidth
-                      height={48}
-                      strands={1500}
-                      strandLen={8}
-                      fontSize={15}
-                    />
+                    >
+                      {newsletterStatus === 'sending' ? 'Subscribing…' : 'Stay Connected →'}
+                    </button>
                   </>
                 )}
               </form>
@@ -437,7 +471,7 @@ export default function Home() {
 
         {/* ── CTA BLOCK ───────────────────────────────────────────── */}
         <div className={styles.ctaWrap}>
-          <div className={styles.ctaBlock}>
+          <div className={`${styles.ctaBlock} ${styles.fadeUp}`}>
             <div className={styles.ctaSecLabel}>A Table Set For Everyone</div>
             <h2 className={styles.ctaH2}>
               Know Us By<br />Our <em>Fruit.</em>
@@ -447,25 +481,18 @@ export default function Home() {
               a check — and every founder&apos;s mission finds its match.
             </p>
             <div className={styles.ctaButtons}>
-              <FluffyButton
-                label={<span style={{display:'flex',gap:6,alignItems:'center'}}><IconApple size={16}/> Join as an Investor</span>}
-                color="#E8601A"
-                strands={2800}
-                strandLen={10}
-                width={200}
-                height={58}
-                fontSize={16}
-                href={token && approved ? '/deals' : '/signup?role=investor'}/>
-              <FluffyButton
-                label="Join the Collective →"
-                color="#1E6B3A"
-                strands={2800}
-                strandLen={10}
-                width={220}
-                height={58}
-                fontSize={16}
+              <Link
+                href={token && approved ? '/deals' : '/signup?role=investor'}
+                className={styles.btnPrimary}
+              >
+                Join as an Investor
+              </Link>
+              <Link
                 href={token ? (approved ? '/community' : '/pending') : '/signup'}
-              />
+                className={styles.btnOutline}
+              >
+                Join the Collective →
+              </Link>
             </div>
           </div>
         </div>
@@ -474,11 +501,7 @@ export default function Home() {
         <footer className={styles.footer}>
           <div className={styles.footBrandWrap}>
             <div className={styles.footBrand}>
-              <img 
-                src="/images/logo.png" 
-                alt="By The Fruit Logo" 
-                style={{ height: '32px', width: 'auto' }}
-              />
+              <img src="/images/logo.png" alt="By The Fruit" />
             </div>
             <div className={styles.footSub}>bythefruit.com · © {new Date().getFullYear()} By the Fruit</div>
           </div>
@@ -490,7 +513,7 @@ export default function Home() {
             {token ? (
               <Link href="/community">Dashboard</Link>
             ) : (
-              <Link href="/login">Sign In</Link>
+              <Link href="/login">Log in</Link>
             )}
           </div>
 
