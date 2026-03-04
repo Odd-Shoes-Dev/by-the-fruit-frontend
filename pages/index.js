@@ -3,6 +3,7 @@ import Link from 'next/link'
 import styles from '../styles/Home.module.css'
 import { useEffect, useRef, useState } from 'react'
 import { getToken, isApproved, apiFetch } from '../lib/api'
+import FluffyButton from '../components/FluffyButton'
 import {
   IconSprout, IconTree, IconApple,
   IconMedia, IconTech, IconEntertainment,
@@ -147,13 +148,13 @@ export default function Home() {
 
           <div className={styles.navCta}>
             {token && approved ? (
-              <Link href="/community" className={styles.navGhostBtn}>Dashboard</Link>
+              <a href="/community" className={styles.navPrimaryBtn}>Dashboard</a>
             ) : token ? (
-              <Link href="/pending" className={styles.navGhostBtn}>Pending Approval</Link>
+              <a href="/pending" className={styles.navPrimaryBtn}>Pending Approval</a>
             ) : (
               <>
-                <Link href="/login" className={styles.navGhostBtn}>Log in</Link>
-                <Link href="/signup" className={styles.navPrimaryBtn}>Get Started</Link>
+                <a href="/login" className={styles.navPrimaryBtn}>Log in</a>
+                <a href="/signup" className={styles.navPrimaryBtn}>Get Started</a>
               </>
             )}
           </div>
@@ -177,13 +178,13 @@ export default function Home() {
             <a href="#manifesto" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Manifesto</a>
             <div className={styles.mobileDivider} />
             {token && approved ? (
-              <Link href="/community" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Dashboard</Link>
+              <a href="/community" className={styles.mobilePrimaryBtn}>Dashboard</a>
             ) : token ? (
-              <Link href="/pending" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Pending Approval</Link>
+              <a href="/pending" className={styles.mobilePrimaryBtn}>Pending Approval</a>
             ) : (
               <>
-                <Link href="/login" className={styles.mobileGhostBtn} onClick={() => setMenuOpen(false)}>Log in</Link>
-                <Link href="/signup" className={styles.mobilePrimaryBtn} onClick={() => setMenuOpen(false)}>Get Started</Link>
+                <a href="/login" className={styles.mobileGhostBtn}>Log in</a>
+                <a href="/signup" className={styles.mobilePrimaryBtn}>Get Started</a>
               </>
             )}
           </div>
@@ -196,9 +197,7 @@ export default function Home() {
           <h1 className={styles.heroH1}>
             The VC System Is<br />
             <em>Broken.</em>{' '}
-            <span style={{ color: 'var(--text-dark)' }}>We&apos;re</span>{' '}
-            <span style={{ color: 'var(--orange)' }}>Fixing</span>{' '}
-            <span style={{ color: 'var(--text-dark)' }}>It.</span>
+            <span style={{ color: '#FFFFFF' }}>We&apos;re Fixing It.</span>
           </h1>
 
           <p className={styles.heroSub}>
@@ -209,15 +208,63 @@ export default function Home() {
           </p>
 
           <div className={styles.heroCtas}>
-            <Link
-              href={token && approved ? '/deals' : '/signup?role=investor'}
-              className={styles.btnPrimary}
+            <button
+              onClick={() => {
+                if (token && approved) window.location.href = '/deals'
+                else window.location.href = '/signup?role=investor'
+              }}
+              style={{
+                background: 'var(--orange)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '999px',
+                padding: '16px 42px',
+                fontSize: '1rem',
+                fontFamily: 'DM Sans, sans-serif',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                boxShadow: '0 10px 30px rgba(245,166,35,0.3)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--orange-hover)'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 14px 40px rgba(245,166,35,0.35)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'var(--orange)'
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = '0 10px 30px rgba(245,166,35,0.3)'
+              }}
             >
               Join as an Investor
-            </Link>
-            <Link href="/signup?role=founder" className={styles.btnOutline}>
+            </button>
+
+            <button
+              onClick={() => window.location.href = '/signup?role=founder'}
+              style={{
+                background: 'transparent',
+                color: 'white',
+                border: '2px solid rgba(255,255,255,0.4)',
+                borderRadius: '999px',
+                padding: '14px 40px',
+                fontSize: '1rem',
+                fontFamily: 'DM Sans, sans-serif',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'white'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)'
+                e.currentTarget.style.transform = 'translateY(0)'
+              }}
+            >
               Join as a Founder
-            </Link>
+            </button>
           </div>
         </section>
 
@@ -486,13 +533,17 @@ export default function Home() {
                     {newsletterStatus === 'error' && (
                       <div className={styles.formError}>Something went wrong. Please try again.</div>
                     )}
-                    <button
+                    <FluffyButton 
                       type="submit"
-                      className={styles.formSubmitBtn}
+                      label={newsletterStatus === 'sending' ? 'Subscribing…' : 'Stay Connected →'}
                       disabled={newsletterStatus === 'sending' || !newsletterEmail || !newsletterAgree}
-                    >
-                      {newsletterStatus === 'sending' ? 'Subscribing…' : 'Stay Connected →'}
-                    </button>
+                      fullWidth
+                      height={48}
+                      strands={1200}
+                      strandLen={8}
+                      fontSize={15}
+                      color="#F5A623"
+                    />
                   </>
                 )}
               </form>
@@ -512,18 +563,26 @@ export default function Home() {
               a check — and every founder&apos;s mission finds its match.
             </p>
             <div className={styles.ctaButtons}>
-              <Link
+              <FluffyButton
                 href={token && approved ? '/deals' : '/signup?role=investor'}
-                className={styles.btnPrimary}
-              >
-                Join as an Investor
-              </Link>
-              <Link
+                label="Join as an Investor"
+                width={200}
+                height={52}
+                strands={1000}
+                strandLen={8}
+                fontSize={16}
+                color="#F5A623"
+              />
+              <FluffyButton
                 href={token ? (approved ? '/community' : '/pending') : '/signup'}
-                className={styles.btnOutline}
-              >
-                Join the Collective →
-              </Link>
+                label="Join the Collective →"
+                width={200}
+                height={52}
+                strands={950}
+                strandLen={8}
+                fontSize={16}
+                color="#4F6BD9"
+              />
             </div>
           </div>
         </div>

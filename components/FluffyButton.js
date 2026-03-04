@@ -4,10 +4,15 @@ import styles from '../styles/FluffyButton.module.css'
 
 /* ─── Canvas drawing helpers ────────────────────────────────────────── */
 function hexToRgb(hex) {
+  // Handle 3-digit hex codes by expanding them (e.g., #999 → #999999)
+  let h = hex
+  if (hex.length === 4) {
+    h = '#' + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3]
+  }
   return [
-    parseInt(hex.slice(1, 3), 16),
-    parseInt(hex.slice(3, 5), 16),
-    parseInt(hex.slice(5, 7), 16),
+    parseInt(h.slice(1, 3), 16),
+    parseInt(h.slice(3, 5), 16),
+    parseInt(h.slice(5, 7), 16),
   ]
 }
 function lerp(a, b, t) { return a + (b - a) * Math.max(0, Math.min(1, t)) }
