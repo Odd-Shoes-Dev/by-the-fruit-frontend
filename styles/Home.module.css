@@ -97,9 +97,88 @@
 
 .navCtaButton { display: flex; align-items: center; }
 
+/* Hamburger — hidden on desktop */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background .15s;
+  min-height: unset;
+  margin-left: auto;
+}
+.hamburger:hover { background: rgba(0,0,0,.06); }
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text-dark);
+  border-radius: 2px;
+  transition: transform .2s, opacity .2s;
+}
+.hamburgerOpen span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburgerOpen span:nth-child(2) { opacity: 0; }
+.hamburgerOpen span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Mobile menu dropdown */
+.mobileMenu {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  background: rgba(242,237,232,0.98);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.25rem 1.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,.1);
+  gap: .25rem;
+}
+.mobileLink {
+  display: block;
+  padding: .65rem .5rem;
+  font-size: .95rem;
+  font-weight: 500;
+  color: var(--text-mid);
+  text-decoration: none;
+  border-radius: 7px;
+  transition: background .15s, color .15s;
+}
+.mobileLink:hover { background: rgba(0,0,0,.05); color: var(--text-dark); }
+.mobileDivider { height: 1px; background: var(--border); margin: .5rem 0; }
+.mobileGhostBtn {
+  display: block;
+  padding: .65rem .5rem;
+  font-size: .95rem;
+  font-weight: 500;
+  color: var(--text-mid);
+  text-decoration: none;
+  border-radius: 7px;
+  transition: background .15s, color .15s;
+}
+.mobileGhostBtn:hover { background: rgba(0,0,0,.05); color: var(--text-dark); }
+.mobilePrimaryBtn {
+  display: block;
+  margin-top: .5rem;
+  padding: .7rem 1rem;
+  background: var(--orange);
+  color: #fff !important;
+  text-align: center;
+  border-radius: 999px;
+  font-size: .95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background .2s;
+}
+.mobilePrimaryBtn:hover { background: var(--orange-hover); }
+
 .navPrimaryBtn {
   background: var(--orange);
-  color: #fff;
+  color: #fff !important;
   border: none;
   border-radius: 999px;
   padding: 10px 22px;
@@ -116,7 +195,7 @@
 /* ─── BUTTONS ───────────────────────────────────────────────── */
 .btnPrimary {
   background: var(--orange);
-  color: #fff;
+  color: #fff !important;
   border: none;
   border-radius: 999px;
   padding: 14px 32px;
@@ -152,7 +231,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 120px 24px 140px;
+  padding: 60px 24px 140px;
 }
 
 .heroEyebrow {
@@ -200,13 +279,6 @@
 
 /* kept for compat */
 .ghostBtn { display: none; }
-.heroLeft {}
-.heroRight {}
-.heroTags {}
-.heroBg {}
-.heroTexture {}
-.heroFixLine {}
-.eyebrowText {}
 
 /* ─── SECTION DIVIDER ───────────────────────────────────────── */
 .hdiv {
@@ -288,8 +360,6 @@
   text-align: left;
 }
 
-.stepCard {}
-
 .stepNum {
   font-family: var(--serif);
   font-size: 2rem;
@@ -337,8 +407,6 @@
 }
 .featureRowReverse { direction: rtl; }
 .featureRowReverse > * { direction: ltr; }
-
-.featureText {}
 
 .featureLabel {
   font-size: .72rem;
@@ -711,7 +779,6 @@
   flex-wrap: wrap; gap: 16px;
 }
 
-.footBrandWrap {}
 .footBrand { margin-bottom: 6px; }
 .footBrand img { height: 30px; width: auto; }
 .footSub { font-size: .78rem; color: var(--text-light); }
@@ -743,7 +810,9 @@
 @media (max-width: 900px) {
   .nav { padding: 16px 20px; }
   .navLinks { display: none; }
-  .hero { padding: 80px 20px 100px; }
+  .navCta { display: none; }
+  .hamburger { display: flex; }
+  .hero { padding: 60px 20px 100px; }
   .hdiv { margin: 0 20px; }
   .statsStrip { grid-template-columns: 1fr 1fr; }
   .statCell { border-right: none; border-bottom: 1px solid var(--border); }

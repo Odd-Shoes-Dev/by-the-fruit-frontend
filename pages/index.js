@@ -62,6 +62,7 @@ export default function Home() {
   const [newsletterMessage, setNewsletterMessage] = useState('')
   const [newsletterAgree, setNewsletterAgree] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     setToken(!!getToken())
@@ -156,7 +157,37 @@ export default function Home() {
               </>
             )}
           </div>
+
+          {/* Hamburger — mobile only */}
+          <button
+            className={`${styles.hamburger}${menuOpen ? ' ' + styles.hamburgerOpen : ''}`}
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          >
+            <span /><span /><span />
+          </button>
         </nav>
+
+        {/* ── MOBILE MENU ─────────────────────────────────────────── */}
+        {menuOpen && (
+          <div className={styles.mobileMenu}>
+            <a href="#vision"  className={styles.mobileLink} onClick={() => setMenuOpen(false)}>The Vision</a>
+            <a href="#how"     className={styles.mobileLink} onClick={() => setMenuOpen(false)}>How It Works</a>
+            <a href="#sectors" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Sectors</a>
+            <a href="#manifesto" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Manifesto</a>
+            <div className={styles.mobileDivider} />
+            {token && approved ? (
+              <Link href="/community" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Dashboard</Link>
+            ) : token ? (
+              <Link href="/pending" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Pending Approval</Link>
+            ) : (
+              <>
+                <Link href="/login" className={styles.mobileGhostBtn} onClick={() => setMenuOpen(false)}>Log in</Link>
+                <Link href="/signup" className={styles.mobilePrimaryBtn} onClick={() => setMenuOpen(false)}>Get Started</Link>
+              </>
+            )}
+          </div>
+        )}
 
         {/* ── HERO ────────────────────────────────────────────────── */}
         <section className={styles.hero} id="vision">
