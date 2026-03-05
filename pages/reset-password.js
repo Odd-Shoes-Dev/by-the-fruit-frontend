@@ -85,6 +85,8 @@ export default function ResetPassword() {
           strands={1500}
           strandLen={8}
           fontSize={15}
+          color="#F5A623"
+          color2="#F57C00"
         />
         <div className={styles.authFooter}>
           <Link href="/login" className={styles.authLink}>Back to login</Link>

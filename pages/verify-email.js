@@ -54,7 +54,7 @@ export default function VerifyEmail() {
               <FiCheckCircle size={44} style={{ color: 'var(--orange)', margin: '0.5rem auto 1rem', display: 'block' }} />
               <p style={{ color: '#34d399', fontWeight: 600, marginBottom: 8 }}>{message}</p>
               <p className={styles.authSub} style={{ marginBottom: 16 }}>You can now log in to your account.</p>
-              <FluffyButton href="/login" label="Go to login" fullWidth height={48} strands={1500} strandLen={8} fontSize={15} />
+              <FluffyButton href="/login" label="Go to login" fullWidth height={48} strands={1500} strandLen={8} fontSize={15} color="#F5A623" color2="#F57C00" />
             </>
           )}
 

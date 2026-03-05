@@ -276,6 +276,8 @@ export default function OfferingDetailPage() {
                           strands={1600}
                           strandLen={8}
                           fontSize={15}
+                          color="#F5A623"
+                          color2="#F57C00"
                         />
                       </div>
                       </>

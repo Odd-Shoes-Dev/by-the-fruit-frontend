@@ -177,7 +177,7 @@ function FundingTab({ user }) {
       {error && <div className={styles.errorBox}>{error}</div>}
       {saved && <div className={styles.successBox}>✓ Funding preferences saved.</div>}
       <div className={styles.formActions}>
-        <FluffyButton type="submit" disabled={saving} label={saving ? 'Saving…' : 'Save changes'} width={170} height={42} strands={1100} strandLen={7} fontSize={14} />
+        <FluffyButton type="submit" disabled={saving} label={saving ? 'Saving…' : 'Save changes'} width={170} height={42} strands={1100} strandLen={7} fontSize={14} color="#F5A623" color2="#F57C00" />
       </div>
     </form>
   )
@@ -321,7 +321,7 @@ function ProfileTab({ user, onUserUpdate }) {
       {error && <div className={styles.errorBox}>{error}</div>}
       {saved && <div className={styles.successBox}>✓ Profile saved successfully.</div>}
       <div className={styles.formActions}>
-        <FluffyButton type="submit" disabled={saving} label={saving ? 'Saving…' : 'Save changes'} width={170} height={42} strands={1100} strandLen={7} fontSize={14} />
+        <FluffyButton type="submit" disabled={saving} label={saving ? 'Saving…' : 'Save changes'} width={170} height={42} strands={1100} strandLen={7} fontSize={14} color="#F5A623" color2="#F57C00" />
       </div>
     </form>
   )
@@ -387,7 +387,7 @@ function AccountTab({ user }) {
           </div>
           {pwError && <div className={styles.errorBox}>{pwError}</div>}
           {pwSaved && <div className={styles.successBox}>✓ Password updated.</div>}
-          <FluffyButton type="submit" disabled={pwSaving || !currentPw || !newPw || !confirmPw} label={pwSaving ? 'Updating…' : 'Update password'} width={185} height={42} strands={1100} strandLen={7} fontSize={14} />
+          <FluffyButton type="submit" disabled={pwSaving || !currentPw || !newPw || !confirmPw} label={pwSaving ? 'Updating…' : 'Update password'} width={185} height={42} strands={1100} strandLen={7} fontSize={14} color="#F5A623" color2="#F57C00" />
         </form>
       </SectionCard>
 
@@ -500,7 +500,7 @@ function PrivacyTab({ user, onUserUpdate }) {
       {error && <div className={styles.errorBox}>{error}</div>}
       {saved && <div className={styles.successBox}>✓ Privacy settings saved.</div>}
       <div className={styles.formActions}>
-        <FluffyButton type="submit" disabled={saving} label={saving ? 'Saving…' : 'Save changes'} width={170} height={42} strands={1100} strandLen={7} fontSize={14} />
+        <FluffyButton type="submit" disabled={saving} label={saving ? 'Saving…' : 'Save changes'} width={170} height={42} strands={1100} strandLen={7} fontSize={14} color="#F5A623" color2="#F57C00" />
       </div>
     </form>
   )

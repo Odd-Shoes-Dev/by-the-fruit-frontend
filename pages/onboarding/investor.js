@@ -83,7 +83,7 @@ export default function OnboardingInvestor() {
             </label>
             {status === 'error' && <p className="error">Something went wrong. Try again.</p>}
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <FluffyButton type="submit" disabled={status === 'saving'} label={status === 'saving' ? 'Saving…' : 'Save'} width={100} height={42} strands={700} strandLen={6} fontSize={14} />
+              <FluffyButton type="submit" disabled={status === 'saving'} label={status === 'saving' ? 'Saving…' : 'Save'} width={100} height={42} strands={700} strandLen={6} fontSize={14} color="#F5A623" color2="#F57C00" />
               <Link href="/profile/settings" className="btn-ghost">Skip for now</Link>
             </div>
           </form>

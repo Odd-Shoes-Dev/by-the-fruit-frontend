@@ -116,6 +116,8 @@ export default function PaymentPage() {
                     strands={1600}
                     strandLen={8}
                     fontSize={16}
+                    color="#F5A623"
+                    color2="#F57C00"
                   />
                   <p className={styles.secureNote}>
                     🔒 Payments are processed securely by Stripe. By The Fruit does not store your card details.

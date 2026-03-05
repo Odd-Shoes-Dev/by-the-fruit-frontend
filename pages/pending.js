@@ -62,7 +62,7 @@ export default function Pending() {
           </div>
 
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
-            <FluffyButton href="/" label="Back to home" width={160} height={44} strands={900} strandLen={7} fontSize={14} />
+            <FluffyButton href="/" label="Back to home" width={160} height={44} strands={900} strandLen={7} fontSize={14} color="#F5A623" color2="#F57C00" />
             <button
               type="button"
               style={{ padding: '0.65rem 1.25rem', background: 'transparent', color: 'var(--orange)', border: '1.5px solid var(--orange)', borderRadius: 10, fontWeight: 600, cursor: 'pointer', fontSize: '0.95rem' }}

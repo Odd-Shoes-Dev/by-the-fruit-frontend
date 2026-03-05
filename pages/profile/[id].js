@@ -188,7 +188,7 @@ export default function ProfilePage() {
               {/* Actions */}
               <div className={styles.actionRow}>
                 {isOwnProfile ? (
-                  <FluffyButton href="/profile/settings" label="Edit profile" width={150} height={40} strands={800} strandLen={6} fontSize={14} />
+                  <FluffyButton href="/profile/settings" label="Edit profile" width={150} height={40} strands={800} strandLen={6} fontSize={14} color="#F5A623" color2="#F57C00" />
                 ) : (
                   <ConnectionButtons targetUserId={Number(id)} viewerRole="investor" />
                 )}
@@ -324,7 +324,7 @@ export default function ProfilePage() {
                 You haven&apos;t set up your founder or investor profile yet.
               </p>
               <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-                <FluffyButton href="/onboarding/founder" label="Set up as Founder" width={165} height={40} strands={850} strandLen={6} fontSize={13} />
+                <FluffyButton href="/onboarding/founder" label="Set up as Founder" width={165} height={40} strands={850} strandLen={6} fontSize={13} color="#F5A623" color2="#F57C00" />
                 <FluffyButton href="/onboarding/investor" label="Set up as Investor" width={165} height={40} strands={850} strandLen={6} fontSize={13} color="#1A4A2E" />
               </div>
             </motion.section>

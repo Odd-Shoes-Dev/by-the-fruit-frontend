@@ -149,7 +149,7 @@ export default function Signup() {
                 We review each request to keep the community trusted. We may contact you by email before approving. Once approved, you can log in and access the full app.
               </p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-                <FluffyButton href="/login" label="Check your status" width={185} height={44} strands={1000} strandLen={7} fontSize={14} />
+                <FluffyButton href="/login" label="Check your status" width={185} height={44} strands={1000} strandLen={7} fontSize={14} color="#F5A623" color2="#F57C00" />
                 <Link href="/" className={styles.authLink} style={{ alignSelf: 'center' }}>
                   Back to home
                 </Link>
