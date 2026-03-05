@@ -66,6 +66,38 @@ export default function Home() {
   const [navVisible, setNavVisible] = useState(true)
   const [menuOpen, setMenuOpen] = useState(false)
 
+  // Lock body scroll when the mobile menu is open (prevents page scrolling behind it)
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    const body = document.body
+    if (menuOpen) {
+      // Store current scroll position so it can be restored on close
+      const scrollY = window.scrollY
+      body.style.position = 'fixed'
+      body.style.top = `-${scrollY}px`
+      body.style.left = '0'
+      body.style.right = '0'
+      body.style.overflow = 'hidden'
+    } else {
+      // Restore scroll position
+      const scrollY = Math.abs(parseInt(body.style.top || '0', 10))
+      body.style.position = ''
+      body.style.top = ''
+      body.style.left = ''
+      body.style.right = ''
+      body.style.overflow = ''
+      window.scrollTo(0, scrollY)
+    }
+    return () => {
+      // Cleanup on unmount
+      body.style.position = ''
+      body.style.top = ''
+      body.style.left = ''
+      body.style.right = ''
+      body.style.overflow = ''
+    }
+  }, [menuOpen])
+
   useEffect(() => {
     setToken(!!getToken())
     setApproved(isApproved())
@@ -165,9 +197,27 @@ export default function Home() {
 
           <div className={styles.navCta}>
             {token && approved ? (
-              <a href="/community" className={styles.navPrimaryBtn}>Dashboard</a>
+              <FluffyButton
+                href="/community"
+                label="Dashboard"
+                width={110}
+                height={38}
+                strands={700}
+                strandLen={6}
+                fontSize={12}
+                color="#F5A623"
+              />
             ) : token ? (
-              <a href="/pending" className={styles.navPrimaryBtn}>Pending Approval</a>
+              <FluffyButton
+                href="/pending"
+                label="Pending Approval"
+                width={180}
+                height={44}
+                strands={800}
+                strandLen={6}
+                fontSize={14}
+                color="#F5A623"
+              />
             ) : (
               <FluffyButton
                 href="/login"
@@ -201,9 +251,27 @@ export default function Home() {
             <a href="#manifesto" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Manifesto</a>
             <div className={styles.mobileDivider} />
             {token && approved ? (
-              <a href="/community" className={styles.mobilePrimaryBtn}>Dashboard</a>
+              <FluffyButton
+                href="/community"
+                label="Dashboard"
+                width={110}
+                height={38}
+                strands={700}
+                strandLen={6}
+                fontSize={12}
+                color="#F5A623"
+              />
             ) : token ? (
-              <a href="/pending" className={styles.mobilePrimaryBtn}>Pending Approval</a>
+              <FluffyButton
+                href="/pending"
+                label="Pending Approval"
+                width={180}
+                height={44}
+                strands={800}
+                strandLen={6}
+                fontSize={14}
+                color="#F5A623"
+              />
             ) : (
               <FluffyButton
                 href="/login"
@@ -511,7 +579,16 @@ export default function Home() {
             <a href="#how">How It Works</a>
             <a href="#manifesto">Manifesto</a>
             {token ? (
-              <Link href="/community">Dashboard</Link>
+              <FluffyButton
+                href="/community"
+                label="Dashboard"
+                width={100}
+                height={34}
+                strands={650}
+                strandLen={6}
+                fontSize={11}
+                color="#F5A623"
+              />
             ) : (
               <Link href="/login">Log in</Link>
             )}
