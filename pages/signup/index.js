@@ -132,7 +132,7 @@ export default function Signup() {
         >
           <Link href="/" className={styles.authLogo}>
             <Image src="/images/logo.png" alt="By The Fruit" width={44} height={44} />
-            <span style={{ fontStyle: 'italic' }}><span style={{ fontSize: '1.2em' }}>B</span>y <span style={{ fontSize: '1.2em' }}>T</span>he <span style={{ fontSize: '1.2em' }}>F</span>ruit</span>
+            <span className={styles.authBrandName}><span style={{ fontSize: '1.2em' }}>B</span>y <span style={{ fontSize: '1.2em' }}>T</span>he <span style={{ fontSize: '1.2em' }}>F</span>ruit</span>
           </Link>
 
           <h1 className={styles.authTitle}>
@@ -332,11 +332,12 @@ export default function Signup() {
                 type="submit"
                 disabled={loading}
                 label={loading ? 'Submitting…' : 'Submit application'}
-                fullWidth
-                height={48}
-                strands={1500}
-                strandLen={8}
-                fontSize={15}
+                width={280}
+                height={44}
+                strands={1200}
+                strandLen={7}
+                fontSize={14}
+                color="#F5A623"
               />
             </form>
           )}
