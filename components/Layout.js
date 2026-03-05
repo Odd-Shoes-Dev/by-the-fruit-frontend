@@ -180,6 +180,11 @@ export default function Layout({ children }) {
             <span className={styles.brandName} style={{ fontStyle: 'italic' }}><span style={{ fontSize: '1.2em' }}>B</span>y <span style={{ fontSize: '1.2em' }}>T</span>he <span style={{ fontSize: '1.2em' }}>F</span>ruit</span>
           </Link>
 
+          {/* Notification bell — mobile only, shown next to hamburger */}
+          {token && approved && (
+            <span className={styles.mobileNavBell}><NotificationBell /></span>
+          )}
+
           <button
             className={`${styles.hamburger} ${menuOpen ? styles.hamburgerOpen : ''}`}
             onClick={() => setMenuOpen(o => !o)}
@@ -263,7 +268,6 @@ export default function Layout({ children }) {
                     {userId && <Link href={`/profile/${userId}`} className={styles.navLink}>My Profile</Link>}
                     <Link href="/settings" className={styles.navLink}>Settings</Link>
                     <Link href="/saved" className={styles.navLink}>Saved Posts</Link>
-                    <span className={styles.navBell}><NotificationBell /></span>
                     <button onClick={handleLogout} className={styles.navLogout}>Log out</button>
                   </>
                 )}
