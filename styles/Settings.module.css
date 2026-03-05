@@ -454,6 +454,32 @@
   font-weight: 500;
 }
 
+/* ── Funding stage chips ── */
+.stageGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.stageChip {
+  padding: 7px 18px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(0,0,0,0.1);
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: rgba(26,18,8,0.6);
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  background: #fff;
+}
+.stageChip:hover { border-color: #F5A623; color: #F5A623; background: rgba(245,166,35,0.05); }
+.stageChipActive {
+  border-color: #F5A623 !important;
+  background: rgba(245,166,35,0.12) !important;
+  color: #c97d0a !important;
+}
+
 /* â”€â”€ Loading skeleton â”€â”€ */
 .loadingRow { display: flex; flex-direction: column; gap: 12px; max-width: 720px; margin-top: 12px; }
 

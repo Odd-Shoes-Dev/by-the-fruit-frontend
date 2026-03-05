@@ -36,11 +36,152 @@ function SectionCard({ title, subtitle, children }) {
   )
 }
 
+const FUNDING_STAGES = [
+  { value: 'pre_seed',    label: 'Pre-seed' },
+  { value: 'seed',        label: 'Seed' },
+  { value: 'series_a',   label: 'Series A' },
+  { value: 'series_b',   label: 'Series B' },
+  { value: 'series_c',   label: 'Series C' },
+  { value: 'series_d_plus', label: 'Series D+' },
+  { value: 'growth',     label: 'Growth' },
+]
+
 const VISIBILITY_OPTIONS = [
   { value: 'everyone', label: 'Everyone' },
   { value: 'connections', label: 'Connections only' },
   { value: 'only_me', label: 'Only me' },
 ]
+
+/* ─── Tab: Funding ─── */
+function FundingTab({ user }) {
+  const role = user?.intended_role
+  const [businessId, setBusinessId] = useState(null)
+  const [profileId, setProfileId] = useState(null)
+  const [fundingStage, setFundingStage] = useState('')
+  const [focusesOn, setFocusesOn] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    if (role === 'founder') {
+      apiFetch('/profiles/businesses/mine')
+        .then(r => r.ok ? r.json() : null)
+        .then(json => {
+          const list = json?.data ?? json
+          const biz = Array.isArray(list) ? list[0] : null
+          if (biz) { setBusinessId(biz.id); setFundingStage(biz.funding_stage || '') }
+          setLoading(false)
+        })
+        .catch(() => setLoading(false))
+    } else if (role === 'investor') {
+      apiFetch('/profiles/investments/me')
+        .then(r => r.ok ? r.json() : null)
+        .then(json => {
+          const d = json?.data ?? json
+          if (d && d.id) { setProfileId(d.id); setFocusesOn(d.focuses_on || []) }
+          setLoading(false)
+        })
+        .catch(() => setLoading(false))
+    } else {
+      setLoading(false)
+    }
+  }, [role])
+
+  function toggleStage(value) {
+    setFocusesOn(prev => prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value])
+  }
+
+  async function handleSave(e) {
+    e.preventDefault()
+    setSaving(true); setError(null); setSaved(false)
+    try {
+      let res
+      if (role === 'founder' && businessId) {
+        res = await apiFetch(`/profiles/businesses/${businessId}/`, {
+          method: 'PATCH',
+          body: JSON.stringify({ funding_stage: fundingStage || null })
+        })
+      } else if (role === 'investor' && profileId) {
+        res = await apiFetch(`/profiles/investments/${profileId}/`, {
+          method: 'PATCH',
+          body: JSON.stringify({ focuses_on: focusesOn })
+        })
+      }
+      if (res?.ok) { setSaved(true); setTimeout(() => setSaved(false), 3000) }
+      else setError('Could not save. Please try again.')
+    } catch { setError('Network error.') }
+    finally { setSaving(false) }
+  }
+
+  if (loading) return (
+    <div className={styles.sectionCard} style={{ padding: 24 }}>
+      <div className="spinner">Loading…</div>
+    </div>
+  )
+
+  if (role !== 'founder' && role !== 'investor') {
+    return (
+      <div className={styles.tabForm}>
+        <SectionCard title="Funding stage matching" subtitle="Not available for your account type.">
+          <p className={styles.fieldHint}>This section is for founders and investors. Your account role is: <strong>{role || 'general'}</strong></p>
+        </SectionCard>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSave} className={styles.tabForm}>
+      {role === 'founder' && (
+        <SectionCard title="Your funding stage" subtitle="Let investors know where your business is in its fundraising journey.">
+          <Field label="Current funding stage" optional>
+            <select className={styles.fieldInput} value={fundingStage} onChange={e => setFundingStage(e.target.value)}>
+              <option value="">— not set —</option>
+              {FUNDING_STAGES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+            </select>
+          </Field>
+          <p className={styles.fieldHint} style={{ marginTop: 10 }}>
+            Save your stage, then visit the{' '}
+            <a href="/matcher" style={{ color: '#F5A623', fontWeight: 600 }}>Investor Matcher</a>{' '}
+            to discover aligned investors.
+          </p>
+        </SectionCard>
+      )}
+
+      {role === 'investor' && (
+        <SectionCard title="Funding stages you invest in" subtitle="Select all stages you actively fund. Founders at matching stages will see you in their matcher.">
+          <div className={styles.stageGrid}>
+            {FUNDING_STAGES.map(s => (
+              <label
+                key={s.value}
+                className={`${styles.stageChip} ${focusesOn.includes(s.value) ? styles.stageChipActive : ''}`}
+              >
+                <input
+                  type="checkbox"
+                  checked={focusesOn.includes(s.value)}
+                  onChange={() => toggleStage(s.value)}
+                  style={{ display: 'none' }}
+                />
+                {s.label}
+              </label>
+            ))}
+          </div>
+          <p className={styles.fieldHint} style={{ marginTop: 14 }}>
+            Founders at your chosen stages will find you in the{' '}
+            <a href="/matcher" style={{ color: '#F5A623', fontWeight: 600 }}>Founder Matcher</a>.
+          </p>
+        </SectionCard>
+      )}
+
+      {error && <div className={styles.errorBox}>{error}</div>}
+      {saved && <div className={styles.successBox}>✓ Funding preferences saved.</div>}
+      <div className={styles.formActions}>
+        <FluffyButton type="submit" disabled={saving} label={saving ? 'Saving…' : 'Save changes'} width={170} height={42} strands={1100} strandLen={7} fontSize={14} />
+      </div>
+    </form>
+  )
+}
 
 /* ─── Tab: Profile ─── */
 function ProfileTab({ user, onUserUpdate }) {
@@ -368,6 +509,7 @@ function PrivacyTab({ user, onUserUpdate }) {
 /* ─── Main settings page ─── */
 const TABS = [
   { id: 'profile', label: 'Profile', icon: <svg viewBox="0 0 24 24" width={17} height={17} fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> },
+  { id: 'funding', label: 'Funding', icon: <svg viewBox="0 0 24 24" width={17} height={17} fill="none" stroke="currentColor" strokeWidth={2}><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> },
   { id: 'account', label: 'Account', icon: <svg viewBox="0 0 24 24" width={17} height={17} fill="none" stroke="currentColor" strokeWidth={2}><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> },
   { id: 'notifications', label: 'Notifications', icon: <svg viewBox="0 0 24 24" width={17} height={17} fill="none" stroke="currentColor" strokeWidth={2}><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> },
   { id: 'privacy', label: 'Privacy', icon: <svg viewBox="0 0 24 24" width={17} height={17} fill="none" stroke="currentColor" strokeWidth={2}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
@@ -477,6 +619,7 @@ export default function SettingsPage() {
                 transition={{ duration: 0.2 }}
               >
                 {activeTab === 'profile' && <ProfileTab user={user} onUserUpdate={setUser} />}
+                {activeTab === 'funding' && <FundingTab user={user} />}
                 {activeTab === 'account' && <AccountTab user={user} />}
                 {activeTab === 'notifications' && <NotificationsTab />}
                 {activeTab === 'privacy' && <PrivacyTab user={user} onUserUpdate={setUser} />}

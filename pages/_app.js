@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 import { getToken, isApproved } from './../lib/api'
 import Layout from '../components/Layout'
 
-const PROTECTED_PATHS = ['/community', '/events', '/deals', '/connections', '/channels', '/notifications', '/profile', '/founders', '/investors', '/admin', '/settings']
+const PROTECTED_PATHS = ['/community', '/events', '/deals', '/connections', '/channels', '/notifications', '/profile', '/founders', '/investors', '/admin', '/settings', '/matcher']
 
 // Pages that manage their own full-page layout (landing, auth, onboarding)
 const NO_LAYOUT_PREFIXES = ['/', '/login', '/signup', '/pending', '/forgot-password', '/reset-password', '/verify-email', '/onboarding']

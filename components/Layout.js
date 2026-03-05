@@ -181,6 +181,7 @@ export default function Layout({ children }) {
                 <Link href="/offerings" className={styles.navLink}>Offerings</Link>
                 <Link href="/my-offerings" className={styles.navLink}>My Deals</Link>
                 <Link href="/portfolio" className={styles.navLink}>Portfolio</Link>
+                <Link href="/matcher" className={styles.navLink}>Matcher</Link>
                 {isCreatorInfluencer && (
                   <Link href="/deals" className={styles.navLink}>Deals</Link>
                 )}
@@ -230,6 +231,7 @@ export default function Layout({ children }) {
                     <Link href="/offerings" className={styles.navLink}>Offerings</Link>
                     <Link href="/my-offerings" className={styles.navLink}>My Deals</Link>
                     <Link href="/portfolio" className={styles.navLink}>Portfolio</Link>
+                    <Link href="/matcher" className={styles.navLink}>Matcher</Link>
                     {isCreatorInfluencer && (
                       <Link href="/deals" className={styles.navLink}>Deals</Link>
                     )}
