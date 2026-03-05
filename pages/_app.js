@@ -36,6 +36,10 @@ export default function MyApp({ Component, pageProps }) {
     <>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        {/* Block all crawlers, scrapers, and AI training bots */}
+        <meta name="robots" content="noindex, nofollow, nosnippet, noarchive, noimageindex" />
+        <meta name="googlebot" content="noindex, nofollow" />
+        <meta name="bingbot" content="noindex, nofollow" />
       </Head>
       {needsLayout(pathname) ? <Layout>{page}</Layout> : page}
     </>
