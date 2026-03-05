@@ -1,10 +1,12 @@
 import Head from 'next/head'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiMessageSquare, FiMic, FiPlay, FiXCircle, FiPlus, FiCheck, FiSettings, FiTrash2 } from 'react-icons/fi'
 import PostForm from '../components/PostForm'
 import PostList from '../components/PostList'
 import { apiFetch, getToken, isAdmin } from '../lib/api'
+import { useEventChat } from '../lib/useEventChat'
+import FluffyBtn from '../components/FluffyBtn'
 
 // ─── YouTube embed helper ────────────────────────────────────────────────────
 // Accepts any YouTube URL format and returns a privacy-neutral embed URL.
@@ -47,6 +49,93 @@ function getYouTubeEmbedUrl(url, autoplay = false) {
   }
 }
 
+// ─── Event Live Chat ────────────────────────────────────────────────────────────────
+
+function EventLiveChat({ eventId, status }) {
+  const token = getToken()
+  const { messages, connected, send } = useEventChat(eventId, status)
+  const [text, setText] = useState('')
+  const [open, setOpen] = useState(true)
+  const bottomRef = useRef(null)
+
+  useEffect(() => {
+    if (open && bottomRef.current) bottomRef.current.scrollIntoView({ behavior: 'smooth' })
+  }, [messages, open])
+
+  const handleSend = () => {
+    if (!text.trim() || !connected) return
+    send(text.trim())
+    setText('')
+  }
+
+  if (!messages.length && status !== 'live') return null
+
+  return (
+    <div style={{ marginTop: 16, border: '1px solid #e8e8ff', borderRadius: 10, overflow: 'hidden', background: '#fafaff' }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: '0.88rem', color: '#444' }}
+      >
+        <span>
+          <FiMessageSquare size={14} style={{ marginRight: 6, verticalAlign: 'middle' }} />
+          {status === 'live' ? 'Live Chat' : 'Chat Replay'}
+          {status === 'live' && connected && (
+            <span style={{ marginLeft: 8, background: '#22c478', color: '#fff', fontSize: '0.72rem', borderRadius: 20, padding: '2px 8px', fontWeight: 700 }}>LIVE</span>
+          )}
+        </span>
+        <span style={{ color: '#bbb', fontSize: '1.1rem' }}>{open ? '▲' : '▼'}</span>
+      </button>
+      {open && (
+        <div style={{ borderTop: '1px solid #e8e8ff' }}>
+          <div style={{ maxHeight: 240, overflowY: 'auto', padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {messages.length === 0 && (
+              <p style={{ margin: 0, fontSize: '0.83rem', color: '#bbb', textAlign: 'center', padding: '16px 0' }}>
+                {status === 'live' ? 'Be the first to comment…' : 'No chat messages recorded.'}
+              </p>
+            )}
+            {messages.map((m, i) => (
+              <div key={m.id || i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#6c47ff', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 700, flexShrink: 0 }}>
+                  {(m.user_detail?.display_name || m.username || '?').charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <span style={{ fontWeight: 700, fontSize: '0.8rem', color: '#555' }}>{m.user_detail?.display_name || m.username || 'User'}</span>
+                  <p style={{ margin: '2px 0 0', fontSize: '0.87rem', lineHeight: 1.4, wordBreak: 'break-word' }}>{m.content}</p>
+                </div>
+              </div>
+            ))}
+            <div ref={bottomRef} />
+          </div>
+          {status === 'live' && token && (
+            <div style={{ borderTop: '1px solid #e8e8ff', padding: '8px 12px', display: 'flex', gap: 8 }}>
+              <input
+                style={{ flex: 1, padding: '8px 12px', border: '1px solid #ddd', borderRadius: 20, fontSize: '0.87rem', outline: 'none', fontFamily: 'inherit' }}
+                placeholder={connected ? 'Say something…' : 'Connecting…'}
+                value={text}
+                onChange={e => setText(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSend()}
+                disabled={!connected}
+              />
+              <button
+                onClick={handleSend}
+                disabled={!connected || !text.trim()}
+                style={{ padding: '8px 14px', background: '#6c47ff', color: '#fff', border: 'none', borderRadius: 20, cursor: 'pointer', fontWeight: 700, fontSize: '0.85rem', flexShrink: 0, opacity: connected && text.trim() ? 1 : 0.5 }}
+              >
+                Send
+              </button>
+            </div>
+          )}
+          {status === 'live' && !token && (
+            <p style={{ margin: 0, padding: '8px 14px', fontSize: '0.82rem', color: '#888', borderTop: '1px solid #e8e8ff', textAlign: 'center' }}>
+              <a href="/login" style={{ color: '#6c47ff', fontWeight: 600 }}>Sign in</a> to join the conversation.
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Manage Event Modal (admin only) ───────────────────────────────────────────────
 
 const STATUS_OPTIONS = [
@@ -58,9 +147,12 @@ const STATUS_OPTIONS = [
 
 function ManageEventModal({ event, onClose, onSaved, onDeleted }) {
   const [form, setForm]       = useState({
-    status:        event.status       || 'scheduled',
-    stream_url:    event.stream_url   || '',
-    recording_url: event.recording_url|| '',
+    status:              event.status              || 'scheduled',
+    stream_url:          event.stream_url          || '',
+    recording_url:       event.recording_url       || '',
+    presenter_join_link: event.presenter_join_link || '',
+    guest_name:          event.guest_name          || '',
+    guest_bio:           event.guest_bio           || '',
   })
   const [saving,   setSaving]   = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -88,9 +180,12 @@ function ManageEventModal({ event, onClose, onSaved, onDeleted }) {
     setServerErr('')
     try {
       const payload = {
-        status:        form.status,
-        stream_url:    form.stream_url.trim()    || null,
-        recording_url: form.recording_url.trim() || null,
+        status:              form.status,
+        stream_url:          form.stream_url.trim()          || null,
+        recording_url:       form.recording_url.trim()       || null,
+        presenter_join_link: form.presenter_join_link.trim() || null,
+        guest_name:          form.guest_name.trim()          || null,
+        guest_bio:           form.guest_bio.trim()           || null,
       }
       const res = await apiFetch(`/profiles/events/${event.id}/`, {
         method: 'PATCH',
@@ -190,6 +285,40 @@ function ManageEventModal({ event, onClose, onSaved, onDeleted }) {
             <p style={{ margin: '4px 0 0', fontSize: '0.79rem', color: '#aaa' }}>
               YouTube keeps the livestream video at the same URL after it ends — this is auto-filled from the stream URL when you mark the event as Ended. The recording embeds under <strong>Past Competitions</strong> so users can rewatch it any time.
             </p>
+          </div>
+
+          {/* Presenter join link */}
+          <div>
+            <label style={lbl}>Presenter join link</label>
+            <input
+              style={inp}
+              placeholder="https://zoom.us/j/… or https://meet.google.com/…"
+              value={form.presenter_join_link}
+              onChange={e => set('presenter_join_link', e.target.value)}
+            />
+            <p style={{ margin: '4px 0 0', fontSize: '0.79rem', color: '#aaa' }}>
+              Private backstage URL — only shown to registered participants and admins.
+            </p>
+          </div>
+
+          {/* Guest speaker */}
+          <div>
+            <label style={lbl}>Guest speaker name <span style={{ color: '#bbb', fontWeight: 400 }}>(optional)</span></label>
+            <input
+              style={inp}
+              placeholder="e.g. Jane Smith, CEO of Acme"
+              value={form.guest_name}
+              onChange={e => set('guest_name', e.target.value)}
+            />
+          </div>
+          <div>
+            <label style={lbl}>Guest speaker bio <span style={{ color: '#bbb', fontWeight: 400 }}>(optional)</span></label>
+            <textarea
+              style={{ ...inp, minHeight: 72, resize: 'vertical' }}
+              placeholder="Short bio shown on the competition card…"
+              value={form.guest_bio}
+              onChange={e => set('guest_bio', e.target.value)}
+            />
           </div>
 
           {serverErr && (
@@ -300,6 +429,30 @@ function PitchCard({ event, token, admin, onManage }) {
       {event.theme && <p className="meta" style={{ marginBottom: 6 }}>Theme: {event.theme}</p>}
       {event.description && <p style={{ marginBottom: 10, lineHeight: 1.55 }}>{event.description}</p>}
 
+      {/* Guest speaker section */}
+      {event.guest_name && (
+        <div style={{ background: '#f8f8ff', border: '1px solid #e8e8ff', borderRadius: 8, padding: '12px 14px', marginBottom: 10 }}>
+          <p style={{ fontWeight: 700, fontSize: '0.82rem', color: '#888', margin: '0 0 4px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Ἱ9 Guest Speaker</p>
+          <p style={{ fontWeight: 700, margin: '0 0 4px', fontSize: '0.95rem' }}>{event.guest_name}</p>
+          {event.guest_bio && <p style={{ margin: 0, fontSize: '0.85rem', color: '#666', lineHeight: 1.55 }}>{event.guest_bio}</p>}
+        </div>
+      )}
+
+      {/* Presenter join link — only for registered participants or admin */}
+      {event.presenter_join_link && (event.is_registered || admin) && (
+        <div style={{ background: '#f0fff8', border: '1px dashed #22c478', borderRadius: 8, padding: '10px 14px', marginBottom: 10 }}>
+          <p style={{ margin: '0 0 6px', fontSize: '0.83rem', fontWeight: 700, color: '#15835a' }}>✓ You&apos;re registered — join as a presenter</p>
+          <a
+            href={event.presenter_join_link}
+            target="_blank"
+            rel="noreferrer"
+            style={{ display: 'inline-block', padding: '6px 16px', background: '#22c478', color: '#fff', borderRadius: 20, fontWeight: 700, fontSize: '0.84rem', textDecoration: 'none' }}
+          >
+            Join now →
+          </a>
+        </div>
+      )}
+
       {event.slots_available !== null && isUpcoming && (
         <p className="meta" style={{ marginBottom: 8 }}>
           {event.slots_available === 0
@@ -347,6 +500,10 @@ function PitchCard({ event, token, admin, onManage }) {
           </a>
         )
       })()}
+      {/* Live / replay chat */}
+      {(isLive || isRecording) && (
+        <EventLiveChat eventId={event.id} status={event.status} />
+      )}
     </motion.article>
   )
 }
@@ -364,6 +521,7 @@ const EMPTY_FORM = {
   title: '', theme: '', description: '',
   starts_at: '', ends_at: '', max_slots: '',
   requirements: '', stream_url: '',
+  presenter_join_link: '', guest_name: '', guest_bio: '',
 }
 
 // ─── Create Competition Wizard ────────────────────────────────────────────────
@@ -400,7 +558,10 @@ function CreateCompetitionWizard({ onClose, onCreate }) {
         ends_at:      form.ends_at            || null,
         max_slots:    form.max_slots ? parseInt(form.max_slots) : null,
         requirements: form.requirements.trim()|| null,
-        stream_url:   form.stream_url.trim()  || null,
+        stream_url:          form.stream_url.trim()          || null,
+        presenter_join_link:  form.presenter_join_link.trim() || null,
+        guest_name:           form.guest_name.trim()          || null,
+        guest_bio:            form.guest_bio.trim()           || null,
         status:       'scheduled',
       }
       const res = await apiFetch('/profiles/events/', {
@@ -435,8 +596,11 @@ function CreateCompetitionWizard({ onClose, onCreate }) {
     ['Starts',       form.starts_at    ? new Date(form.starts_at).toLocaleString() : '—'],
     ['Ends',         form.ends_at      ? new Date(form.ends_at).toLocaleString()   : 'Open-ended'],
     ['Max slots',    form.max_slots    || 'Unlimited'],
-    ['Stream URL',   form.stream_url   || 'Not set — can add later'],
-    ['Requirements', form.requirements || '—'],
+    ['Stream URL',    form.stream_url          || 'Not set — can add later'],
+    ['Requirements',  form.requirements        || '—'],
+    ['Guest speaker', form.guest_name          || '—'],
+    ['Guest bio',     form.guest_bio           || '—'],
+    ['Presenter link',form.presenter_join_link || 'Not set'],
   ]
 
   return (
@@ -569,6 +733,24 @@ function CreateCompetitionWizard({ onClose, onCreate }) {
                 onChange={e => set('requirements', e.target.value)}
               />
             </div>
+            <div>
+              <label style={lbl}>Guest speaker name <span style={{ color: '#bbb', fontWeight: 400 }}>(optional)</span></label>
+              <input style={inp()} placeholder="e.g. Jane Smith, CEO of Acme" value={form.guest_name} onChange={e => set('guest_name', e.target.value)} />
+            </div>
+            <div>
+              <label style={lbl}>Guest speaker bio <span style={{ color: '#bbb', fontWeight: 400 }}>(optional)</span></label>
+              <textarea
+                style={{ ...inp(), minHeight: 72, resize: 'vertical' }}
+                placeholder="Short bio shown on the competition card…"
+                value={form.guest_bio}
+                onChange={e => set('guest_bio', e.target.value)}
+              />
+            </div>
+            <div>
+              <label style={lbl}>Presenter join link <span style={{ color: '#bbb', fontWeight: 400 }}>(optional)</span></label>
+              <input style={inp()} placeholder="https://zoom.us/j/… or https://meet.google.com/…" value={form.presenter_join_link} onChange={e => set('presenter_join_link', e.target.value)} />
+              <p style={hint}>Private Zoom/Meet URL — only visible to registered participants.</p>
+            </div>
           </div>
         )}
 
@@ -591,20 +773,40 @@ function CreateCompetitionWizard({ onClose, onCreate }) {
         )}
 
         {/* Navigation buttons */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 28, gap: 10 }}>
-          <button
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 28, gap: 10 }}>
+          <FluffyBtn
             onClick={step === 1 ? onClose : back}
-            className="btn-outline btn-sm"
-            style={{ minWidth: 90 }}
+            color="#888888"
+            width={88}
+            height={34}
+            strands={700}
+            strandLen={5}
           >
             {step === 1 ? 'Cancel' : '← Back'}
-          </button>
+          </FluffyBtn>
           {step < 4 ? (
-            <button onClick={next} className="btn btn-sm" style={{ minWidth: 90 }}>Next →</button>
+            <FluffyBtn
+              onClick={next}
+              color="#F5A623"
+              width={96}
+              height={34}
+              strands={800}
+              strandLen={6}
+            >
+              Next →
+            </FluffyBtn>
           ) : (
-            <button onClick={submit} className="btn btn-sm" disabled={submitting} style={{ minWidth: 150 }}>
-              {submitting ? 'Creating…' : '🎤 Create Competition'}
-            </button>
+            <FluffyBtn
+              onClick={submit}
+              disabled={submitting}
+              color="#F5A623"
+              width={178}
+              height={40}
+              strands={1600}
+              strandLen={8}
+            >
+              {submitting ? 'Creating…' : <><FiPlus size={13} /> Create Competition</>}
+            </FluffyBtn>
           )}
         </div>
       </motion.div>
@@ -647,14 +849,16 @@ function PitchCompetitions() {
       {/* Admin toolbar */}
       {admin && (
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
-          <button
-            className="btn btn-sm"
+          <FluffyBtn
             onClick={() => setShowWizard(true)}
-            style={{ display: 'flex', alignItems: 'center', gap: 7 }}
+            color="#F5A623"
+            width={188}
+            height={38}
+            strands={1200}
+            strandLen={6}
           >
-            <FiPlus size={15} />
-            Create Competition
-          </button>
+            <FiPlus size={13} /> Create Competition
+          </FluffyBtn>
         </div>
       )}
 
@@ -780,17 +984,11 @@ export default function Community() {
               exit={{ opacity: 0, x: 8 }}
               transition={{ duration: 0.18 }}
             >
-              <div className="community-layout">
-                <div>
-                  <PostForm onCreate={() => setRefresh(r => r + 1)} />
-                  <div style={{ marginTop: 18 }}>
-                    <PostList refreshTrigger={refresh} />
-                  </div>
+              <div style={{ maxWidth: 740, margin: '0 auto' }}>
+                <PostForm onCreate={() => setRefresh(r => r + 1)} />
+                <div style={{ marginTop: 18 }}>
+                  <PostList refreshTrigger={refresh} />
                 </div>
-                <aside className="card community-aside">
-                  <h3>Upcoming</h3>
-                  <p>Events, opportunities, and announcements will appear here.</p>
-                </aside>
               </div>
             </motion.div>
           )}
