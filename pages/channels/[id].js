@@ -86,6 +86,13 @@ export default function ChannelDetailPage() {
   const [sending, setSending] = useState(false)
   // attachment: { file, previewUrl, kind: 'image'|'video'|'file' } | null
   const [attachment, setAttachment] = useState(null)
+  // member management
+  const [members, setMembers] = useState([])
+  const [showMembersPanel, setShowMembersPanel] = useState(false)
+  const [addQuery, setAddQuery] = useState('')
+  const [addResults, setAddResults] = useState([])
+  const [addLoading, setAddLoading] = useState(false)
+  const [removingId, setRemovingId] = useState(null)
   const messagesEndRef = useRef(null)
   const fileInputRef = useRef(null)
   const router = useRouter()
@@ -102,7 +109,13 @@ export default function ChannelDetailPage() {
 
     apiFetch(`/profiles/channels/${id}/`)
       .then(r => r.ok ? r.json() : null)
-      .then(json => { if (json) setChannel(unwrap(json)) })
+      .then(json => {
+        if (json) {
+          const ch = unwrap(json)
+          setChannel(ch)
+          if (Array.isArray(ch.members)) setMembers(ch.members)
+        }
+      })
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [id])
@@ -111,6 +124,56 @@ export default function ChannelDetailPage() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  async function refreshMembers() {
+    const res = await apiFetch(`/profiles/channels/${id}/`)
+    if (res.ok) {
+      const json = await res.json()
+      const ch = unwrap(json)
+      if (Array.isArray(ch.members)) setMembers(ch.members)
+    }
+  }
+
+  async function searchUsers(q) {
+    setAddQuery(q)
+    if (q.trim().length < 2) { setAddResults([]); return }
+    setAddLoading(true)
+    try {
+      const res = await apiFetch(`/profiles/channels/${id}/search-users/?q=${encodeURIComponent(q)}`)
+      if (res.ok) setAddResults(await res.json())
+    } catch (_) {}
+    setAddLoading(false)
+  }
+
+  async function addMember(userId) {
+    const res = await apiFetch(`/profiles/channels/${id}/add-member/`, {
+      method: 'POST',
+      body: JSON.stringify({ user_id: userId })
+    })
+    if (res.ok) {
+      setAddQuery('')
+      setAddResults([])
+      await refreshMembers()
+    } else {
+      const err = await res.json()
+      alert(err.error || 'Could not add member')
+    }
+  }
+
+  async function removeMember(userId) {
+    setRemovingId(userId)
+    const res = await apiFetch(`/profiles/channels/${id}/remove-member/`, {
+      method: 'POST',
+      body: JSON.stringify({ user_id: userId })
+    })
+    if (res.ok) {
+      await refreshMembers()
+    } else {
+      const err = await res.json()
+      alert(err.error || 'Could not remove member')
+    }
+    setRemovingId(null)
+  }
 
   function handleFileSelect(e) {
     const file = e.target.files?.[0]
@@ -211,11 +274,15 @@ export default function ChannelDetailPage() {
     : channel.founder_detail
 
   const canSend = !sending && (!!newMsg.trim() || !!attachment)
+  const isOriginalMember = currentUserId && (
+    Number(channel.founder_detail?.id) === Number(currentUserId) ||
+    Number(channel.investor_detail?.id) === Number(currentUserId)
+  )
 
   return (
     <div className="container" style={{ maxWidth: 720 }}>
       {/* Header */}
-      <header className="page-header" style={{ marginBottom: 20 }}>
+      <header className="page-header" style={{ marginBottom: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{
             width: 46, height: 46, borderRadius: '50%', flexShrink: 0,
@@ -225,7 +292,7 @@ export default function ChannelDetailPage() {
           }}>
             {(otherPerson?.full_name || '?')[0].toUpperCase()}
           </div>
-          <div>
+          <div style={{ flex: 1 }}>
             <h1 style={{ margin: 0 }}>{otherPerson?.full_name || 'Conversation'}</h1>
             <span style={{ fontSize: '0.82rem' }}>
               {connected
@@ -233,8 +300,119 @@ export default function ChannelDetailPage() {
                 : <span style={{ color: 'var(--muted)' }}>● Offline</span>}
             </span>
           </div>
+          {/* Members count button */}
+          <button
+            onClick={() => setShowMembersPanel(v => !v)}
+            style={{
+              background: showMembersPanel ? 'rgba(79,107,217,0.18)' : 'none',
+              border: '1.5px solid var(--border)',
+              borderRadius: 10, padding: '6px 14px',
+              cursor: 'pointer', fontSize: '0.85rem',
+              color: showMembersPanel ? '#4F6BD9' : 'var(--muted)',
+              fontWeight: 600, flexShrink: 0,
+              display: 'flex', alignItems: 'center', gap: 6,
+            }}
+          >
+            👥 {members.length} member{members.length !== 1 ? 's' : ''}
+          </button>
         </div>
       </header>
+
+      {/* Members panel */}
+      {showMembersPanel && (
+        <div style={{
+          border: '1.5px solid var(--border)', borderRadius: 'var(--radius)',
+          padding: 16, marginBottom: 16, background: 'var(--dark2)',
+        }}>
+          <h3 style={{ margin: '0 0 12px', fontSize: '0.95rem' }}>Members</h3>
+
+          {/* Current members list */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: isOriginalMember ? 16 : 0 }}>
+            {members.map(m => {
+              const name = m.user_detail?.full_name || m.user_detail?.email || 'Unknown'
+              const isOriginalRole = m.role === 'founder' || m.role === 'investor'
+              const canRemove = isOriginalMember && !isOriginalRole
+              return (
+                <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{
+                    width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
+                    background: 'linear-gradient(135deg, #4F6BD9, #F5A623)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#fff', fontWeight: 700, fontSize: '0.82rem'
+                  }}>
+                    {name[0].toUpperCase()}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{name}</div>
+                    <div style={{ fontSize: '0.76rem', opacity: 0.55, textTransform: 'capitalize' }}>{m.role}</div>
+                  </div>
+                  {canRemove && (
+                    <button
+                      onClick={() => removeMember(m.user_detail?.id)}
+                      disabled={removingId === m.user_detail?.id}
+                      style={{
+                        background: 'none', border: '1px solid rgba(239,68,68,0.4)',
+                        borderRadius: 6, padding: '3px 10px', cursor: 'pointer',
+                        fontSize: '0.78rem', color: '#ef4444',
+                      }}
+                    >
+                      {removingId === m.user_detail?.id ? '…' : 'Remove'}
+                    </button>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Add member search (original founder/investor only) */}
+          {isOriginalMember && (
+            <div style={{ borderTop: '1px solid var(--border)', paddingTop: 14 }}>
+              <p style={{ margin: '0 0 8px', fontSize: '0.85rem', fontWeight: 600 }}>Add a member</p>
+              <input
+                type="text"
+                placeholder="Search by name or email…"
+                value={addQuery}
+                onChange={e => searchUsers(e.target.value)}
+                style={{ width: '100%', borderRadius: 8, padding: '8px 12px', fontSize: '0.9rem', boxSizing: 'border-box' }}
+              />
+              {addLoading && <p style={{ fontSize: '0.82rem', opacity: 0.5, margin: '6px 0 0' }}>Searching…</p>}
+              {addResults.length > 0 && (
+                <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {addResults.map(u => (
+                    <div key={u.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 8px', borderRadius: 8, background: 'rgba(79,107,217,0.07)' }}>
+                      <div style={{
+                        width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
+                        background: 'linear-gradient(135deg, #4F6BD9, #F5A623)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: '#fff', fontWeight: 700, fontSize: '0.78rem'
+                      }}>
+                        {(u.full_name || u.email || '?')[0].toUpperCase()}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 600, fontSize: '0.88rem' }}>{u.full_name || '—'}</div>
+                        <div style={{ fontSize: '0.75rem', opacity: 0.55 }}>{u.email}</div>
+                      </div>
+                      <button
+                        onClick={() => addMember(u.id)}
+                        style={{
+                          background: '#F5A623', border: 'none', borderRadius: 6,
+                          padding: '4px 14px', cursor: 'pointer',
+                          fontSize: '0.82rem', fontWeight: 600, color: '#fff',
+                        }}
+                      >
+                        Add
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {!addLoading && addQuery.trim().length >= 2 && addResults.length === 0 && (
+                <p style={{ fontSize: '0.82rem', opacity: 0.5, margin: '6px 0 0' }}>No users found</p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Messages */}
       <div style={{
