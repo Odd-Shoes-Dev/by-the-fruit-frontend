@@ -1,8 +1,16 @@
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { apiFetch, getToken } from '../lib/api'
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 
-const unwrap = json => { const r = json?.data ?? json; return Array.isArray(r) ? r : Array.isArray(r?.results) ? r.results : [] }
+// Connections are now frictionless — investor messages founder directly,
+// channel opens immediately. This page redirects to /channels.
+export default function ConnectionsPage() {
+  const router = useRouter()
+  useEffect(() => {
+    router.replace('/channels')
+  }, [])
+  return null
+}
+
 
 export default function ConnectionsPage() {
   const [connections, setConnections] = useState([])

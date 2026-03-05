@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { apiFetch, getToken, getUserId } from '../lib/api'
 import FluffyButton from './FluffyButton'
 
@@ -11,6 +11,7 @@ export default function ConnectionButtons({ targetUserId, viewerRole = 'investor
   const [error, setError] = useState(null)
   const [token, setToken] = useState(null)
   const [userId, setUserId] = useState(null)
+  const router = useRouter()
 
   useEffect(() => {
     const t = getToken()
@@ -35,37 +36,50 @@ export default function ConnectionButtons({ targetUserId, viewerRole = 'investor
       .catch(() => {})
   }, [targetUserId])
 
-  async function markInterested() {
+  async function openChannel() {
     setLoading(true); setError(null)
     try {
-      const res = await apiFetch('/profiles/connections/interested/', {
-        method: 'POST',
-        body: JSON.stringify({ founder_id: targetUserId })
-      })
-      const json = await res.json()
-      if (res.ok) setConnection(unwrap(json))
-      else setError((unwrap(json))?.error || 'Failed')
-    } catch (e) { setError('Network error') }
-    setLoading(false)
-  }
-
-  async function requestConnect() {
-    setLoading(true); setError(null)
-    try {
+      // If already connected, navigate straight to the channel
+      if (connection?.status === 'connected') {
+        // Try to find channel id from connection or fetch channels
+        if (connection?.channel_id) {
+          router.push(`/channels/${connection.channel_id}`)
+          return
+        }
+        const res = await apiFetch('/profiles/channels/')
+        if (res.ok) {
+          const items = unwrap(await res.json())
+          const ch = items.find(c => c.connection === connection.id)
+          if (ch) { router.push(`/channels/${ch.id}`); return }
+        }
+        router.push('/channels')
+        return
+      }
+      // Not connected yet — auto-connect and open channel immediately
       const res = await apiFetch('/profiles/connections/connect/', {
         method: 'POST',
         body: JSON.stringify({ founder_id: targetUserId })
       })
       const json = await res.json()
-      if (res.ok) setConnection(unwrap(json))
-      else setError((unwrap(json))?.error || 'Failed')
+      if (res.ok) {
+        const data = unwrap(json)
+        setConnection(data)
+        const channelId = data.channel_id
+        if (channelId) {
+          router.push(`/channels/${channelId}`)
+        } else {
+          router.push('/channels')
+        }
+      } else {
+        setError((unwrap(json))?.error || 'Failed to open channel')
+      }
     } catch (e) { setError('Network error') }
     setLoading(false)
   }
 
   if (!token) {
     return (
-      <FluffyButton href="/login" label="Log in to connect" width={180} height={40} strands={800} strandLen={6} fontSize={14} />
+      <FluffyButton href="/login" label="Log in to message" width={180} height={40} strands={800} strandLen={6} fontSize={14} />
     )
   }
 
@@ -76,21 +90,24 @@ export default function ConnectionButtons({ targetUserId, viewerRole = 'investor
   return (
     <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
       {error && <span style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>{error}</span>}
-      {status === 'connected' && (
-        <FluffyButton href={`/channels?connection=${connection?.id}`} label="View channel" width={150} height={40} strands={700} strandLen={6} fontSize={14} />
-      )}
-      {status === 'connect_pending' && viewerRole === 'investor' && (
-        <span style={{ color: 'var(--muted)' }}>Connect request pending</span>
-      )}
-      {status === 'rejected' && <span style={{ color: 'var(--muted)' }}>Connection declined</span>}
-      {(!status || status === 'interested') && viewerRole === 'investor' && (
-        <>
-          {status !== 'interested' && (
-            <FluffyButton onClick={markInterested} disabled={loading} label={loading ? '...' : 'Interested'} width={120} height={40} strands={700} strandLen={6} fontSize={14} />
-          )}
-          <FluffyButton onClick={requestConnect} disabled={loading} label={loading ? '...' : 'Connect'} width={120} height={40} strands={700} strandLen={6} fontSize={14} />
-        </>
+      {status === 'connected' ? (
+        <FluffyButton
+          onClick={openChannel}
+          disabled={loading}
+          label={loading ? '…' : 'Open channel'}
+          width={125} height={36} strands={700} strandLen={6} fontSize={13}
+          color="#4F6BD9"
+        />
+      ) : (
+        <FluffyButton
+          onClick={openChannel}
+          disabled={loading}
+          label={loading ? 'Opening…' : 'Message'}
+          width={100} height={36} strands={800} strandLen={6} fontSize={13}
+          color="#F5A623"
+        />
       )}
     </div>
   )
 }
+

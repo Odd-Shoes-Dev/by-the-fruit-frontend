@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import Pagination from '../components/Pagination'
+import FluffyButton from '../components/FluffyButton'
 import { apiFetch, getToken, isAdmin } from '../lib/api'
 
 const PAGE_SIZE = 8
@@ -78,7 +79,7 @@ export default function InvestorsList() {
                   {inv.bio && <div className="meta">{inv.bio}{inv.bio.length >= 120 ? '…' : ''}</div>}
                 </div>
                 <div className="list-item-actions">
-                  <Link href={`/profile/${inv.id}`} className="btn btn-sm">View</Link>
+                  <FluffyButton href={`/profile/${inv.id}`} label="View" width={80} height={36} strands={700} strandLen={6} fontSize={13} color="#F5A623" />
                 </div>
               </div>
             </li>

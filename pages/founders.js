@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import Pagination from '../components/Pagination'
 import ConnectionButtons from '../components/ConnectionButtons'
+import FluffyButton from '../components/FluffyButton'
 import { apiFetch, getToken, isAdmin } from '../lib/api'
 
 const PAGE_SIZE = 6
@@ -73,7 +74,7 @@ export default function FoundersList() {
                 </div>
                 <div className="list-item-actions">
                   <ConnectionButtons targetUserId={f.id} viewerRole="investor" />
-                  <Link href={`/profile/${f.id}`} className="btn btn-sm">View</Link>
+                  <FluffyButton href={`/profile/${f.id}`} label="View" width={80} height={36} strands={700} strandLen={6} fontSize={13} color="#F5A623" />
                 </div>
               </div>
               {f.family && <div className="meta">Family: {(f.family || []).join(', ')}</div>}

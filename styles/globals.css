@@ -156,14 +156,14 @@ header h2 {
 .btn-ghost:hover { border-color: rgba(0,0,0,0.3); color: var(--cream); }
 
 .btn-danger {
-  background: transparent; color: #c0392b;
-  border: 1.5px solid #c0392b;
+  background: transparent; color: var(--orange);
+  border: 1.5px solid var(--orange);
   padding: 9px 20px; border-radius: 999px;
   cursor: pointer; min-height: 40px; font-family: inherit;
   font-size: 0.9rem; font-weight: 600;
   transition: all var(--transition);
 }
-.btn-danger:hover { background: #c0392b; color: #fff; }
+.btn-danger:hover { background: var(--orange); color: #fff; }
 .btn-sm { padding: 6px 14px; min-height: 32px; font-size: 0.82rem; }
 
 /* ── Forms ──────────────────────────────────────────────── */

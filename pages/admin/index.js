@@ -277,25 +277,22 @@ export default function AdminIndex() {
               whileHover={{ y: -2 }}
               onClick={onClick}
               style={{
-                background: 'rgba(244,239,230,0.04)',
-                border: '1px solid rgba(244,239,230,0.08)',
+                background: 'var(--dark2)',
+                border: '1px solid var(--border)',
                 borderRadius: 14,
-                padding: '16px 18px',
+                padding: '18px 18px 16px',
                 cursor: 'pointer',
-                position: 'relative',
-                overflow: 'hidden',
+                boxShadow: 'var(--shadow-sm)',
               }}
             >
-              {/* accent bar at top */}
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: '#E8601A', borderRadius: '14px 14px 0 0' }} />
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                <Icon size={15} style={{ color: '#E8601A', flexShrink: 0 }} />
-                <span style={{ fontSize: '0.78rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <Icon size={15} style={{ color: 'rgba(45,59,81,0.35)', flexShrink: 0 }} />
+                <span style={{ fontSize: '0.72rem', color: 'var(--muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</span>
               </div>
-              <div style={{ fontSize: '1.9rem', fontWeight: 800, color: 'var(--cream)', lineHeight: 1, fontFamily: "'Playfair Display', serif" }}>
+              <div style={{ fontSize: '1.9rem', fontWeight: 800, color: 'var(--cream)', lineHeight: 1 }}>
                 {value ?? '—'}
               </div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--muted)', marginTop: 4 }}>{sub}</div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--muted)', marginTop: 5 }}>{sub}</div>
             </motion.div>
           ))}
         </div>
@@ -304,47 +301,29 @@ export default function AdminIndex() {
         {totalUsers > 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16, marginBottom: 28 }}>
 
-            {/* Donut: user status */}
-            <div style={{ background: 'rgba(244,239,230,0.04)', border: '1px solid rgba(244,239,230,0.08)', borderRadius: 14, padding: '20px 18px' }}>
-              <p style={{ margin: '0 0 14px', fontSize: '0.8rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>User Status</p>
-              {PieChart && (
-                <ResponsiveContainer width="100%" height={180}>
-                  <PieChart>
-                    <Pie
-                      data={[
-                        { name: 'Approved', value: approvedUsers },
-                        { name: 'Pending',  value: pendingUsers  },
-                        { name: 'Rejected', value: rejectedUsers },
-                      ].filter(d => d.value > 0)}
-                      cx="50%" cy="50%"
-                      innerRadius={50} outerRadius={75}
-                      paddingAngle={3}
-                      dataKey="value"
-                    >
-                      <Cell fill="#34d399" />
-                      <Cell fill="#E8601A" />
-                      <Cell fill="#f87171" />
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{ background: '#0e2019', border: '1px solid rgba(244,239,230,0.1)', borderRadius: 8, fontSize: '0.82rem', color: '#F4EFE6' }}
-                      itemStyle={{ color: '#F4EFE6' }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              )}
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 4, flexWrap: 'wrap' }}>
-                {[['Approved', approvedUsers, '#34d399'], ['Pending', pendingUsers, '#E8601A'], ['Rejected', rejectedUsers, '#f87171']].map(([lbl, count, color]) => (
-                  <span key={lbl} style={{ fontSize: '0.78rem', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: color, display: 'inline-block', flexShrink: 0 }} />
-                    {lbl} <strong style={{ color: 'var(--cream)' }}>{count}</strong>
-                  </span>
+            {/* User status counters */}
+            <div style={{ background: 'var(--dark2)', border: '1px solid var(--border)', borderRadius: 14, padding: '20px 18px', boxShadow: 'var(--shadow-sm)' }}>
+              <p style={{ margin: '0 0 16px', fontSize: '0.72rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>User Status</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                {[['Approved', approvedUsers, '#15803d', '#f0fdf4'], ['Pending', pendingUsers, '#b45309', '#fff8e1'], ['Rejected', rejectedUsers, '#be123c', '#fff1f2']].map(([lbl, count, color, bg]) => (
+                  <div key={lbl} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <span style={{ fontSize: '0.82rem', color: 'var(--muted)', fontWeight: 600 }}>{lbl}</span>
+                        <strong style={{ fontSize: '0.88rem', color }}>{count}</strong>
+                      </div>
+                      <div style={{ height: 6, borderRadius: 4, background: 'rgba(45,59,81,0.07)', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: totalUsers > 0 ? `${Math.round(count / totalUsers * 100)}%` : '0%', background: color, borderRadius: 4 }} />
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
 
             {/* Bar: offerings by status */}
-            <div style={{ background: 'rgba(244,239,230,0.04)', border: '1px solid rgba(244,239,230,0.08)', borderRadius: 14, padding: '20px 18px' }}>
-              <p style={{ margin: '0 0 14px', fontSize: '0.8rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Offerings by Status</p>
+            <div style={{ background: 'var(--dark2)', border: '1px solid var(--border)', borderRadius: 14, padding: '20px 18px', boxShadow: 'var(--shadow-sm)' }}>
+              <p style={{ margin: '0 0 14px', fontSize: '0.72rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Offerings by Status</p>
               {BarChart && (
                 <ResponsiveContainer width="100%" height={180}>
                   <BarChart
@@ -355,11 +334,11 @@ export default function AdminIndex() {
                     margin={{ top: 4, right: 8, bottom: 4, left: -20 }}
                     barSize={28}
                   >
-                    <XAxis dataKey="name" tick={{ fill: '#8a9e8d', fontSize: 11 }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fill: '#8a9e8d', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
+                    <XAxis dataKey="name" tick={{ fill: 'rgba(45,59,81,0.45)', fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fill: 'rgba(45,59,81,0.45)', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
                     <Tooltip
-                      contentStyle={{ background: '#0e2019', border: '1px solid rgba(244,239,230,0.1)', borderRadius: 8, fontSize: '0.82rem', color: '#F4EFE6' }}
-                      cursor={{ fill: 'rgba(244,239,230,0.04)' }}
+                      contentStyle={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 8, fontSize: '0.82rem', color: 'var(--cream)' }}
+                      cursor={{ fill: 'rgba(79,107,217,0.04)' }}
                     />
                     <Bar dataKey="count" radius={[6, 6, 0, 0]}>
                       {['draft', 'live', 'closed', 'cancelled'].map((s, i) => (
@@ -373,8 +352,8 @@ export default function AdminIndex() {
 
             {/* Bar: commitments by status */}
             {commitments.length > 0 && (
-              <div style={{ background: 'rgba(244,239,230,0.04)', border: '1px solid rgba(244,239,230,0.08)', borderRadius: 14, padding: '20px 18px' }}>
-                <p style={{ margin: '0 0 14px', fontSize: '0.8rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Commitments by Status</p>
+              <div style={{ background: 'var(--dark2)', border: '1px solid var(--border)', borderRadius: 14, padding: '20px 18px', boxShadow: 'var(--shadow-sm)' }}>
+                <p style={{ margin: '0 0 14px', fontSize: '0.72rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Commitments by Status</p>
                 {BarChart && (
                   <ResponsiveContainer width="100%" height={180}>
                     <BarChart
@@ -385,15 +364,15 @@ export default function AdminIndex() {
                       margin={{ top: 4, right: 8, bottom: 4, left: -20 }}
                       barSize={28}
                     >
-                      <XAxis dataKey="name" tick={{ fill: '#8a9e8d', fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fill: '#8a9e8d', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
+                      <XAxis dataKey="name" tick={{ fill: 'rgba(45,59,81,0.45)', fontSize: 11 }} axisLine={false} tickLine={false} />
+                      <YAxis tick={{ fill: 'rgba(45,59,81,0.45)', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
                       <Tooltip
-                        contentStyle={{ background: '#0e2019', border: '1px solid rgba(244,239,230,0.1)', borderRadius: 8, fontSize: '0.82rem', color: '#F4EFE6' }}
-                        cursor={{ fill: 'rgba(244,239,230,0.04)' }}
+                        contentStyle={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 8, fontSize: '0.82rem', color: 'var(--cream)' }}
+                        cursor={{ fill: 'rgba(79,107,217,0.04)' }}
                       />
                       <Bar dataKey="count" radius={[6, 6, 0, 0]}>
                         {['pending','signed','countersigned','rejected'].map((s, i) => (
-                          <Cell key={s} fill={['#E8601A', '#34d399', '#a78bfa', '#f87171'][i]} />
+                        <Cell key={s} fill={['#F5A623', '#34d399', '#a78bfa', '#f87171'][i]} />
                         ))}
                       </Bar>
                     </BarChart>
@@ -463,7 +442,7 @@ export default function AdminIndex() {
                       borderRadius: 20,
                       border: waitlistFilter === f ? 'none' : '1px solid #e5e7eb',
                       background: waitlistFilter === f
-                        ? (f === 'pending' ? '#d97706' : f === 'approved' ? '#34d399' : f === 'rejected' ? '#f87171' : 'var(--orange)')
+                        ? (f === 'pending' ? '#d97706' : f === 'approved' ? '#15803d' : f === 'rejected' ? 'var(--orange)' : 'var(--orange)')
                         : '#fff',
                       color: waitlistFilter === f ? '#fff' : 'var(--dark)',
                       fontWeight: 600,

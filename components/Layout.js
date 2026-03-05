@@ -184,8 +184,7 @@ export default function Layout({ children }) {
                 {isCreatorInfluencer && (
                   <Link href="/deals" className={styles.navLink}>Deals</Link>
                 )}
-                <Link href="/connections" className={styles.navLink}>Connections</Link>
-                <Link href="/channels" className={styles.navLink}>Channels</Link>
+                <Link href="/channels" className={styles.navLink}>Messages</Link>
                 {admin && (
                   <>
                     <Link href="/founders" className={styles.navLink}>Founders</Link>
@@ -234,8 +233,7 @@ export default function Layout({ children }) {
                     {isCreatorInfluencer && (
                       <Link href="/deals" className={styles.navLink}>Deals</Link>
                     )}
-                    <Link href="/connections" className={styles.navLink}>Connections</Link>
-                    <Link href="/channels" className={styles.navLink}>Channels</Link>
+                    <Link href="/channels" className={styles.navLink}>Messages</Link>
                     {admin && (
                       <>
                         <Link href="/founders" className={styles.navLink}>Founders</Link>
@@ -304,8 +302,7 @@ export default function Layout({ children }) {
             <span className={styles.footerColTitle}>Platform</span>
             <Link href="/community" className={styles.footerLink}>Feed</Link>
             <Link href="/events" className={styles.footerLink}>Events</Link>
-            <Link href="/connections" className={styles.footerLink}>Connections</Link>
-            <Link href="/channels" className={styles.footerLink}>Channels</Link>
+            <Link href="/channels" className={styles.footerLink}>Messages</Link>
           </div>
 
           <div className={styles.footerCol}>
