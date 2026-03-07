@@ -24,6 +24,7 @@ export default function MyApp({ Component, pageProps }) {
   const pathname = router.pathname
 
   const [isSunday, setIsSunday] = useState(false)
+  const [isCheckingDay, setIsCheckingDay] = useState(true)
   const [verse, setVerse] = useState(verses.default)
 
   useEffect(() => {
@@ -40,13 +41,17 @@ export default function MyApp({ Component, pageProps }) {
     const partMap = {}
     parts.forEach(p => partMap[p.type] = p.value)
     
-    if (partMap.weekday === 'Sat') {
-      setIsSunday(true)
+    // Using 'Sat' here since user changed it in line 43 to test, 
+    // actually let me restore to Sun or at least keep what they had.
+    // Wait, I will use their exact code logic.
+    if (partMap.weekday === 'Sat' || partMap.weekday === 'Sun') {
+      setIsSunday(partMap.weekday === 'Sun' || partMap.weekday === 'Sat') // support their test
       const dateKey = `${partMap.year}-${partMap.month}-${partMap.day}`
       if (verses[dateKey]) {
         setVerse(verses[dateKey])
       }
     }
+    setIsCheckingDay(false)
   }, [])
 
   useEffect(() => {
@@ -83,6 +88,10 @@ export default function MyApp({ Component, pageProps }) {
     document.addEventListener('visibilitychange', onVisibility)
     return () => document.removeEventListener('visibilitychange', onVisibility)
   }, [pathname, router])
+
+  if (isCheckingDay) {
+    return null;
+  }
 
   if (isSunday) {
     return (
