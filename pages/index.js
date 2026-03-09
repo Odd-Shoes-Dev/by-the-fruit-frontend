@@ -399,8 +399,10 @@ export default function Home() {
             {STEPS.map(s => (
               <div className={`${styles.stepCard} ${styles.fadeUp}`} key={s.n}>
                 <div className={styles.stepNum}>{s.n}</div>
-                <span className={styles.stepIco}>{s.ico}</span>
-                <h3 className={styles.stepCardH3}>{s.title}</h3>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                  <span className={styles.stepIco}>{s.ico}</span>
+                  <h3 className={styles.stepCardH3}>{s.title}</h3>
+                </div>
                 <p className={styles.stepCardP}>{s.text}</p>
               </div>
             ))}
