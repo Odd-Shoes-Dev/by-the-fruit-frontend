@@ -281,7 +281,7 @@ export default function Home() {
 
           <h1 className={styles.heroH1}>
             Investing in Innovation.<br />
-            <em>Known by its Fruit.</em>
+            <span className={styles.heroH1Orange}>Known by its Fruit.</span>
           </h1>
 
           <p className={styles.heroSub}>
