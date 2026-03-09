@@ -336,7 +336,7 @@ export default function Home() {
         <div className={styles.section}>
           <div className={styles.secLabel}>The Problem</div>
           <h2 className={styles.sectionH2}><em>Systemic Tension</em></h2>
-          <p className={styles.secDesc} style={{ fontStyle: 'italic', maxWidth: 680 }}>
+          <p className={styles.secDesc} style={{ maxWidth: 680 }}>
             &ldquo;Companies stay private longer. Liquidity is locked. Minimums are sky-high. The bridge
             between those who build and those who believe is crumbling.&rdquo;
           </p>
@@ -420,7 +420,7 @@ export default function Home() {
               <blockquote className={styles.manifestoQuote}>
                 &ldquo;Something amazing happens when we operate in our God-given gifts as a collective whole.&rdquo;
               </blockquote>
-              <p style={{ marginTop: '1.25rem', lineHeight: 1.75, color: 'var(--text-mid, #5C637E)', maxWidth: 560 }}>
+              <p style={{ marginTop: '1.25rem', lineHeight: 1.75, color: 'var(--text-mid, #5C637E)', maxWidth: 600, textAlign: 'left' }}>
                 We are decentralizing the power of who and what gets funded—and why. By aligning capital
                 with calling, we&apos;re building an ecosystem where every venture is strengthened not just by
                 funding, but by the collective gifts of those who believe in it.
@@ -469,7 +469,6 @@ export default function Home() {
           <div className={styles.newsletterInner}>
             <div className={styles.newsletterGrid}>
               <div>
-                <div className={styles.secLabel}>Stay Updated on the Harvest</div>
                 <h2 className={styles.newsletterLeftH2}>
                   Stay Updated on the <em>Harvest</em>
                 </h2>
