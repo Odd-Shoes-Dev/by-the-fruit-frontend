@@ -70,31 +70,19 @@ export default function Home() {
   useEffect(() => {
     if (typeof document === 'undefined') return
     const body = document.body
+    const html = document.documentElement
     if (menuOpen) {
-      // Store current scroll position so it can be restored on close
-      const scrollY = window.scrollY
-      body.style.position = 'fixed'
-      body.style.top = `-${scrollY}px`
-      body.style.left = '0'
-      body.style.right = '0'
+      // Disable scrolling without changing layout
       body.style.overflow = 'hidden'
+      html.style.overflow = 'hidden'
     } else {
-      // Restore scroll position
-      const scrollY = Math.abs(parseInt(body.style.top || '0', 10))
-      body.style.position = ''
-      body.style.top = ''
-      body.style.left = ''
-      body.style.right = ''
+      // Re-enable scrolling
       body.style.overflow = ''
-      window.scrollTo(0, scrollY)
+      html.style.overflow = ''
     }
     return () => {
-      // Cleanup on unmount
-      body.style.position = ''
-      body.style.top = ''
-      body.style.left = ''
-      body.style.right = ''
       body.style.overflow = ''
+      html.style.overflow = ''
     }
   }, [menuOpen])
 

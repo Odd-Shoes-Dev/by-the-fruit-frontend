@@ -149,8 +149,10 @@
 
 /* Mobile menu dropdown */
 .mobileMenu {
-  position: sticky;
-  top: 0;
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
   z-index: 99;
   display: flex;
   flex-direction: column;
@@ -265,8 +267,7 @@
   align-items: center;
   text-align: center;
   padding: 100px 24px 160px;
-  background: var(--blue);
-  background: linear-gradient(135deg, #4F6BD9 0%, #3B5BC9 100%);
+  background: var(--ivory);
   position: relative;
   overflow: hidden;
 }
@@ -310,7 +311,7 @@
   font-weight: 500;
   line-height: 1.12;
   letter-spacing: -.02em;
-  color: var(--white);
+  color: var(--text-dark);
   max-width: 760px;
 }
 .heroH1 em {
@@ -324,7 +325,7 @@
   z-index: 1;
   margin-top: 28px;
   font-size: 1.1rem;
-  color: rgba(255,255,255,0.85);
+  color: var(--text-dark);
   max-width: 520px;
   line-height: 1.75;
 }
@@ -358,19 +359,25 @@
 .statsStrip {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 60px;
   border-bottom: 1px solid var(--border-dark);
   background: var(--ivory);
 }
 
 .statCell {
-  padding: 48px 32px;
-  border-right: 1px solid var(--border-dark);
+  padding: 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   gap: 12px;
+  background: var(--white);
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
 }
 .statCell:last-child { border-right: none; }
 
@@ -762,7 +769,7 @@
 
 /* ─── NEWSLETTER ────────────────────────────────────────────── */
 .newsletterSection {
-  background: var(--blue-light);
+  background: var(--ivory);
   margin: 60px 60px;
   border-radius: 24px;
   padding: 80px 60px;
@@ -843,10 +850,9 @@
 .ctaBlock {
   text-align: center;
   padding: 100px 24px;
-  background: var(--blue);
-  background: linear-gradient(135deg, #4F6BD9 0%, #3B5BC9 100%);
+  background: var(--ivory);
   border-radius: 24px;
-  color: var(--white);
+  color: var(--text-dark);
 }
 .ctaSecLabel {
   font-size: .72rem; font-weight: 600;
@@ -857,11 +863,11 @@
   font-family: var(--serif);
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 500; letter-spacing: -.02em;
-  color: var(--white); margin-bottom: 16px;
+  color: var(--text-dark); margin-bottom: 16px;
 }
 .ctaH2 em { color: var(--orange); font-style: italic; }
 .ctaP {
-  font-size: 1.1rem; color: rgba(255,255,255,0.85);
+  font-size: 1.1rem; color: var(--text-dark);
   margin-bottom: 40px; max-width: 500px;
   margin-left: auto; margin-right: auto;
 }
@@ -915,8 +921,8 @@
   .hamburger { display: flex; }
   .hero { padding: 60px 20px 100px; }
   .hdiv { margin: 0 20px; }
-  .statsStrip { grid-template-columns: 1fr 1fr; }
-  .statCell { border-right: none; border-bottom: 1px solid var(--border); }
+  .statsStrip { grid-template-columns: 1fr 1fr; padding: 0 20px; gap: 20px; }
+  .statCell { border-right: none; }
   .section { padding: 60px 20px; }
   .stepsGrid { grid-template-columns: 1fr; gap: 28px; }
   .sectorsGrid { grid-template-columns: 1fr; }
@@ -928,5 +934,13 @@
   .ctaWrap { padding: 0 20px 60px; }
   .ctaBlock { padding: 60px 20px; }
   .footer { flex-direction: column; gap: 20px; text-align: center; padding: 24px 20px; }
-  .footLinks { justify-content: center; }
+  .footBrandWrap { align-items: center; }
+  .footLinks { justify-content: center; flex-wrap: wrap; gap: 16px; }
+  .footTagline { margin-left: 0; margin-top: 8px; }
+}
+
+@media (max-width: 600px) {
+  .statsStrip { grid-template-columns: 1fr; gap: 16px; }
+  .footer { padding: 20px 16px; gap: 16px; }
+  .footLinks { gap: 12px; }
 }
