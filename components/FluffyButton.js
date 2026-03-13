@@ -20,6 +20,7 @@ export default function FluffyButton({
   float = false,
   floatDelay = '0s',
   style = {},
+  children,
 }) {
   const router = useRouter()
 
@@ -53,7 +54,7 @@ export default function FluffyButton({
       }}
     >
       <div className={styles.flLabel} style={{ opacity: disabled ? 0.5 : 1 }}>
-        {label}
+        {children || label}
       </div>
     </El>
   )
