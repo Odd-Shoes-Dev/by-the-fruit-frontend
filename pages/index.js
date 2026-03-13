@@ -351,7 +351,7 @@ export default function Home() {
           <div className={styles.heroCtas}>
             <FluffyButton
               href={sec('hero')?.cta_primary_link || '/signup?role=founder'}
-              label={sec('hero')?.cta_primary_text || 'I have a Project to Fund →'}
+              label={sec('hero')?.cta_primary_text || 'Submit a Company →'}
               width={240}
               height={52}
               strands={1000}
@@ -555,7 +555,7 @@ export default function Home() {
                 <div className={styles.ctaButtons}>
                   <FluffyButton
                     href={sec('cta')?.cta_primary_link || '/signup?role=founder'}
-                    label={sec('cta')?.cta_primary_text || 'I have a Project to Fund'}
+                    label={sec('cta')?.cta_primary_text || 'Submit a Company'}
                     width={220} height={52} strands={1000} strandLen={8} fontSize={16} color="#F5A623"
                   />
                   <FluffyButton
