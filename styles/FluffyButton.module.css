@@ -6,10 +6,12 @@
   cursor: pointer;
   user-select: none;
   transition: transform 0.18s ease, filter 0.18s ease;
-  background: none;
+  background: #E8601A;
   border: none;
-  padding: 0;
+  padding: 16px 32px;
   outline: none;
+  border-radius: 999px;
+  color: white;
 }
 .fluffyWrap:not(.fluffyDisabled):not([disabled]):hover {
   transform: translateY(-3px) scale(1.02);
@@ -18,8 +20,7 @@
   transform: translateY(1px) scale(0.98);
 }
 .fluffyWrap canvas {
-  display: block;
-  border-radius: 999px;
+  display: none;
 }
 .fluffyDisabled,
 .fluffyWrap[disabled] {
@@ -29,8 +30,6 @@
 }
 
 .flLabel {
-  position: absolute;
-  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,7 +38,6 @@
   font-weight: 700;
   letter-spacing: 0.01em;
   pointer-events: none;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.25);
   white-space: nowrap;
 }
 
