@@ -19,7 +19,7 @@ export default function AdminUsersPage() {
     if (!getToken() || !isAdmin()) { router.replace('/login'); return }
     async function load() {
       try {
-        const res = await apiFetch('/accounts/waitlist?status=all')
+        const res = await apiFetch('/user/waitlist?status=all')
         if (res.ok) {
           const data = unwrap(await res.json())
           setUsers(Array.isArray(data) ? data : (data?.results || []))
@@ -33,7 +33,7 @@ export default function AdminUsersPage() {
   async function act(userId, action) {
     setActing(a => ({ ...a, [userId]: true }))
     try {
-      const res = await apiFetch(`/accounts/waitlist/${userId}/action`, {
+      const res = await apiFetch(`/user/waitlist/${userId}/action`, {
         method: 'PATCH',
         body: JSON.stringify({ action }),
       })

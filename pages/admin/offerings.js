@@ -21,7 +21,7 @@ export default function AdminOfferingsPage() {
     if (!getToken() || !isAdmin()) { router.replace('/login'); return }
     async function load() {
       try {
-        const res = await apiFetch('/profiles/offerings/')
+        const res = await apiFetch('/profiles/offerings/?all=true')
         if (res.ok) {
           const data = unwrap(await res.json())
           setOfferings(Array.isArray(data) ? data : (data?.results || []))

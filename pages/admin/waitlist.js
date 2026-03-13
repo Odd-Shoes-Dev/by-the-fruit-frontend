@@ -24,7 +24,7 @@ export default function AdminWaitlistPage() {
   const load = useCallback(async (f = filter) => {
     setLoading(true)
     try {
-      const res = await apiFetch(`/accounts/waitlist?status=${f}`)
+        const res = await apiFetch(`/user/waitlist?status=${f}`)
       if (res.ok) {
         const data = unwrap(await res.json())
         setUsers(Array.isArray(data) ? data : (data?.results || []))
@@ -38,10 +38,11 @@ export default function AdminWaitlistPage() {
     load(filter)
   }, [filter, router, load])
 
+
   async function act(userId, action) {
     setActing(a => ({ ...a, [userId]: true }))
     try {
-      const res = await apiFetch(`/accounts/waitlist/${userId}/action`, {
+      const res = await apiFetch(`/user/waitlist/${userId}/action`, {
         method: 'PATCH',
         body: JSON.stringify({ action }),
       })

@@ -1,7 +1,7 @@
 ﻿import Head from 'next/head'
 import Link from 'next/link'
 import styles from '../styles/Home.module.css'
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { getToken, isApproved, apiFetch } from '../lib/api'
 import FluffyButton from '../components/FluffyButton'
 import {
@@ -65,6 +65,8 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false)
   const [navVisible, setNavVisible] = useState(true)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [sections, setSections] = useState({})
+  const [sectionOrder, setSectionOrder] = useState(['problem', 'vision', 'how_it_works', 'manifesto', 'newsletter', 'cta'])
 
   // Lock body scroll when the mobile menu is open (prevents page scrolling behind it)
   useEffect(() => {
@@ -134,6 +136,28 @@ export default function Home() {
     return () => { mounted = false }
   }, [])
 
+  // Fetch CMS landing sections
+  useEffect(() => {
+    let mounted = true
+    apiFetch('/api/landing-sections/')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!mounted || !data) return
+        const list = Array.isArray(data) ? data : (data.results || [])
+        const map = {}
+        list.forEach(s => { map[s.key] = s })
+        setSections(map)
+        // Derive render order from API, excluding hero which is always first
+        const sorted = [...list]
+          .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+          .map(s => s.key)
+          .filter(k => k !== 'hero')
+        if (sorted.length > 0) setSectionOrder(sorted)
+      })
+      .catch(() => {})
+    return () => { mounted = false }
+  }, [])
+
   async function handleNewsletterSubmit(e) {
     e.preventDefault()
     if (!newsletterEmail.trim() || !newsletterAgree) return
@@ -158,6 +182,18 @@ export default function Home() {
       setNewsletterStatus('error')
     }
   }
+
+  // CMS helpers — sec(key) returns section data, vis(key) = true unless admin hid it
+  const sec = (key) => sections[key] || null
+  const vis = (key) => sec(key) ? sec(key).is_visible !== false : true
+
+  // CMS-driven items with hard-coded fallbacks
+  const cmsSteps = sec('how_it_works')?.items?.length
+    ? sec('how_it_works').items.map((item, i) => ({ ...STEPS[i], ...item, ico: STEPS[i]?.ico }))
+    : STEPS
+  const cmsPillars = sec('manifesto')?.items?.length
+    ? sec('manifesto').items.map((item, i) => ({ ...PILLARS[i], ...item, dot: PILLARS[i]?.dot }))
+    : PILLARS
 
   return (
     <>
@@ -276,23 +312,23 @@ export default function Home() {
         )}
 
         {/* ── HERO ────────────────────────────────────────────────── */}
+        {vis('hero') && (
         <section className={styles.hero} id="vision">
-          <div className={styles.heroEyebrow}><img src="/images/logo.png" alt="By The Fruit" style={{ width: 22, height: 22, objectFit: 'contain', verticalAlign: 'middle', marginRight: 6 }} /> Redemptive Tech Investing</div>
+          <div className={styles.heroEyebrow}><img src="/images/logo.png" alt="By The Fruit" style={{ width: 22, height: 22, objectFit: 'contain', verticalAlign: 'middle', marginRight: 6 }} /> {sec('hero')?.subtitle || 'Redemptive Tech Investing'}</div>
 
           <h1 className={styles.heroH1}>
-            Investing in Innovation.<br />
-            <span className={styles.heroH1Orange}>Known by its Fruit.</span>
+            {(sec('hero')?.title || 'Investing in Innovation.\nKnown by its Fruit.').split('\n')[0]}<br />
+            <span className={styles.heroH1Orange}>{(sec('hero')?.title || 'Investing in Innovation.\nKnown by its Fruit.').split('\n')[1] || 'Known by its Fruit.'}</span>
           </h1>
 
           <p className={styles.heroSub}>
-            The Venture Capital system is broken. We&apos;re fixing it through radical
-            hospitality, decentralized power, and capital that acts as an advocate—not just a check.
+            {sec('hero')?.body || "The Venture Capital system is broken. We're fixing it through radical hospitality, decentralized power, and capital that acts as an advocate—not just a check."}
           </p>
 
           <div className={styles.heroCtas}>
             <FluffyButton
-              href="/signup?role=founder"
-              label="I have a Project to Fund →"
+              href={sec('hero')?.cta_primary_link || '/signup?role=founder'}
+              label={sec('hero')?.cta_primary_text || 'I have a Project to Fund →'}
               width={240}
               height={52}
               strands={1000}
@@ -302,8 +338,8 @@ export default function Home() {
             />
 
             <FluffyButton
-              href={token && approved ? '/deals' : '/signup?role=investor'}
-              label="Join the Investor Collective →"
+              href={token && approved ? '/deals' : (sec('hero')?.cta_secondary_link || '/signup?role=investor')}
+              label={sec('hero')?.cta_secondary_text || 'Join the Investor Collective →'}
               width={240}
               height={52}
               strands={950}
@@ -313,6 +349,7 @@ export default function Home() {
             />
           </div>
         </section>
+        )}
 
         {/* ── SECTORS STRIP ───────────────────────────────────────── */}
         <div className={styles.statsStrip} id="sectors">
@@ -330,120 +367,188 @@ export default function Home() {
           </div>
         </div>
 
-        <div className={styles.hdiv} />
-
-        {/* ── THE PROBLEM ─────────────────────────────────────────── */}
-        <div className={styles.section}>
-          <div className={styles.secLabel}>The Problem</div>
-          <h2 className={styles.sectionH2}><em>Systemic Tension</em></h2>
-          <p className={styles.secDesc} style={{ maxWidth: 680 }}>
-            &ldquo;Companies stay private longer. Liquidity is locked. Minimums are sky-high. The bridge
-            between those who build and those who believe is crumbling.&rdquo;
-          </p>
-
-          <div className={styles.stepsGrid}>
-            <div className={`${styles.stepCard} ${styles.fadeUp}`}>
-              <h3 className={styles.stepCardH3}>The Locked Table</h3>
-              <p className={styles.stepCardP}>High barriers to entry keep brilliant minds away from the table. Companies stay private longer. Liquidity is locked. Minimums are sky-high.</p>
-            </div>
-            <div className={`${styles.stepCard} ${styles.fadeUp}`}>
-              <h3 className={styles.stepCardH3}>The Bridge is Crumbling</h3>
-              <p className={styles.stepCardP}>The connection between those who build and those who believe is breaking down. The traditional VC model leaves too many out.</p>
-            </div>
-            <div className={`${styles.stepCard} ${styles.fadeUp}`}>
-              <h3 className={styles.stepCardH3}>Transactional vs. Transformational</h3>
-              <p className={styles.stepCardP}>&apos;Capital In, Returns Out.&apos; We believe in &apos;Gifts In, Growth Out.&apos; True value comes from aligned relationships, not just transactions.</p>
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.hdiv} />
-
-        {/* ── THE VISION ──────────────────────────────────────────── */}
-        <div className={styles.section} id="vision">
-          <div className={styles.secLabel}>The Vision</div>
-          <h2 className={styles.sectionH2}>A <em>Redemptive Ecosystem</em></h2>
-          <p className={styles.secDesc}>What if funding mechanics were designed to align both sides of the table?</p>
-          <p className={styles.secDesc} style={{ maxWidth: 680, marginTop: '1rem' }}>
-            We curate a space where investors aren&apos;t just line items on a cap table. They are partners
-            who bring more than capital—they bring their gifts, expertise, and commitment to the mission.
-          </p>
-
-          <div className={styles.stepsGrid} style={{ marginTop: '2.5rem' }}>
-            <div className={`${styles.stepCard} ${styles.fadeUp}`}>
-              <span className={styles.stepIco}><IconMedia size={28} /></span>
-              <h3 className={styles.stepCardH3}>Evangelists</h3>
-              <p className={styles.stepCardP}>Spreading the mission and amplifying the voices of founders building redemptive ventures.</p>
-            </div>
-            <div className={`${styles.stepCard} ${styles.fadeUp}`}>
-              <span className={styles.stepIco}><IconLeaf size={28} /></span>
-              <h3 className={styles.stepCardH3}>Fractional Operators</h3>
-              <p className={styles.stepCardP}>Applying their God-given gifts to serve and strengthen the ventures they believe in.</p>
-            </div>
-            <div className={`${styles.stepCard} ${styles.fadeUp}`}>
-              <span className={styles.stepIco}><IconDollar size={28} /></span>
-              <h3 className={styles.stepCardH3}>Strategic Partners</h3>
-              <p className={styles.stepCardP}>Ensuring the roots are healthy so the fruit is sweet. True partnership, not just capital.</p>
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.hdiv} />
-
-        {/* ── HOW IT WORKS ────────────────────────────────────────── */}
-        <div className={styles.section} id="how">
-          <div className={styles.secLabel}>How It Works</div>
-          <h2 className={styles.sectionH2}>From <em>Seed</em> to Harvest</h2>
-
-          <div className={styles.stepsGrid}>
-            {STEPS.map(s => (
-              <div className={`${styles.stepCard} ${styles.fadeUp}`} key={s.n}>
-                <div className={styles.stepNum}>{s.n}</div>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                  <span className={styles.stepIco}>{s.ico}</span>
-                  <h3 className={styles.stepCardH3}>{s.title}</h3>
-                </div>
-                <p className={styles.stepCardP}>{s.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.hdiv} />
-
-        {/* ── MANIFESTO ───────────────────────────────────────────── */}
-        <div id="manifesto">
-          <div className={styles.manifestoBlock}>
-            <div>
-              <div className={styles.secLabel}>The Redemptive Tech Manifesto</div>
-              <h2 className={styles.manifestoH2}>
-                A table set for <em>everyone</em>
-              </h2>
-              <blockquote className={styles.manifestoQuote}>
-                &ldquo;Something amazing happens when we operate in our God-given gifts as a collective whole.&rdquo;
-              </blockquote>
-              <p style={{ marginTop: '1.25rem', lineHeight: 1.75, color: 'var(--text-mid, #5C637E)', maxWidth: 600, textAlign: 'left' }}>
-                We are decentralizing the power of who and what gets funded—and why. By aligning capital
-                with calling, we&apos;re building an ecosystem where every venture is strengthened not just by
-                funding, but by the collective gifts of those who believe in it.
+        {sectionOrder.map(key => {
+          if (key === 'problem') return !vis('problem') ? null : (
+            <React.Fragment key="problem">
+            <div className={styles.hdiv} />
+            <div className={styles.section}>
+              <div className={styles.secLabel}>{sec('problem')?.label || 'The Problem'}</div>
+              <h2 className={styles.sectionH2}><em>{sec('problem')?.title || 'Systemic Tension'}</em></h2>
+              <p className={styles.secDesc} style={{ maxWidth: 680 }}>
+                {sec('problem')?.body || '"Companies stay private longer. Liquidity is locked. Minimums are sky-high. The bridge between those who build and those who believe is crumbling."'}
               </p>
-            </div>
-
-            <div className={styles.manifestoPillars}>
-              {PILLARS.map(p => (
-                <div className={styles.pillar} key={p.title}>
-                  <div className={styles.pillarDot}>{p.dot}</div>
-                  <div className={styles.pillarTxt}>
-                    <span className={styles.pillarTxtStrong}>{p.title}</span>
-                    <span className={styles.pillarTxtSpan}>{p.text}</span>
+              <div className={styles.stepsGrid}>
+                {(sec('problem')?.items?.length ? sec('problem').items : [
+                  { title: 'The Locked Table', text: 'High barriers to entry keep brilliant minds away from the table. Companies stay private longer. Liquidity is locked. Minimums are sky-high.' },
+                  { title: 'The Bridge is Crumbling', text: 'The connection between those who build and those who believe is breaking down. The traditional VC model leaves too many out.' },
+                  { title: 'Transactional vs. Transformational', text: '\u2018Capital In, Returns Out.\u2019 We believe in \u2018Gifts In, Growth Out.\u2019 True value comes from aligned relationships, not just transactions.' },
+                ]).map((card, i) => (
+                  <div key={i} className={`${styles.stepCard} ${styles.fadeUp}`}>
+                    <h3 className={styles.stepCardH3}>{card.title}</h3>
+                    <p className={styles.stepCardP}>{card.text}</p>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        </div>
+            </React.Fragment>
+          )
 
-        {/* ── TESTIMONIALS (if any) ────────────────────────────────── */}
+          if (key === 'vision') return !vis('vision') ? null : (
+            <React.Fragment key="vision">
+            <div className={styles.hdiv} />
+            <div className={styles.section} id="vision">
+              <div className={styles.secLabel}>{sec('vision')?.label || 'The Vision'}</div>
+              <h2 className={styles.sectionH2}>A <em>{sec('vision')?.title || 'Redemptive Ecosystem'}</em></h2>
+              <p className={styles.secDesc}>{sec('vision')?.subtitle || 'What if funding mechanics were designed to align both sides of the table?'}</p>
+              <p className={styles.secDesc} style={{ maxWidth: 680, marginTop: '1rem' }}>
+                {sec('vision')?.body || "We curate a space where investors aren\u2019t just line items on a cap table. They are partners who bring more than capital\u2014they bring their gifts, expertise, and commitment to the mission."}
+              </p>
+              <div className={styles.stepsGrid} style={{ marginTop: '2.5rem' }}>
+                {(sec('vision')?.items?.length ? sec('vision').items : [
+                  { title: 'Evangelists', text: 'Spreading the mission and amplifying the voices of founders building redemptive ventures.' },
+                  { title: 'Fractional Operators', text: 'Applying their God-given gifts to serve and strengthen the ventures they believe in.' },
+                  { title: 'Strategic Partners', text: 'Ensuring the roots are healthy so the fruit is sweet. True partnership, not just capital.' },
+                ]).map((card, i) => {
+                  const icons = [<IconMedia key={0} size={28} />, <IconLeaf key={1} size={28} />, <IconDollar key={2} size={28} />]
+                  return (
+                    <div key={i} className={`${styles.stepCard} ${styles.fadeUp}`}>
+                      <span className={styles.stepIco}>{icons[i]}</span>
+                      <h3 className={styles.stepCardH3}>{card.title}</h3>
+                      <p className={styles.stepCardP}>{card.text}</p>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+            </React.Fragment>
+          )
+
+          if (key === 'how_it_works') return !vis('how_it_works') ? null : (
+            <React.Fragment key="how_it_works">
+            <div className={styles.hdiv} />
+            <div className={styles.section} id="how">
+              <div className={styles.secLabel}>{sec('how_it_works')?.label || 'How It Works'}</div>
+              <h2 className={styles.sectionH2}>From <em>{(sec('how_it_works')?.title || 'From Seed to Harvest').replace('From ', '').split(' to ')[0] || 'Seed'}</em> to Harvest</h2>
+              <div className={styles.stepsGrid}>
+                {cmsSteps.map(s => (
+                  <div className={`${styles.stepCard} ${styles.fadeUp}`} key={s.n || s.number}>
+                    <div className={styles.stepNum}>{s.n || s.number}</div>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                      <span className={styles.stepIco}>{s.ico}</span>
+                      <h3 className={styles.stepCardH3}>{s.title}</h3>
+                    </div>
+                    <p className={styles.stepCardP}>{s.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            </React.Fragment>
+          )
+
+          if (key === 'manifesto') return !vis('manifesto') ? null : (
+            <React.Fragment key="manifesto">
+            <div className={styles.hdiv} />
+            <div id="manifesto">
+              <div className={styles.manifestoBlock}>
+                <div>
+                  <div className={styles.secLabel}>{sec('manifesto')?.label || 'The Redemptive Tech Manifesto'}</div>
+                  <h2 className={styles.manifestoH2}>
+                    {sec('manifesto')?.title ? sec('manifesto').title : <>A table set for <em>everyone</em></>}
+                  </h2>
+                  <blockquote className={styles.manifestoQuote}>
+                    {sec('manifesto')?.body?.split('\n')[0] || '\u201cSomething amazing happens when we operate in our God-given gifts as a collective whole.\u201d'}
+                  </blockquote>
+                  <p style={{ marginTop: '1.25rem', lineHeight: 1.75, color: 'var(--text-mid, #5C637E)', maxWidth: 600, textAlign: 'left' }}>
+                    {sec('manifesto')?.body?.split('\n').slice(2).join(' ') || 'We are decentralizing the power of who and what gets funded\u2014and why. By aligning capital with calling, we\u2019re building an ecosystem where every venture is strengthened not just by funding, but by the collective gifts of those who believe in it.'}
+                  </p>
+                </div>
+                <div className={styles.manifestoPillars}>
+                  {cmsPillars.map(p => (
+                    <div className={styles.pillar} key={p.title}>
+                      <div className={styles.pillarDot}>{p.dot}</div>
+                      <div className={styles.pillarTxt}>
+                        <span className={styles.pillarTxtStrong}>{p.title}</span>
+                        <span className={styles.pillarTxtSpan}>{p.text}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            </React.Fragment>
+          )
+
+          if (key === 'newsletter') return !vis('newsletter') ? null : (
+            <div key="newsletter" className={styles.newsletterSection}>
+              <div className={styles.newsletterInner}>
+                <div className={styles.newsletterGrid}>
+                  <div>
+                    <h2 className={styles.newsletterLeftH2}>
+                      {sec('newsletter')?.title || 'Stay Updated on the Harvest'}
+                    </h2>
+                    <p className={styles.newsletterLeftP}>
+                      {sec('newsletter')?.body || 'Join our newsletter for curated insights, founder stories, and investment opportunities.'}
+                    </p>
+                  </div>
+                  <form className={styles.formStack} onSubmit={handleNewsletterSubmit}>
+                    {newsletterStatus === 'sent' ? (
+                      <div className={styles.formSuccess}>You&apos;re in. Welcome to the orchard.</div>
+                    ) : (
+                      <>
+                        <div className={styles.formGroup}>
+                          <input
+                            id="nl-email" type="email" className={styles.formInput}
+                            placeholder="Enter your email" value={newsletterEmail}
+                            onChange={e => setNewsletterEmail(e.target.value)} required
+                          />
+                        </div>
+                        {newsletterStatus === 'error' && (
+                          <div className={styles.formError}>Something went wrong. Please try again.</div>
+                        )}
+                        <FluffyButton
+                          type="submit"
+                          label={newsletterStatus === 'sending' ? 'Subscribing\u2026' : 'Subscribe'}
+                          disabled={newsletterStatus === 'sending' || !newsletterEmail}
+                          fullWidth height={48} strands={1200} strandLen={8} fontSize={15} color="#F5A623"
+                        />
+                      </>
+                    )}
+                  </form>
+                </div>
+              </div>
+            </div>
+          )
+
+          if (key === 'cta') return !vis('cta') ? null : (
+            <div key="cta" className={styles.ctaWrap}>
+              <div className={`${styles.ctaBlock} ${styles.fadeUp}`}>
+                <div className={styles.ctaSecLabel}>{sec('cta')?.label || 'A Table Set For Everyone'}</div>
+                <h2 className={styles.ctaH2}>
+                  {sec('cta')?.title || <>Known by its <em>Fruit.</em></>}
+                </h2>
+                <p className={styles.ctaP}>
+                  {sec('cta')?.body || 'The Venture Capital system is broken. We\u2019re fixing it through radical hospitality, decentralized power, and capital that acts as an advocate\u2014not just a check.'}
+                </p>
+                <div className={styles.ctaButtons}>
+                  <FluffyButton
+                    href={sec('cta')?.cta_primary_link || '/signup?role=founder'}
+                    label={sec('cta')?.cta_primary_text || 'I have a Project to Fund'}
+                    width={220} height={52} strands={1000} strandLen={8} fontSize={16} color="#F5A623"
+                  />
+                  <FluffyButton
+                    href={token && approved ? '/deals' : (sec('cta')?.cta_secondary_link || '/signup?role=investor')}
+                    label={sec('cta')?.cta_secondary_text || 'Join the Investor Collective \u2192'}
+                    width={240} height={52} strands={950} strandLen={8} fontSize={16} color="#4F6BD9"
+                  />
+                </div>
+              </div>
+            </div>
+          )
+
+          return null
+        })}
+
+        {/* ── TESTIMONIALS (always after ordered sections) ─────────── */}
         {testimonials.length > 0 && (
           <>
             <div className={styles.hdiv} />
@@ -465,94 +570,6 @@ export default function Home() {
             </div>
           </>
         )}
-
-        {/* ── NEWSLETTER ──────────────────────────────────────────── */}
-        <div className={styles.newsletterSection}>
-          <div className={styles.newsletterInner}>
-            <div className={styles.newsletterGrid}>
-              <div>
-                <h2 className={styles.newsletterLeftH2}>
-                  Stay Updated on the <em>Harvest</em>
-                </h2>
-                <p className={styles.newsletterLeftP}>
-                  Join our newsletter for curated insights, founder stories, and investment opportunities.
-                </p>
-              </div>
-
-              <form className={styles.formStack} onSubmit={handleNewsletterSubmit}>
-                {newsletterStatus === 'sent' ? (
-                  <div className={styles.formSuccess}>
-                    You&apos;re in. Welcome to the orchard.
-                  </div>
-                ) : (
-                  <>
-                    <div className={styles.formGroup}>
-                      <input
-                        id="nl-email"
-                        type="email"
-                        className={styles.formInput}
-                        placeholder="Enter your email"
-                        value={newsletterEmail}
-                        onChange={e => setNewsletterEmail(e.target.value)}
-                        required
-                      />
-                    </div>
-                    {newsletterStatus === 'error' && (
-                      <div className={styles.formError}>Something went wrong. Please try again.</div>
-                    )}
-                    <FluffyButton 
-                      type="submit"
-                      label={newsletterStatus === 'sending' ? 'Subscribing…' : 'Subscribe'}
-                      disabled={newsletterStatus === 'sending' || !newsletterEmail}
-                      fullWidth
-                      height={48}
-                      strands={1200}
-                      strandLen={8}
-                      fontSize={15}
-                      color="#F5A623"
-                    />
-                  </>
-                )}
-              </form>
-            </div>
-          </div>
-        </div>
-
-        {/* ── CTA BLOCK ───────────────────────────────────────────── */}
-        <div className={styles.ctaWrap}>
-          <div className={`${styles.ctaBlock} ${styles.fadeUp}`}>
-            <div className={styles.ctaSecLabel}>A Table Set For Everyone</div>
-            <h2 className={styles.ctaH2}>
-              Known by its <em>Fruit.</em>
-            </h2>
-            <p className={styles.ctaP}>
-              The Venture Capital system is broken. We&apos;re fixing it through radical hospitality,
-              decentralized power, and capital that acts as an advocate—not just a check.
-            </p>
-            <div className={styles.ctaButtons}>
-              <FluffyButton
-                href='/signup?role=founder'
-                label="I have a Project to Fund"
-                width={220}
-                height={52}
-                strands={1000}
-                strandLen={8}
-                fontSize={16}
-                color="#F5A623"
-              />
-              <FluffyButton
-                href={token && approved ? '/deals' : '/signup?role=investor'}
-                label="Join the Investor Collective →"
-                width={240}
-                height={52}
-                strands={950}
-                strandLen={8}
-                fontSize={16}
-                color="#4F6BD9"
-              />
-            </div>
-          </div>
-        </div>
 
         {/* ── FOOTER ──────────────────────────────────────────────── */}
         <footer className={styles.footer}>

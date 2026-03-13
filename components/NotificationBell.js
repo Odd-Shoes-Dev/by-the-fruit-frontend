@@ -43,7 +43,7 @@ export default function NotificationBell() {
       aria-label={`Notifications${count > 0 ? ` (${count} unread)` : ''}`}
     >
       {/* Bell icon */}
-      <FiBell size={22} aria-hidden="true" style={{ display: 'block', flexShrink: 0, color: '#fff' }} />
+      <FiBell size={22} aria-hidden="true" style={{ display: 'block', flexShrink: 0, color: '#5C637E' }} />
       {count > 0 && (
         <span
           style={{

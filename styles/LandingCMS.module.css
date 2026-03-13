@@ -1,0 +1,357 @@
+/* ── LandingCMS.module.css ── Landing page admin CMS styles ── */
+
+/* Section list */
+.sectionList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.sectionRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fff;
+  transition: background 0.15s;
+}
+.sectionRow:last-child {
+  border-bottom: none;
+}
+.sectionRow:hover {
+  background: #fafafa;
+}
+
+.sectionHidden {
+  opacity: 0.55;
+}
+
+/* Order controls */
+.orderControls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.orderBtn {
+  background: none;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  width: 26px;
+  height: 22px;
+  font-size: 10px;
+  cursor: pointer;
+  color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s, color 0.1s;
+}
+.orderBtn:hover:not(:disabled) {
+  background: #f0f0f0;
+  color: #333;
+}
+.orderBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.orderNum {
+  font-size: 11px;
+  color: #aaa;
+  font-weight: 600;
+  line-height: 1;
+  padding: 2px 0;
+}
+
+/* Section info */
+.sectionInfo {
+  flex: 1;
+  min-width: 0;
+}
+.sectionMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.sectionKey {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #4F6BD9;
+  background: rgba(79, 107, 217, 0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.sectionType {
+  font-size: 11px;
+  color: #888;
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.sectionLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2D3B51;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sectionTitle {
+  font-size: 12px;
+  color: #888;
+  margin: 2px 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Actions */
+.sectionActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.visBtn {
+  border: none;
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+.visBtn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.visBtnOn {
+  background: rgba(34, 197, 94, 0.12);
+  color: #16a34a;
+}
+.visBtnOff {
+  background: rgba(156, 163, 175, 0.15);
+  color: #9ca3af;
+}
+
+.editBtn {
+  background: #4F6BD9;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.editBtn:hover {
+  background: #3d59c7;
+}
+
+/* ── Modal ── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+  overflow-y: auto;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 720px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 24px 28px 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.modalTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #2D3B51;
+  margin: 0 0 4px;
+}
+.modalSubtitle {
+  font-size: 12px;
+  color: #888;
+  margin: 0;
+}
+.modalClose {
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #888;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modalClose:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.modalForm {
+  padding: 20px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Form fields */
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+}
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 560px) {
+  .fieldRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4b5563;
+  display: block;
+}
+.hint {
+  font-weight: 400;
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+.input {
+  border: 1.5px solid #e5e7eb;
+  border-radius: 7px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #2D3B51;
+  background: #fafafa;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+.input:focus {
+  outline: none;
+  border-color: #4F6BD9;
+  background: #fff;
+}
+
+.textarea {
+  border: 1.5px solid #e5e7eb;
+  border-radius: 7px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #2D3B51;
+  background: #fafafa;
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  line-height: 1.5;
+  transition: border-color 0.15s;
+}
+.textarea:focus {
+  outline: none;
+  border-color: #4F6BD9;
+  background: #fff;
+}
+.mono {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 12px;
+}
+
+.fieldError {
+  font-size: 12px;
+  color: #dc2626;
+  margin: 0;
+}
+.formError {
+  font-size: 13px;
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 0;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+.cancelBtn {
+  background: none;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 7px;
+  padding: 9px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #5c637e;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.cancelBtn:hover {
+  background: #f5f5f5;
+}
+
+.saveBtn {
+  background: #4F6BD9;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 9px 24px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.saveBtn:hover:not(:disabled) {
+  background: #3d59c7;
+}
+.saveBtn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
