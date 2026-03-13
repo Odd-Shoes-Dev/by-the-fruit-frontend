@@ -64,7 +64,7 @@ export default function MyApp({ Component, pageProps }) {
     setIsCheckingDay(false)
 
     // 2. Fetch admin-customised content (public, no auth needed)
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE || ''}/api/sunday-page/`)
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || ''}/api/sunday-page/`)
       .then(r => r.ok ? r.json() : null)
       .then(row => {
         if (!row) return
