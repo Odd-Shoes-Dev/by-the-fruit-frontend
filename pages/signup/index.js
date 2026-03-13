@@ -21,7 +21,9 @@ export default function Signup() {
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
-  const [location, setLocation] = useState('')
+  const [city, setCity] = useState('')
+  const [state, setState] = useState('')
+  const [country, setCountry] = useState('')
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
   const [postalCode, setPostalCode] = useState('')
@@ -52,11 +54,11 @@ export default function Signup() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email, full_name: name, password,
+          phone,
           newsletter_opt_in: newsletterOptIn,
           intended_role: role || 'general',
-          ...(location && { location }),
+          location: [city, state, country].filter(Boolean).join(', '),
           ...(address && { address }),
-          ...(phone && { phone }),
           ...(postalCode && { postal_code: postalCode }),
           ...(linkedinUrl && { linkedin_url: linkedinUrl }),
           ...(companyName && { company_name: companyName }),
@@ -197,11 +199,32 @@ export default function Signup() {
                   {fieldErrors.password && <p className={styles.fieldError}>{fieldErrors.password}</p>}
                 </label>
                 <label className={styles.fieldLabel}>
-                  Location <span className={styles.optional}>(optional)</span>
+                  City
                   <input
-                    value={location}
-                    onChange={e => setLocation(e.target.value)}
-                    placeholder="City / Region"
+                    value={city}
+                    onChange={e => { setCity(e.target.value); setFieldErrors(f => ({ ...f, location: undefined })) }}
+                    required
+                    placeholder="e.g. Austin"
+                    className={`${styles.fieldInput}${fieldErrors.location ? ' '+styles.fieldInputError : ''}`}
+                  />
+                </label>
+                <label className={styles.fieldLabel}>
+                  State / Province
+                  <input
+                    value={state}
+                    onChange={e => setState(e.target.value)}
+                    required
+                    placeholder="e.g. Texas"
+                    className={styles.fieldInput}
+                  />
+                </label>
+                <label className={styles.fieldLabel}>
+                  Country
+                  <input
+                    value={country}
+                    onChange={e => setCountry(e.target.value)}
+                    required
+                    placeholder="e.g. United States"
                     className={styles.fieldInput}
                   />
                 </label>
@@ -300,14 +323,16 @@ export default function Signup() {
 
               <div className={styles.fieldGrid}>
                 <label className={styles.fieldLabel}>
-                  Phone <span className={styles.optional}>(optional)</span>
+                  Phone number
                   <input
                     type="tel"
                     value={phone}
-                    onChange={e => setPhone(e.target.value)}
+                    onChange={e => { setPhone(e.target.value); setFieldErrors(f => ({ ...f, phone: undefined })) }}
+                    required
                     placeholder="+1 234 567 8900"
-                    className={styles.fieldInput}
+                    className={`${styles.fieldInput}${fieldErrors.phone ? ' '+styles.fieldInputError : ''}`}
                   />
+                  {fieldErrors.phone && <p className={styles.fieldError}>{fieldErrors.phone}</p>}
                 </label>
                 <label className={styles.fieldLabel}>
                   Postal / ZIP Code <span className={styles.optional}>(optional)</span>
