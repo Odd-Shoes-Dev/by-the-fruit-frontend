@@ -4,7 +4,19 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { getToken, isApproved } from './../lib/api'
 import Layout from '../components/Layout'
-import verses from '../data/verses.json'
+import fallbackVerses from '../data/verses.json'
+
+// Hardcoded defaults — used when the admin has not overridden a field
+const DEFAULT_CONTENT = {
+  headline:        "We're Closed Today —",
+  headline_accent: "On Purpose.",
+  intro:           "At By the Fruit, we believe capital should serve life — not consume it.",
+  notice_main:     "So every Sunday (12:00am\u201311:59pm ET), we pause.",
+  notice_sub:      "No deals. No dashboards. No urgency.",
+  notice_rest:     "Just rest.",
+  body:            "We honor the Sabbath as a reminder that our worth isn't measured in productivity \u2014 and that the world keeps turning without our striving.\n\nWhat an honor it is to rest in Him \u2014 as the first investment community to pause weekly to reflect, listen, and honor the One who gives to us so freely.\n\nWhether today looks like church, family dinner, a long walk, or quiet reflection \u2014 we hope you take this space to reset and recharge.",
+  signoff:         "We'll see you tomorrow",
+}
 
 const AUTH_ROUTES = ['/login', '/signup', '/pending', '/forgot-password', '/reset-password', '/verify-email', '/onboarding']
 
@@ -25,10 +37,11 @@ export default function MyApp({ Component, pageProps }) {
 
   const [isSunday, setIsSunday] = useState(false)
   const [isCheckingDay, setIsCheckingDay] = useState(true)
-  const [verse, setVerse] = useState(verses.default)
+  const [verse, setVerse] = useState(fallbackVerses.default)
+  const [sundayContent, setSundayContent] = useState(DEFAULT_CONTENT)
 
   useEffect(() => {
-    // Check if it's Sunday in ET
+    // 1. Determine whether today is Sunday (ET) and compute today's date key
     const formatter = new Intl.DateTimeFormat('en-US', {
       timeZone: 'America/New_York',
       weekday: 'short',
@@ -36,22 +49,43 @@ export default function MyApp({ Component, pageProps }) {
       month: '2-digit',
       day: '2-digit'
     })
-    
     const parts = formatter.formatToParts(new Date())
     const partMap = {}
     parts.forEach(p => partMap[p.type] = p.value)
-    
-    // Using 'Sat' here since user changed it in line 43 to test, 
-    // actually let me restore to Sun or at least keep what they had.
-    // Wait, I will use their exact code logic.
-    if (partMap.weekday === 'Sat' || partMap.weekday === 'Sun') {
-      setIsSunday(partMap.weekday === 'Sun' || partMap.weekday === 'Sat') // support their test
-      const dateKey = `${partMap.year}-${partMap.month}-${partMap.day}`
-      if (verses[dateKey]) {
-        setVerse(verses[dateKey])
-      }
+
+    const todayIsSunday = partMap.weekday === 'Sun'
+    const dateKey = `${partMap.year}-${partMap.month}-${partMap.day}`
+
+    if (todayIsSunday) {
+      setIsSunday(true)
+      // Set verse from the JSON fallback first (instant, no flicker)
+      setVerse(fallbackVerses[dateKey] || fallbackVerses.default)
     }
     setIsCheckingDay(false)
+
+    // 2. Fetch admin-customised content (public, no auth needed)
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE || ''}/api/sunday-page/`)
+      .then(r => r.ok ? r.json() : null)
+      .then(row => {
+        if (!row) return
+        setSundayContent({
+          headline:        row.headline        || DEFAULT_CONTENT.headline,
+          headline_accent: row.headline_accent || DEFAULT_CONTENT.headline_accent,
+          intro:           row.intro           || DEFAULT_CONTENT.intro,
+          notice_main:     row.notice_main     || DEFAULT_CONTENT.notice_main,
+          notice_sub:      row.notice_sub      || DEFAULT_CONTENT.notice_sub,
+          notice_rest:     row.notice_rest     || DEFAULT_CONTENT.notice_rest,
+          body:            row.body            || DEFAULT_CONTENT.body,
+          signoff:         row.signoff         || DEFAULT_CONTENT.signoff,
+        })
+        // Merge API verses over the JSON file — API entries take precedence
+        const mergedVerses = { ...fallbackVerses, ...(row.verses || {}) }
+        // Update the verse now that we have the API data
+        if (todayIsSunday) {
+          setVerse(mergedVerses[dateKey] || mergedVerses.default || fallbackVerses.default)
+        }
+      })
+      .catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -131,8 +165,8 @@ export default function MyApp({ Component, pageProps }) {
             margin: 0,
             letterSpacing: '-0.02em'
           }}>
-            We’re Closed Today — <br/>
-            <span style={{ fontStyle: 'italic', color: 'var(--orange2)' }}>On Purpose.</span>
+            {sundayContent.headline} <br/>
+            <span style={{ fontStyle: 'italic', color: 'var(--orange2)' }}>{sundayContent.headline_accent}</span>
           </h1>
           
           <div style={{
@@ -145,7 +179,7 @@ export default function MyApp({ Component, pageProps }) {
             fontWeight: 300
           }}>
             <p style={{ margin: 0 }}>
-              At <strong style={{ fontWeight: 600, color: 'var(--blue-dark)' }}>By the Fruit</strong>, we believe capital should serve life — not consume it.
+              {sundayContent.intro}
             </p>
             
             <div style={{
@@ -167,17 +201,17 @@ export default function MyApp({ Component, pageProps }) {
                 height: '100%',
                 background: 'var(--orange2)'
               }}></div>
-              <p style={{ margin: '0 0 8px 0', fontSize: '1.25rem' }}>So every Sunday (12:00am–11:59pm ET), we pause.</p>
-              <p style={{ margin: 0, color: 'var(--orange2)', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.85rem' }}>No deals. No dashboards. No urgency.</p>
-              <span style={{ display: 'block', marginTop: '24px', fontSize: '2.5rem', fontFamily: "'Inter', sans-serif", fontStyle: 'italic' }}>Just rest.</span>
+              <p style={{ margin: '0 0 8px 0', fontSize: '1.25rem' }}>{sundayContent.notice_main}</p>
+              <p style={{ margin: 0, color: 'var(--orange2)', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.85rem' }}>{sundayContent.notice_sub}</p>
+              <span style={{ display: 'block', marginTop: '24px', fontSize: '2.5rem', fontFamily: "'Inter', sans-serif", fontStyle: 'italic' }}>{sundayContent.notice_rest}</span>
             </div>
             
             <p style={{ margin: 0 }}>
-              We honor the Sabbath as a reminder that our worth isn’t measured in productivity — and that the world keeps turning without our striving.
-            
-              What an honor it is to rest in Him — as the first investment community to pause weekly to reflect, listen, and honor the One who gives to us so freely.
-          
-              Whether today looks like church, family dinner, a long walk, or quiet reflection — we hope you take this space to reset and recharge.
+              {sundayContent.body.split('\n\n').map((para, i) => (
+                <span key={i} style={{ display: 'block', marginBottom: i < sundayContent.body.split('\n\n').length - 1 ? '1em' : 0 }}>
+                  {para}
+                </span>
+              ))}
             </p>
           </div>
           
@@ -222,7 +256,7 @@ export default function MyApp({ Component, pageProps }) {
           
           <div style={{ paddingTop: '40px', paddingBottom: '32px' }}>
             <p style={{ fontSize: '1.2rem', color: 'var(--cream2)', margin: 0, fontWeight: 500 }}>
-              We’ll see you tomorrow <span style={{ color: 'var(--orange2)', marginLeft: '8px', fontSize: '1.5rem' }}>🧡</span>
+              {sundayContent.signoff} <span style={{ color: 'var(--orange2)', marginLeft: '8px', fontSize: '1.5rem' }}>🧡</span>
             </p>
           </div>
         </div>

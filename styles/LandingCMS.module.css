@@ -355,3 +355,27 @@
   opacity: 0.6;
   cursor: wait;
 }
+
+/* ── Sunday-page form sections ─────────────────────────────────────── */
+.formSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+}
+
+.sectionHeading {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--blue-dark, #1e2d5a);
+  margin: 0;
+}
+
+.sectionDesc {
+  font-size: 13px;
+  color: var(--muted, #6b7280);
+  margin: 0;
+}
