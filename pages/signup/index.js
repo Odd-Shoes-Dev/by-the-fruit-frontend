@@ -25,6 +25,7 @@ export default function Signup() {
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
   const [postalCode, setPostalCode] = useState('')
+  const [referralCode, setReferralCode] = useState('')
   const [newsletterOptIn, setNewsletterOptIn] = useState(false)
 
   // Role-specific fields
@@ -62,6 +63,7 @@ export default function Signup() {
           ...(raiseStage && { raise_stage: raiseStage }),
           ...(investmentRange && { investment_range: investmentRange }),
           ...(role === 'investor' && { is_accredited: isAccredited }),
+          ...(referralCode && { referral_code: referralCode }),
         })
       })
       if (res.ok) {
@@ -200,6 +202,19 @@ export default function Signup() {
                     value={location}
                     onChange={e => setLocation(e.target.value)}
                     placeholder="City / Region"
+                    className={styles.fieldInput}
+                  />
+                </label>
+              </div>
+
+              {/* Referral code */}
+              <div className={styles.fieldGrid}>
+                <label className={styles.fieldLabel}>
+                  Referral code <span className={styles.optional}>(optional)</span>
+                  <input
+                    value={referralCode}
+                    onChange={e => setReferralCode(e.target.value)}
+                    placeholder="e.g., BYFETG09E9"
                     className={styles.fieldInput}
                   />
                 </label>

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import Image from 'next/image'
 import { apiFetch, getToken } from '../lib/api'
 import styles from '../styles/Admin.module.css'
 
@@ -49,6 +50,10 @@ export default function AdminLayout({ children, active }) {
     <div className={styles.adminWrap}>
       {/* Sidebar */}
       <nav className={styles.sidebar}>
+        <Link href="/" className={styles.sidebarBrand}>
+          <Image src="/images/logo.png" alt="By The Fruit" width={30} height={30} className={styles.sidebarLogo} />
+          <span className={styles.sidebarBrandName}>By The Fruit</span>
+        </Link>
         <span className={styles.sidebarHeading}>Admin</span>
         {NAV.map(item => (
           <Link

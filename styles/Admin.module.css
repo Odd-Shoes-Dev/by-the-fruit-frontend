@@ -1,4 +1,4 @@
-﻿/* =====================
+/* =====================
    Shared Admin Dashboard Styles
    ===================== */
 
@@ -7,7 +7,7 @@
   display: grid;
   grid-template-columns: 220px 1fr;
   gap: 0;
-  min-height: calc(100vh - 64px);
+  min-height: 100vh;
 }
 @media (max-width: 860px) { .adminWrap { grid-template-columns: 1fr; } }
 
@@ -36,7 +36,29 @@
   text-transform: uppercase;
   color: rgba(26,18,8,0.25);
   padding: 0.5rem 1.25rem 0.25rem;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
+}
+
+.sidebarBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 1.25rem 1.25rem 0.75rem;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  margin-bottom: 0.5rem;
+}
+
+.sidebarLogo {
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.sidebarBrandName {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--cream);
+  letter-spacing: -0.01em;
 }
 .sidebarLink {
   display: flex;

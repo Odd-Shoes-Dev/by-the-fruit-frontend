@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { FiMapPin, FiPhone, FiGlobe, FiMail, FiLock, FiFeather, FiTrendingUp } from 'react-icons/fi'
+import { FiMapPin, FiPhone, FiGlobe, FiMail, FiLock, FiFeather, FiTrendingUp, FiShare2, FiCopy, FiCheck, FiRefreshCw } from 'react-icons/fi'
 import { apiFetch, getToken, getUserId } from '../../lib/api'
 import ConnectionButtons from '../../components/ConnectionButtons'
 import FluffyButton from '../../components/FluffyButton'
@@ -55,6 +55,40 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [viewerId, setViewerId] = useState(null)
+  const [isSeedModalOpen, setIsSeedModalOpen] = useState(false)
+  const [isGeneratingSeed, setIsGeneratingSeed] = useState(false)
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false)
+  const [isCopied, setIsCopied] = useState(false)
+
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(profile.user_code)
+    setIsCopied(true)
+    setTimeout(() => setIsCopied(false), 2000)
+  }
+
+  const handleGenerateCode = async () => {
+    setIsGeneratingSeed(true)
+    try {
+      const res = await apiFetch('/user/me/referral_code', { method: 'GET' })
+      if (res.ok) {
+        const json = await res.json()
+        const data = json?.data || json
+        const newCode = data?.code || data?.referral_code || data?.user_code
+        if (newCode) {
+          setProfile(prev => ({ ...prev, user_code: newCode }))
+        } else {
+          router.reload()
+        }
+        setIsSeedModalOpen(false)
+      } else {
+        console.error('Failed to generate code')
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsGeneratingSeed(false)
+    }
+  }
 
   useEffect(() => {
     setViewerId(getUserId())
@@ -78,6 +112,7 @@ export default function ProfilePage() {
         const hasBusiness = data.businesses?.length > 0
         const hasInvestor = data.investment_profiles?.length > 0
         setProfile(data)
+        
         setType(hasBusiness ? 'founder' : hasInvestor ? 'investor' : null)
         setLoading(false)
       })
@@ -121,6 +156,17 @@ export default function ProfilePage() {
 
   // Social links from investor profile
   const socials = investorProfile || {}
+
+  // TIER LOGIC
+  const cc = profile.code_count || 0;
+  let target = 10, tColor = '#f97316', tName = 'Starter';
+  if (cc >= 50) { target = 50; tColor = '#eab308'; tName = 'Gold'; }
+  else if (cc >= 25) { target = 50; tColor = '#94a3b8'; tName = 'Platinum'; }
+  else if (cc >= 10) { target = 25; tColor = '#cbd5e1'; tName = 'Silver'; }
+  else { target = 10; tColor = '#f97316'; tName = 'Starter'; }
+  const pct = Math.min(100, Math.round((cc / target) * 100));
+  const circ = 2 * Math.PI * 60;
+  const offset = circ - (pct / 100) * circ;
 
   return (
     <motion.div
@@ -171,16 +217,16 @@ export default function ProfilePage() {
               {(socials.linkedin || socials.twitter || socials.instagram || socials.facebook) && (
                 <div className={styles.socialRow}>
                   <SocialLink href={socials.linkedin} label="LinkedIn" icon={
-                    <svg viewBox="0 0 24 24" width={18} height={18} fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    <svg viewBox="0 0 24 24" width={18} height={18} fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
                   } />
                   <SocialLink href={socials.twitter} label="Twitter / X" icon={
-                    <svg viewBox="0 0 24 24" width={18} height={18} fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    <svg viewBox="0 0 24 24" width={18} height={18} fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
                   } />
                   <SocialLink href={socials.instagram} label="Instagram" icon={
-                    <svg viewBox="0 0 24 24" width={18} height={18} fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                    <svg viewBox="0 0 24 24" width={18} height={18} fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" /></svg>
                   } />
                   <SocialLink href={socials.facebook} label="Facebook" icon={
-                    <svg viewBox="0 0 24 24" width={18} height={18} fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    <svg viewBox="0 0 24 24" width={18} height={18} fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
                   } />
                 </div>
               )}
@@ -188,7 +234,78 @@ export default function ProfilePage() {
               {/* Actions */}
               <div className={styles.actionRow}>
                 {isOwnProfile ? (
-                  <FluffyButton href="/profile/settings" label="Edit profile" width={150} height={40} strands={800} strandLen={6} fontSize={14} color="#F5A623" color2="#F57C00" />
+                  <div className='flex flex-col gap-4 w-full'>
+                    {/* Referral Code Section */}
+                    <div className={styles.referralBox}>
+                      <p className={styles.referralLabel}>Your Referral Code</p>
+                      
+                      <div className={styles.progressContainer}>
+                        <div className={styles.progressRingWrapper}>
+                          <svg width="140" height="140" viewBox="0 0 140 140" className={styles.progressSvg}>
+                            <defs>
+                              <mask id="dash-mask">
+                                <circle cx="70" cy="70" r="60" fill="none" stroke="white" strokeWidth="10" strokeDasharray="5 3" />
+                              </mask>
+                            </defs>
+                            <circle cx="70" cy="70" r="60" fill="none" stroke="#f1f5f9" strokeWidth="10" mask="url(#dash-mask)" />
+                            <circle 
+                              cx="70" cy="70" r="60" 
+                              fill="none" 
+                              stroke={tColor} 
+                              strokeWidth="10" 
+                              transform="rotate(-90 70 70)"
+                              strokeDasharray={`${circ} ${circ}`} 
+                              strokeDashoffset={offset} 
+                              mask="url(#dash-mask)" 
+                              style={{ transition: 'stroke-dashoffset 0.8s ease' }} 
+                            />
+                          </svg>
+                          <div className={styles.progressInnerPlate}>
+                            <p className={styles.progressCodeTxt}>{profile.user_code || '----'}</p>
+                            <p className={styles.progressCountTxt}>{cc} / {target}</p>
+                          </div>
+                        </div>
+                        <p className={styles.tierNameTxt} style={{ color: tColor }}>
+                          {tName}
+                        </p>
+                      </div>
+
+                      <div className={styles.referralActionRow}>
+                        {profile.user_code ? (
+                          <>
+                            <button 
+                              onClick={() => setIsShareModalOpen(true)}
+                              className={styles.shareCodeBtnFilled}
+                            >
+                              <FiShare2 size={14} /> Share
+                            </button>
+                            <button 
+                              onClick={handleGenerateCode}
+                              disabled={isGeneratingSeed}
+                              className={styles.reloadCodeBtn}
+                              title="Reload Code"
+                            >
+                              <FiRefreshCw size={16} className={isGeneratingSeed ? styles.spinInline : ''} />
+                              
+                            </button>
+                          </>
+                        ) : (
+                          <button 
+                            onClick={() => setIsSeedModalOpen(true)}
+                            className={styles.plantSeedBtn}
+                            style={{ margin: 0 }}
+                          >
+                            <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M12 22c4-4 4-10 0-14-4 4-4 10 0 14z" /><path d="M12 22V8" /><path d="M12 8c4-4 10-4 10-4" /><path d="M12 8C8 4 2 4 2 4" /></svg>
+                            Generate
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <FluffyButton href="/profile/settings" label="Edit profile" width={150} height={40} strands={800} strandLen={6} fontSize={14} color="#F5A623" color2="#F57C00" />
+                    </div>
+                  </div>
                 ) : (
                   <ConnectionButtons targetUserId={Number(id)} viewerRole="investor" />
                 )}
@@ -374,6 +491,104 @@ export default function ProfilePage() {
 
         </main>
       </div>
+
+      {/* Plant a Seed Modal */}
+      {isSeedModalOpen && (
+        <div className={styles.modalOverlay}>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className={styles.modalCard}
+          >
+            {/* Decorative background blob */}
+            <div className={styles.modalBlob}></div>
+            
+            <div style={{ position: 'relative' }}>
+              <div className={styles.modalIconWrap}>
+                <svg viewBox="0 0 24 24" width={36} height={36} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M12 22c4-4 4-10 0-14-4 4-4 10 0 14z" /><path d="M12 22V8" /><path d="M12 8c4-4 10-4 10-4" /><path d="M12 8C8 4 2 4 2 4" /></svg>
+              </div>
+              <h2 className={styles.modalTitle}>Plant a seed</h2>
+              <p className={styles.modalText}>
+                A way to really illustrate the network effect and how 1 seed impacts so much!!
+              </p>
+              <div className="flex flex-col gap-3">
+                <button 
+                  onClick={handleGenerateCode}
+                  disabled={isGeneratingSeed}
+                  className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-md shadow-green-500/20 disabled:opacity-70 flex justify-center items-center gap-2"
+                >
+                  {isGeneratingSeed ? (
+                    <>
+                      <div className={styles.spinner}></div>
+                      Planting...
+                    </>
+                  ) : (
+                    'Generate Code'
+                  )}
+                </button>
+                <button 
+                  onClick={() => setIsSeedModalOpen(false)}
+                  disabled={isGeneratingSeed}
+                  className={styles.modalCancelBtn}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Share Code Modal */}
+      {isShareModalOpen && (
+        <div className={styles.modalOverlay}>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className={styles.modalCard}
+          >
+            <div className={styles.shareModalBlob}></div>
+            
+            <div style={{ position: 'relative' }}>
+              <div className={styles.shareModalIconWrap}>
+                <FiShare2 size={32} />
+              </div>
+              <h2 className={styles.modalTitle}>Share the Wealth!</h2>
+              <p className={styles.modalText}>
+                Invite your network using your unique referral code.
+              </p>
+              
+              <div className={styles.copyBox}>
+                <span className={styles.copyBoxCode}>{profile.user_code}</span>
+                <button 
+                  onClick={handleCopyCode}
+                  className={styles.copyBtn}
+                  title="Copy to clipboard"
+                >
+                  {isCopied ? <FiCheck size={18} color="#10b981" /> : <FiCopy size={18} />}
+                </button>
+              </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '24px' }}>
+                <button 
+                  onClick={handleGenerateCode}
+                  disabled={isGeneratingSeed}
+                  className={styles.modalResetBtn}
+                  title="Generate a new referral code"
+                >
+                  {isGeneratingSeed ? 'Resetting...' : 'Reset Code'}
+                </button>
+                <button 
+                  onClick={() => setIsShareModalOpen(false)}
+                  className={styles.modalCancelBtn}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </motion.div>
   )
 }

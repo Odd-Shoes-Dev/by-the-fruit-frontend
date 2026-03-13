@@ -41,7 +41,7 @@ export default function MyApp({ Component, pageProps }) {
   const [sundayContent, setSundayContent] = useState(DEFAULT_CONTENT)
 
   useEffect(() => {
-    // 1. Determine whether today is Sunday (ET) and compute today's date key
+    // 1. Determine whether motoday is Sunday (ET) and compute today's date key
     const formatter = new Intl.DateTimeFormat('en-US', {
       timeZone: 'America/New_York',
       weekday: 'short',

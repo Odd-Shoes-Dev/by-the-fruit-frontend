@@ -1,4 +1,4 @@
-﻿/* â”€â”€ Layout â”€â”€ */
+/* â”€â”€ Layout â”€â”€ */
 .profileGrid {
   display: grid;
   grid-template-columns: 1fr;
@@ -492,9 +492,424 @@
 
 .backLink:hover { text-decoration: underline; }
 
-/* â”€â”€ Mobile â”€â”€ */
+/* â”€â”€/* ── Mobile ── */
 @media (max-width: 767px) {
   .sidebar { position: static; }
   .detailCard { padding: 16px; }
   .identityBody { padding: 0 16px 20px; }
+}
+
+/* ── Referral / Plant a Seed ── */
+.referralBox {
+  background: rgba(245, 166, 35, 0.1);
+  border: 1px solid rgba(245, 166, 35, 0.3);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.referralLabel {
+  color: #c26900;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 8px;
+}
+
+.referralCodeWrap {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 8px;
+  padding: 8px 16px;
+  display: inline-block;
+}
+
+.referralCodeTxt {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #e65100;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.plantSeedBtn {
+  width: 100%;
+  background: linear-gradient(135deg, #22c55e, #059669);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  margin-bottom: 12px;
+}
+
+.plantSeedBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+/* ── Seed Modal ── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  padding: 16px;
+}
+
+.modalCard {
+  background: #fff;
+  border-radius: 24px;
+  max-width: 360px;
+  width: 100%;
+  padding: 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.modalBlob {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 120px;
+  height: 120px;
+  background: rgba(34, 197, 94, 0.15);
+  border-radius: 50%;
+  filter: blur(20px);
+}
+
+.modalIconWrap {
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(5, 150, 105, 0.05));
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  color: #15803d;
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 12px;
+  letter-spacing: -0.02em;
+}
+
+.modalText {
+  color: #4b5563;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0 0 28px;
+}
+
+.modalPrimaryBtn {
+  width: 100%;
+  background: linear-gradient(135deg, #22c55e, #059669);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.modalPrimaryBtn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.modalPrimaryBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.modalCancelBtn {
+  width: 100%;
+  background: #f3f4f6;
+  color: #374151;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.modalCancelBtn:hover:not(:disabled) {
+  background: #e5e7eb;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinInline {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Share Modal ── */
+.shareCodeBtn {
+  margin-top: 12px;
+  width: 100%;
+  background: rgba(245, 166, 35, 0.15);
+  color: #c26900;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(245, 166, 35, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.shareCodeBtn:hover {
+  background: rgba(245, 166, 35, 0.25);
+  transform: translateY(-1px);
+}
+
+.shareModalBlob {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 120px;
+  height: 120px;
+  background: rgba(245, 166, 35, 0.15);
+  border-radius: 50%;
+  filter: blur(20px);
+}
+
+.shareModalIconWrap {
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(135deg, rgba(245, 166, 35, 0.15), rgba(245, 124, 0, 0.05));
+  border: 1px solid rgba(245, 166, 35, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  color: #e65100;
+}
+
+.copyBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 0 auto;
+}
+
+.copyBoxCode {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: 0.1em;
+}
+
+.copyBtn {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.15s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.copyBtn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.modalResetBtn {
+  width: 100%;
+  background: transparent;
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #fca5a5;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.modalResetBtn:hover:not(:disabled) {
+  background: #fef2f2;
+}
+
+.modalResetBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ── Progress Layout ── */
+.progressContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.progressRingWrapper {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progressSvg {
+  position: absolute;
+  inset: 0;
+}
+
+.progressInnerPlate {
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 50%;
+  width: 96px;
+  height: 96px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  border: 1px solid rgba(245, 166, 35, 0.1);
+}
+
+.progressCodeTxt {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #ea580c;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70px;
+}
+
+.progressCountTxt {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #9ca3af;
+  margin: 2px 0 0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.tierNameTxt {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 6px 0 0;
+  letter-spacing: 0.1em;
+  transition: color 0.5s;
+}
+
+.referralActionRow {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.shareCodeBtnFilled {
+  flex: 1;
+  background: rgba(245, 166, 35, 0.15);
+  color: #c26900;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(245, 166, 35, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.shareCodeBtnFilled:hover {
+  background: rgba(245, 166, 35, 0.25);
+  transform: translateY(-1px);
+}
+
+.reloadCodeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: rgba(245, 166, 35, 0.1);
+  color: #ea580c;
+  border: 1px solid rgba(245, 166, 35, 0.2);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.reloadCodeBtn:hover:not(:disabled) {
+  background: rgba(245, 166, 35, 0.2);
+}
+
+.reloadCodeBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

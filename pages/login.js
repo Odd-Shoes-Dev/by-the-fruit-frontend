@@ -36,6 +36,7 @@ export default function Login() {
       })
       if (res.ok) {
         const result = await res.json()
+        console.log(result)
         const raw = result?.user
         const token = raw?.token
         if (raw && token) {

@@ -171,8 +171,11 @@ export default function Layout({ children }) {
     router.push('/')
   }
 
+  const isAdminPage = router.pathname === '/admin' || router.pathname.startsWith('/admin/')
+
   return (
     <div className={styles.layout}>
+      {!isAdminPage && (
       <nav className={styles.navbar}>
         <div className={styles.navInner}>
           <Link href="/" className={styles.brand}>
@@ -288,6 +291,7 @@ export default function Layout({ children }) {
           </AnimatePresence>
         </div>
       </nav>
+      )}
 
       <AnimatePresence mode="wait">
         <motion.main
@@ -302,6 +306,7 @@ export default function Layout({ children }) {
         </motion.main>
       </AnimatePresence>
 
+      {!isAdminPage && (
       <motion.footer
         className={styles.footer}
         initial={{ opacity: 0 }}
@@ -344,6 +349,7 @@ export default function Layout({ children }) {
           </div>
         </div>
       </motion.footer>
+      )}
     </div>
   )
 }
