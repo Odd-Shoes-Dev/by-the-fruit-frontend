@@ -3,25 +3,36 @@ const nextConfig = {
   reactStrictMode: false,
 
   async headers() {
+    // Security headers shared by every route
+    const securityHeaders = [
+      { key: 'X-Frame-Options',           value: 'DENY' },
+      { key: 'X-Content-Type-Options',    value: 'nosniff' },
+      { key: 'Referrer-Policy',           value: 'strict-origin-when-cross-origin' },
+      { key: 'Permissions-Policy',        value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), display-capture=()' },
+      { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
+      { key: 'X-XSS-Protection',          value: '1; mode=block' },
+    ]
+
     return [
       {
-        // Apply to every route
-        source: '/(.*)',
+        // Landing page is public — allow search engines to index it
+        source: '/',
         headers: [
-          // Block all search engines and crawlers
+          ...securityHeaders,
+          { key: 'X-Robots-Tag', value: 'index, follow' },
+        ],
+      },
+      {
+        // Sitemap and manifest are public assets
+        source: '/(sitemap.xml|manifest.json|robots.txt)',
+        headers: securityHeaders,
+      },
+      {
+        // Everything else is private — block all crawlers
+        source: '/((?!$|sitemap\\.xml|manifest\\.json|robots\\.txt).*)',
+        headers: [
+          ...securityHeaders,
           { key: 'X-Robots-Tag', value: 'noindex, nofollow, nosnippet, noarchive, noimageindex' },
-          // Prevent clickjacking
-          { key: 'X-Frame-Options', value: 'DENY' },
-          // Prevent MIME sniffing
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          // Minimal referrer leakage
-          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          // Disable unnecessary browser features
-          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), display-capture=()' },
-          // Enable HSTS (1 year)
-          { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
-          // Basic CSP — blocks inline scripts from unknown origins
-          { key: 'X-XSS-Protection', value: '1; mode=block' },
         ],
       },
     ]

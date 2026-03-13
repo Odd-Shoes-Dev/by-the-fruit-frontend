@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!--
+    Only the public landing page is listed here.
+    All other pages are members-only and are blocked via robots.txt
+    and X-Robots-Tag: noindex, nofollow headers.
+  -->
+  <url>
+    <loc>https://bythefruit.com/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

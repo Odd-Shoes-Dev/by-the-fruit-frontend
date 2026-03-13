@@ -199,8 +199,31 @@ export default function Home() {
     <>
       <Head>
         <title>By The Fruit — Redemptive Tech Investing</title>
-        <meta name="description" content="A faith-aligned platform connecting founders and investors in media, tech, and entertainment." />
+        <meta name="description" content="A faith-aligned platform connecting founders and investors in media, tech, and entertainment. Know them by their fruit." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="keywords" content="faith-based investing, Christian investors, founders, media investing, tech investing, entertainment funding, redemptive capital" />
+        <link rel="canonical" href="https://bythefruit.com/" />
+
+        {/* ── Open Graph ─────────────────────────────────────────── */}
+        <meta property="og:title" content="By The Fruit — Redemptive Tech Investing" />
+        <meta property="og:description" content="A faith-aligned platform connecting founders and investors in media, tech, and entertainment. Know them by their fruit." />
+        <meta property="og:url" content="https://bythefruit.com/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://bythefruit.com/images/logo.png" />
+        <meta property="og:image:alt" content="By The Fruit logo" />
+        <meta property="og:image:width" content="512" />
+        <meta property="og:image:height" content="512" />
+
+        {/* ── Twitter / X Card ────────────────────────────────────── */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="By The Fruit — Redemptive Tech Investing" />
+        <meta name="twitter:description" content="A faith-aligned platform connecting founders and investors in media, tech, and entertainment." />
+        <meta name="twitter:image" content="https://bythefruit.com/images/logo.png" />
+        <meta name="twitter:image:alt" content="By The Fruit logo" />
+
+        {/* ── Landing page is public — allow indexing ─────────────── */}
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
       </Head>
 
       <div className={styles.main}>
