@@ -175,7 +175,6 @@ export default function Layout({ children }) {
 
   return (
     <div className={styles.layout}>
-      {!isAdminPage && (
       <nav className={styles.navbar}>
         <div className={styles.navInner}>
           <Link href="/" className={styles.brand}>
@@ -291,7 +290,6 @@ export default function Layout({ children }) {
           </AnimatePresence>
         </div>
       </nav>
-      )}
 
       <AnimatePresence mode="wait">
         <motion.main
