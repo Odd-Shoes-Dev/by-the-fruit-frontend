@@ -103,7 +103,7 @@ export default function MyApp({ Component, pageProps }) {
         minHeight: '100vh',
         background: 'var(--dark)',
         color: 'var(--cream)',
-        fontFamily: "'Source Sans 3', system-ui, sans-serif",
+        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
         padding: '24px',
         textAlign: 'center'
       }}>
@@ -123,7 +123,7 @@ export default function MyApp({ Component, pageProps }) {
           gap: '40px'
         }}>
           <h1 style={{
-            fontFamily: "'Oswald', 'Franklin Gothic Heavy', sans-serif",
+            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
             fontSize: 'clamp(2.5rem, 6vw, 4rem)',
             color: 'var(--blue-dark)',
             fontWeight: 500,
@@ -169,7 +169,7 @@ export default function MyApp({ Component, pageProps }) {
               }}></div>
               <p style={{ margin: '0 0 8px 0', fontSize: '1.25rem' }}>So every Sunday (12:00am–11:59pm ET), we pause.</p>
               <p style={{ margin: 0, color: 'var(--orange2)', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.85rem' }}>No deals. No dashboards. No urgency.</p>
-              <span style={{ display: 'block', marginTop: '24px', fontSize: '2.5rem', fontFamily: "'Oswald', sans-serif", fontStyle: 'italic' }}>Just rest.</span>
+              <span style={{ display: 'block', marginTop: '24px', fontSize: '2.5rem', fontFamily: "'Inter', sans-serif", fontStyle: 'italic' }}>Just rest.</span>
             </div>
             
             <p style={{ margin: 0 }}>
@@ -208,7 +208,7 @@ export default function MyApp({ Component, pageProps }) {
               margin: '0 0 24px 0'
             }}>This week’s encouragement:</p>
             <p style={{
-              fontFamily: "'Oswald', sans-serif",
+              fontFamily: "'Inter', sans-serif",
               fontSize: 'clamp(1.5rem, 4vw, 2rem)',
               color: 'var(--blue-dark)',
               fontStyle: 'italic',

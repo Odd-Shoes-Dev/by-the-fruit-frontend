@@ -97,7 +97,7 @@
 }
 
 .profileName {
-  font-family: 'Oswald', 'Franklin Gothic Heavy', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
   margin: 0 0 2px;

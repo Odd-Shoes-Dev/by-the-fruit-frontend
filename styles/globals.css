@@ -1,6 +1,6 @@
 ﻿/* ═══════════════════════════════════════════════════════════════
    BY THE FRUIT — Global Design System
-   Brand Blue · Harvest Orange · Growth Green · Oswald · Source Sans 3
+   Brand Blue · Harvest Orange · Growth Green · Inter
 ═══════════════════════════════════════════════════════════════ */
 :root {
   --dark:         #F5EFE6;   /* page background (warm ivory)      */
@@ -27,13 +27,16 @@
 *, *::before, *::after { box-sizing: border-box; }
 html { overflow-x: hidden; scroll-behavior: smooth; }
 body {
-  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 400;
   margin: 0;
   color: var(--cream);
   background: var(--dark);
+  line-height: 1.6;
   overflow-x: hidden;
   min-width: 0;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 a { color: inherit; text-decoration: none; }
 
@@ -45,7 +48,7 @@ a { color: inherit; text-decoration: none; }
 /* ── Page header ───────────────────────────────────────── */
 .page-header { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
 .page-title {
-  font-family: 'Oswald', 'Franklin Gothic Heavy', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   margin: 0 0 0.35rem;
   color: var(--cream);
@@ -57,24 +60,29 @@ a { color: inherit; text-decoration: none; }
 .page-sub { color: var(--muted); font-size: 0.95rem; margin: 0; line-height: 1.5; }
 
 header h1 {
-  font-family: 'Oswald', 'Franklin Gothic Heavy', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: clamp(1.5rem, 4vw, 2rem);
   margin: 0 0 0.35rem;
   color: var(--cream);
   font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 header h2 {
-  font-family: 'Oswald', 'Franklin Gothic Heavy', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: clamp(1.3rem, 3.5vw, 1.75rem);
   margin: 0 0 0.35rem;
   color: var(--cream);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 .tagline { color: var(--muted); margin: 0; font-size: 0.95rem; }
 
 /* ── Section dividers ──────────────────────────────────── */
 .section-header { margin: 0 0 16px; }
 .section-title {
-  font-family: 'Oswald', 'Franklin Gothic Heavy', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 1.1rem;
   font-weight: 500;
   margin: 0 0 4px;
@@ -215,7 +223,7 @@ select option { background: #fff; color: var(--cream); }
 .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
 .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
 .empty-title {
-  font-family: 'Oswald', 'Franklin Gothic Heavy', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 500; color: var(--cream);
   margin: 0 0 6px; font-size: 1.05rem;
 }

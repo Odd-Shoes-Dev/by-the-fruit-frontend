@@ -6,7 +6,7 @@
   align-items: center;
   justify-content: center;
   padding: 2rem 1.25rem;
-  font-family: 'Source Sans 3', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .authCard {
@@ -29,13 +29,21 @@
   margin-bottom: 2rem;
 }
 .authLogo {
-  width: 36px !important;
-  height: 36px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  margin-bottom: 2rem;
+}
+.authLogo img {
+  width: 44px !important;
+  height: auto !important;
   object-fit: contain;
   border-radius: 6px;
 }
 .authBrandName {
-  font-family: 'Oswald', 'Franklin Gothic Heavy', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 500;
   font-size: 1.15rem;
   color: #4F6BD9;
@@ -44,7 +52,7 @@
 
 /* Title block */
 .authTitle {
-  font-family: 'Oswald', 'Franklin Gothic Heavy', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 600;
   font-size: 1.65rem;
   color: #2D3B51;

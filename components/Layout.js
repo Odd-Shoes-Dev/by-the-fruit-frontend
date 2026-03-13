@@ -177,7 +177,7 @@ export default function Layout({ children }) {
         <div className={styles.navInner}>
           <Link href="/" className={styles.brand}>
             <Image src="/images/logo.png" alt="By The Fruit" width={36} height={36} className={styles.logo} />
-            <span className={styles.brandName} style={{ fontStyle: 'italic' }}><span style={{ fontSize: '1.2em' }}>B</span>y <span style={{ fontSize: '1.2em' }}>T</span>he <span style={{ fontSize: '1.2em' }}>F</span>ruit</span>
+            <span className={styles.brandName}><span style={{ fontSize: '1.2em' }}>B</span>y <span style={{ fontSize: '1.2em' }}>T</span>he <span style={{ fontSize: '1.2em' }}>F</span>ruit</span>
           </Link>
 
           {/* Notification bell — mobile only, shown next to hamburger */}
@@ -197,21 +197,21 @@ export default function Layout({ children }) {
           <div className={styles.navLinks}>
             {token && approved && (
               <>
-                <Link href="/community" className={styles.navLink}>Feed</Link>
-                <Link href="/events" className={styles.navLink}>Events</Link>
-                <Link href="/offerings" className={styles.navLink}>Offerings</Link>
-                <Link href="/my-offerings" className={styles.navLink}>My Deals</Link>
-                <Link href="/portfolio" className={styles.navLink}>Portfolio</Link>
-                <Link href="/matcher" className={styles.navLink}>Matcher</Link>
+                <Link href="/community" className={`${styles.navLink} ${router.pathname === '/community' ? styles.active : ''}`}>Feed</Link>
+                <Link href="/events" className={`${styles.navLink} ${router.pathname === '/events' ? styles.active : ''}`}>Events</Link>
+                <Link href="/offerings" className={`${styles.navLink} ${router.pathname === '/offerings' || router.pathname.startsWith('/offerings/') ? styles.active : ''}`}>Offerings</Link>
+                <Link href="/my-offerings" className={`${styles.navLink} ${router.pathname === '/my-offerings' ? styles.active : ''}`}>My Deals</Link>
+                <Link href="/portfolio" className={`${styles.navLink} ${router.pathname === '/portfolio' ? styles.active : ''}`}>Portfolio</Link>
+                <Link href="/matcher" className={`${styles.navLink} ${router.pathname === '/matcher' ? styles.active : ''}`}>Matcher</Link>
                 {isCreatorInfluencer && (
-                  <Link href="/deals" className={styles.navLink}>Deals</Link>
+                  <Link href="/deals" className={`${styles.navLink} ${router.pathname === '/deals' ? styles.active : ''}`}>Deals</Link>
                 )}
-                <Link href="/channels" className={styles.navLink}>Messages</Link>
+                <Link href="/channels" className={`${styles.navLink} ${router.pathname === '/channels' || router.pathname.startsWith('/channels/') ? styles.active : ''}`}>Messages</Link>
                 {admin && (
                   <>
-                    <Link href="/founders" className={styles.navLink}>Founders</Link>
-                    <Link href="/investors" className={styles.navLink}>Investors</Link>
-                    <Link href="/admin" className={styles.navLink}>Admin</Link>
+                    <Link href="/founders" className={`${styles.navLink} ${router.pathname === '/founders' ? styles.active : ''}`}>Founders</Link>
+                    <Link href="/investors" className={`${styles.navLink} ${router.pathname === '/investors' ? styles.active : ''}`}>Investors</Link>
+                    <Link href="/admin" className={`${styles.navLink} ${router.pathname === '/admin' || router.pathname.startsWith('/admin/') ? styles.active : ''}`}>Admin</Link>
                   </>
                 )}
                 <span className={styles.navBell}><NotificationBell /></span>
@@ -247,27 +247,27 @@ export default function Layout({ children }) {
               >
                 {token && approved && (
                   <>
-                    <Link href="/community" className={styles.navLink}>Feed</Link>
-                    <Link href="/events" className={styles.navLink}>Events</Link>
-                    <Link href="/offerings" className={styles.navLink}>Offerings</Link>
-                    <Link href="/my-offerings" className={styles.navLink}>My Deals</Link>
-                    <Link href="/portfolio" className={styles.navLink}>Portfolio</Link>
-                    <Link href="/matcher" className={styles.navLink}>Matcher</Link>
+                    <Link href="/community" className={`${styles.navLink} ${router.pathname === '/community' ? styles.active : ''}`}>Feed</Link>
+                    <Link href="/events" className={`${styles.navLink} ${router.pathname === '/events' ? styles.active : ''}`}>Events</Link>
+                    <Link href="/offerings" className={`${styles.navLink} ${router.pathname === '/offerings' || router.pathname.startsWith('/offerings/') ? styles.active : ''}`}>Offerings</Link>
+                    <Link href="/my-offerings" className={`${styles.navLink} ${router.pathname === '/my-offerings' ? styles.active : ''}`}>My Deals</Link>
+                    <Link href="/portfolio" className={`${styles.navLink} ${router.pathname === '/portfolio' ? styles.active : ''}`}>Portfolio</Link>
+                    <Link href="/matcher" className={`${styles.navLink} ${router.pathname === '/matcher' ? styles.active : ''}`}>Matcher</Link>
                     {isCreatorInfluencer && (
-                      <Link href="/deals" className={styles.navLink}>Deals</Link>
+                      <Link href="/deals" className={`${styles.navLink} ${router.pathname === '/deals' ? styles.active : ''}`}>Deals</Link>
                     )}
-                    <Link href="/channels" className={styles.navLink}>Messages</Link>
+                    <Link href="/channels" className={`${styles.navLink} ${router.pathname === '/channels' || router.pathname.startsWith('/channels/') ? styles.active : ''}`}>Messages</Link>
                     {admin && (
                       <>
-                        <Link href="/founders" className={styles.navLink}>Founders</Link>
-                        <Link href="/investors" className={styles.navLink}>Investors</Link>
-                        <Link href="/admin" className={styles.navLink}>Admin</Link>
+                        <Link href="/founders" className={`${styles.navLink} ${router.pathname === '/founders' ? styles.active : ''}`}>Founders</Link>
+                        <Link href="/investors" className={`${styles.navLink} ${router.pathname === '/investors' ? styles.active : ''}`}>Investors</Link>
+                        <Link href="/admin" className={`${styles.navLink} ${router.pathname === '/admin' || router.pathname.startsWith('/admin/') ? styles.active : ''}`}>Admin</Link>
                       </>
                     )}
                     <div className={styles.mobileMenuDivider} />
-                    {userId && <Link href={`/profile/${userId}`} className={styles.navLink}>My Profile</Link>}
-                    <Link href="/settings" className={styles.navLink}>Settings</Link>
-                    <Link href="/saved" className={styles.navLink}>Saved Posts</Link>
+                    {userId && <Link href={`/profile/${userId}`} className={`${styles.navLink} ${router.pathname === `/profile/${userId}` ? styles.active : ''}`}>My Profile</Link>}
+                    <Link href="/settings" className={`${styles.navLink} ${router.pathname === '/settings' ? styles.active : ''}`}>Settings</Link>
+                    <Link href="/saved" className={`${styles.navLink} ${router.pathname === '/saved' ? styles.active : ''}`}>Saved Posts</Link>
                     <button onClick={handleLogout} className={styles.navLogout}>Log out</button>
                   </>
                 )}
