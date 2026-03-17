@@ -15,6 +15,8 @@ const STATUS_COLORS = {
   cancelled: '#e53935',
 }
 
+const SALLY_PORTAL_URL = process.env.NEXT_PUBLIC_SALLY_PORTAL_URL || 'https://auth.sally.co/'
+
 export default function MyOfferingsPage() {
   const router = useRouter()
   const [offerings, setOfferings] = useState([])
@@ -47,19 +49,19 @@ export default function MyOfferingsPage() {
             <div>
               <p className={styles.eyebrow}>Issuer Dashboard</p>
               <h1 className={styles.title}>My Offerings</h1>
-              <p className={styles.sub}>Manage your fundraising offerings and track investor pipelines.</p>
+              <p className={styles.sub}>View offering progress here and manage transactions in Sally.</p>
             </div>
-            <Link href="/offerings/new" className={styles.newBtn}>
-              + New Offering
-            </Link>
+            <a href={SALLY_PORTAL_URL} target="_blank" rel="noreferrer" className={styles.newBtn}>
+              Open Sally
+            </a>
           </div>
 
           {offerings.length === 0 ? (
             <div className={styles.empty}>
               <p>You haven&apos;t created any offerings yet.</p>
-              <Link href="/offerings/new" className={styles.emptyBtn}>
-                Create Your First Offering →
-              </Link>
+              <a href={SALLY_PORTAL_URL} target="_blank" rel="noreferrer" className={styles.emptyBtn}>
+                Create Offering in Sally →
+              </a>
             </div>
           ) : (
             <div className={styles.list}>
@@ -88,15 +90,12 @@ export default function MyOfferingsPage() {
                     </div>
                   </div>
                   <div className={styles.cardActions}>
-                    <Link href={`/offerings/edit/${o.id}`} className={styles.editBtn}>
-                      Edit
-                    </Link>
-                    <Link href={`/offerings/dashboard/${o.id}`} className={styles.dashBtn}>
-                      Pipeline
-                    </Link>
                     <Link href={`/offerings/${o.id}`} className={styles.viewBtn}>
                       View
                     </Link>
+                    <a href={SALLY_PORTAL_URL} target="_blank" rel="noreferrer" className={styles.dashBtn}>
+                      Manage in Sally
+                    </a>
                   </div>
                 </div>
               ))}

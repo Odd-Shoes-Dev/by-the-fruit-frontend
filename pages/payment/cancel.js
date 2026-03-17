@@ -1,39 +1,24 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { motion } from 'framer-motion'
-import styles from '../../styles/Payment.module.css'
+
+const SALLY_PORTAL_URL = process.env.NEXT_PUBLIC_SALLY_PORTAL_URL || 'https://auth.sally.co/'
 
 export default function PaymentCancelPage() {
-  const router = useRouter()
-  const { commitment_id } = router.query
-
   return (
     <>
-      <Head><title>Payment Cancelled — By The Fruit</title></Head>
-      <div className="container">
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-          <div className={styles.wrap}>
-            <div className={styles.cancelCard}>
-              <div className={styles.cancelIcon}>✕</div>
-              <h1 className={styles.cancelTitle}>Payment Cancelled</h1>
-              <p className={styles.info}>
-                Your payment was not completed. Your commitment is still saved — you can try again whenever you&apos;re ready.
-              </p>
-              <div className={styles.cancelActions}>
-                {commitment_id && (
-                  <Link href={`/payment/${commitment_id}`} className={styles.primaryLink}>
-                    Try Again →
-                  </Link>
-                )}
-                <Link href="/portfolio" className={styles.secondaryLink}>
-                  Back to Portfolio
-                </Link>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
+      <Head><title>Investment Checkout — By The Fruit</title></Head>
+      <main className="container" style={{ maxWidth: 760, margin: '0 auto', padding: '3rem 1.25rem' }}>
+        <h1>Checkout Is Managed on Sally</h1>
+        <p style={{ marginTop: '0.75rem' }}>
+          If your checkout was interrupted, continue the flow directly in Sally.
+        </p>
+        <p style={{ marginTop: '1rem' }}>
+          <a href={SALLY_PORTAL_URL} target="_blank" rel="noreferrer">Continue on Sally →</a>
+        </p>
+        <p style={{ marginTop: '1rem' }}>
+          <Link href="/offerings">Back to offerings</Link>
+        </p>
+      </main>
     </>
   )
 }

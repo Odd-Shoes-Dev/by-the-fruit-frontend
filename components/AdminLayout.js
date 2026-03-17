@@ -8,7 +8,7 @@ const NAV = [
   { key: 'overview', label: 'Overview', href: '/admin' },
   { key: 'waitlist', label: 'Waitlist', href: '/admin/waitlist', badgeKey: 'pending_users' },
   { key: 'users', label: 'All Users', href: '/admin/users' },
-  { key: 'kyc', label: 'KYC Queue', href: '/admin/kyc', badgeKey: 'pending_kyc' },
+  { key: 'kyc', label: 'KYC Queue (Sally)', href: '/admin/kyc' },
   { key: 'offerings', label: 'Offerings', href: '/admin/offerings' },
   { key: 'contacts', label: 'Contact Messages', href: '/admin/contacts' },
   { key: 'landing-page', label: 'Landing Page', href: '/admin/landing-page' },
@@ -23,21 +23,12 @@ export default function AdminLayout({ children, active }) {
     if (!getToken()) return
     async function fetchBadges() {
       try {
-        const [waitlistRes, kycRes] = await Promise.all([
-          apiFetch('/user/waitlist?status=pending'),
-          apiFetch('/profiles/kyc-documents/'),
-        ])
+        const waitlistRes = await apiFetch('/user/waitlist?status=pending')
         const newBadges = {}
         if (waitlistRes.ok) {
           const json = await waitlistRes.json()
           const raw = json?.data ?? json
           newBadges.pending_users = Array.isArray(raw) ? raw.length : (raw?.results?.length || 0)
-        }
-        if (kycRes.ok) {
-          const json = await kycRes.json()
-          const raw = json?.data ?? json
-          const list = Array.isArray(raw) ? raw : (raw?.results || [])
-          newBadges.pending_kyc = list.filter(k => k.status === 'pending').length
         }
         setBadges(newBadges)
       } catch (e) {}
@@ -47,7 +38,6 @@ export default function AdminLayout({ children, active }) {
 
   return (
     <div className={styles.adminWrap}>
-      {/* Sidebar */}
       <nav className={styles.sidebar}>
         <span className={styles.sidebarHeading}>Admin</span>
         {NAV.map(item => (
@@ -64,7 +54,6 @@ export default function AdminLayout({ children, active }) {
         ))}
       </nav>
 
-      {/* Content */}
       <main className={styles.main}>
         {children}
       </main>
