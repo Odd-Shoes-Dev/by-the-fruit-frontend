@@ -8,7 +8,7 @@ import styles from '../../styles/Admin.module.css'
 
 const unwrap = json => json?.data ?? json
 
-const SALLY_PORTAL_URL = process.env.NEXT_PUBLIC_SALLY_PORTAL_URL || 'https://auth.sally.co/'
+const STATUS_COLORS = { live: styles.pillGreen, draft: styles.pillGrey, closed: styles.pillBlue, cancelled: styles.pillRed }
 
 export default function AdminOfferingsPage() {
   const router = useRouter()
@@ -109,9 +109,9 @@ export default function AdminOfferingsPage() {
                           <Link href={`/offerings/${o.id}`} style={{ color: 'var(--orange)', fontSize: '0.74rem', textDecoration: 'none' }}>
                             View
                           </Link>
-                          <a href={SALLY_PORTAL_URL} target="_blank" rel="noreferrer" style={{ color: 'rgba(244,239,230,0.35)', fontSize: '0.74rem', textDecoration: 'none' }}>
-                            Sally Pipeline
-                          </a>
+                          <Link href={`/offerings/dashboard/${o.id}`} style={{ color: 'rgba(244,239,230,0.35)', fontSize: '0.74rem', textDecoration: 'none' }}>
+                            Pipeline
+                          </Link>
                         </div>
                       </td>
                     </tr>

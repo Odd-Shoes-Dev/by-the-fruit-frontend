@@ -1,24 +1,70 @@
 import Head from 'next/head'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { motion } from 'framer-motion'
+import { apiFetch } from '../../lib/api'
+import styles from '../../styles/Payment.module.css'
 
-const SALLY_PORTAL_URL = process.env.NEXT_PUBLIC_SALLY_PORTAL_URL || 'https://auth.sally.co/'
+const unwrap = json => json?.data ?? json
 
 export default function PaymentSuccessPage() {
+  const router = useRouter()
+  const { commitment_id } = router.query
+  const [commitment, setCommitment] = useState(null)
+
+  useEffect(() => {
+    if (!commitment_id) return
+    async function load() {
+      try {
+        const res = await apiFetch(`/profiles/spv-commitments/${commitment_id}/`)
+        if (res.ok) setCommitment(unwrap(await res.json()))
+      } catch (e) {}
+    }
+    load()
+  }, [commitment_id])
+
   return (
     <>
-      <Head><title>Investment Status — By The Fruit</title></Head>
-      <main className="container" style={{ maxWidth: 760, margin: '0 auto', padding: '3rem 1.25rem' }}>
-        <h1>Investment Status Lives on Sally</h1>
-        <p style={{ marginTop: '0.75rem' }}>
-          Payment, signing, and investment status updates are managed in Sally.
-        </p>
-        <p style={{ marginTop: '1rem' }}>
-          <a href={SALLY_PORTAL_URL} target="_blank" rel="noreferrer">Open Sally →</a>
-        </p>
-        <p style={{ marginTop: '1rem' }}>
-          <Link href="/portfolio">Back to portfolio</Link>
-        </p>
-      </main>
+      <Head><title>Payment Confirmed — By The Fruit</title></Head>
+      <div className="container">
+        <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.35 }}>
+          <div className={styles.wrap}>
+            <div className={styles.successCard}>
+              <div className={styles.checkIcon}>✓</div>
+              <h1 className={styles.successTitle}>Payment Confirmed</h1>
+              <p className={styles.successDesc}>
+                Your investment has been funded successfully. Welcome to the deal.
+              </p>
+              {commitment && (
+                <div className={styles.summaryRow} style={{ marginBottom: '1.5rem' }}>
+                  <div className={styles.summaryItem}>
+                    <span className={styles.summaryLabel}>Offering</span>
+                    <span className={styles.summaryVal}>{commitment.offering_title || '—'}</span>
+                  </div>
+                  <div className={styles.summaryItem}>
+                    <span className={styles.summaryLabel}>Amount Funded</span>
+                    <span className={styles.summaryVal} style={{ fontWeight: 700, color: '#b9f5bb' }}>
+                      ${Number(commitment.amount).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              )}
+              <p className={styles.info} style={{ marginBottom: '1.5rem' }}>
+                A confirmation email has been sent to your inbox. The next step is to sign your subscription agreement.
+              </p>
+              {commitment_id && (
+                <Link href={`/sign/${commitment_id}`} className={styles.primaryLink} style={{ marginBottom: '0.75rem' }}>
+                  Sign Agreement Now →
+                </Link>
+              )}
+              <Link href="/portfolio" className={styles.secondaryLink}>
+                Do this later — go to Portfolio
+              </Link>
+            </div>
+          </div>
+        </motion.div>
+      </div>
     </>
   )
 }

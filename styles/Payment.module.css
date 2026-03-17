@@ -1,0 +1,204 @@
+﻿/* =====================
+   Payment Pages
+   ===================== */
+
+.wrap {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 3rem 0 4rem;
+}
+
+.backLink {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  font-size: 0.82rem;
+  color: rgba(26,18,8,0.5);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.backLink:hover { color: var(--orange); }
+
+/* ---- Main Card ---- */
+.card {
+  background: var(--dark2);
+  border: 1px solid rgba(232,96,26,0.2);
+  border-radius: 16px;
+  padding: 2.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin: 0;
+}
+.title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--cream);
+  margin: 0;
+}
+
+/* ---- Summary Row ---- */
+.summaryRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  background: rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.04);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+}
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.summaryLabel {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(26,18,8,0.4);
+}
+.summaryVal {
+  font-size: 0.95rem;
+  color: rgba(26,18,8,0.85);
+  font-weight: 500;
+}
+
+/* ---- Info Text ---- */
+.info {
+  font-size: 0.85rem;
+  color: rgba(26,18,8,0.55);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ---- Warning / Success / Cancel Boxes ---- */
+.warningBox {
+  background: rgba(232,96,26,0.1);
+  border: 1px solid rgba(232,96,26,0.3);
+  border-radius: 9px;
+  padding: 0.85rem 1rem;
+  font-size: 0.85rem;
+  color: rgba(26,18,8,0.8);
+}
+.successBox {
+  background: rgba(76,175,80,0.1);
+  border: 1px solid rgba(76,175,80,0.3);
+  border-radius: 9px;
+  padding: 0.85rem 1rem;
+  font-size: 0.85rem;
+  color: #b9f5bb;
+}
+
+/* ---- Secure Note ---- */
+.secureNote {
+  font-size: 0.73rem;
+  color: rgba(26,18,8,0.3);
+  margin: 0;
+  text-align: center;
+}
+
+/* ---- Success Page ---- */
+.successCard {
+  background: var(--dark2);
+  border: 1px solid rgba(76,175,80,0.25);
+  border-radius: 16px;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+.checkIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(76,175,80,0.15);
+  border: 2px solid rgba(76,175,80,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #b9f5bb;
+}
+.successTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--cream);
+  margin: 0;
+}
+.successDesc {
+  font-size: 0.95rem;
+  color: rgba(26,18,8,0.65);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ---- Cancel Page ---- */
+.cancelCard {
+  background: var(--dark2);
+  border: 1px solid rgba(0,0,0,0.07);
+  border-radius: 16px;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+.cancelIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.04);
+  border: 2px solid rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: rgba(26,18,8,0.4);
+}
+.cancelTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--cream);
+  margin: 0;
+}
+.cancelActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* ---- Links ---- */
+.primaryLink {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--orange);
+  text-decoration: none;
+  border: 1px solid rgba(232,96,26,0.35);
+  border-radius: 9px;
+  padding: 0.55rem 1.25rem;
+  transition: background 0.15s;
+}
+.primaryLink:hover { background: rgba(232,96,26,0.1); }
+
+.secondaryLink {
+  display: inline-block;
+  font-size: 0.9rem;
+  color: rgba(26,18,8,0.5);
+  text-decoration: none;
+  padding: 0.55rem 1.25rem;
+  transition: color 0.15s;
+}
+.secondaryLink:hover { color: var(--cream); }
