@@ -19,16 +19,19 @@ const DEFAULT_CONTENT = {
 }
 
 const AUTH_ROUTES = ['/login', '/signup', '/pending', '/forgot-password', '/reset-password', '/verify-email', '/onboarding']
+const PUBLIC_ROUTES = ['/', '/login', '/signup', '/pending', '/forgot-password', '/reset-password', '/verify-email', '/onboarding']
 
 const PROTECTED_PATHS = ['/community', '/events', '/deals', '/connections', '/channels', '/notifications', '/profile', '/founders', '/investors', '/admin', '/settings', '/matcher']
 
 // Pages that manage their own full-page layout (landing, auth, onboarding)
 const NO_LAYOUT_PREFIXES = ['/', '/login', '/signup', '/pending', '/forgot-password', '/reset-password', '/verify-email', '/onboarding']
 
+function matchesRoutePrefix(pathname, prefixes) {
+  return prefixes.some(p => (p === '/' ? pathname === '/' : pathname === p || pathname.startsWith(p + '/')))
+}
+
 function needsLayout(pathname) {
-  return !NO_LAYOUT_PREFIXES.some(p =>
-    p === '/' ? pathname === '/' : pathname === p || pathname.startsWith(p + '/')
-  )
+  return !matchesRoutePrefix(pathname, NO_LAYOUT_PREFIXES)
 }
 
 export default function MyApp({ Component, pageProps }) {
@@ -102,8 +105,9 @@ export default function MyApp({ Component, pageProps }) {
   useEffect(() => {
     if (typeof window === 'undefined') return
     function onExpired() {
-      const onAuthRoute = AUTH_ROUTES.some(p => pathname === p || pathname.startsWith(p + '/'))
-      if (!onAuthRoute) router.replace('/login')
+      const onAuthRoute = matchesRoutePrefix(pathname, AUTH_ROUTES)
+      const onPublicRoute = matchesRoutePrefix(pathname, PUBLIC_ROUTES)
+      if (!onAuthRoute && !onPublicRoute) router.replace('/login')
     }
     window.addEventListener('auth:expired', onExpired)
     return () => window.removeEventListener('auth:expired', onExpired)
@@ -114,8 +118,9 @@ export default function MyApp({ Component, pageProps }) {
     if (typeof window === 'undefined') return
     function onVisibility() {
       if (document.visibilityState !== 'visible') return
-      const onAuthRoute = AUTH_ROUTES.some(p => pathname === p || pathname.startsWith(p + '/'))
-      if (!onAuthRoute && !getToken()) {
+      const onAuthRoute = matchesRoutePrefix(pathname, AUTH_ROUTES)
+      const onPublicRoute = matchesRoutePrefix(pathname, PUBLIC_ROUTES)
+      if (!onAuthRoute && !onPublicRoute && !getToken()) {
         router.replace('/login')
       }
     }

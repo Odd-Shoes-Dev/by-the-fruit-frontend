@@ -239,7 +239,7 @@ export default function Home() {
             <li><a href="#vision">The Vision</a></li>
             <li><a href="#how">How It Works</a></li>
             <li><a href="#sectors">Sectors</a></li>
-            <li><a href="#manifesto">Manifesto</a></li>
+            <li><a href="#manifesto">Our Commitment</a></li>
           </ul>
 
           <div className={styles.navCta}>
@@ -295,7 +295,7 @@ export default function Home() {
             <a href="#vision"  className={styles.mobileLink} onClick={() => setMenuOpen(false)}>The Vision</a>
             <a href="#how"     className={styles.mobileLink} onClick={() => setMenuOpen(false)}>How It Works</a>
             <a href="#sectors" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Sectors</a>
-            <a href="#manifesto" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Manifesto</a>
+            <a href="#manifesto" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Our Commitment</a>
             <div className={styles.mobileDivider} />
             {token && approved ? (
               <FluffyButton
@@ -421,7 +421,7 @@ export default function Home() {
             <div className={styles.hdiv} />
             <div className={styles.section} id="vision">
               <div className={styles.secLabel}>{sec('vision')?.label || 'The Vision'}</div>
-              <h2 className={styles.sectionH2}>A <em>{sec('vision')?.title || 'Redemptive Ecosystem'}</em></h2>
+              <h2 className={styles.sectionH2}><em>{sec('vision')?.title || 'A Redemptive Ecosystem'}</em></h2>
               <p className={styles.secDesc}>{sec('vision')?.subtitle || 'What if funding mechanics were designed to align both sides of the table?'}</p>
               <p className={styles.secDesc} style={{ maxWidth: 680, marginTop: '1rem' }}>
                 {sec('vision')?.body || "We curate a space where investors aren\u2019t just line items on a cap table. They are partners who bring more than capital\u2014they bring their gifts, expertise, and commitment to the mission."}
