@@ -191,6 +191,9 @@ export function PostCard({ p, i, onSaveChange, onDelete, onEdit }) {
   const [editing, setEditing] = useState(false)
   const [editContent, setEditContent] = useState(p.content)
   const [editCategory, setEditCategory] = useState(p.category || '')
+  // null = no change, false = remove, File = replace
+  const [editImage, setEditImage] = useState(null)
+  const [editVideo, setEditVideo] = useState(null)
   const [editSaving, setEditSaving] = useState(false)
   const [editError, setEditError] = useState(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -198,6 +201,8 @@ export function PostCard({ p, i, onSaveChange, onDelete, onEdit }) {
   const isSaving = useRef(false)
   const isLiking = useRef(false)
   const menuRef = useRef()
+  const editImageRef = useRef()
+  const editVideoRef = useRef()
   const token = getToken()
 
   const author = p.author_detail
@@ -220,6 +225,8 @@ export function PostCard({ p, i, onSaveChange, onDelete, onEdit }) {
   function openEdit() {
     setEditContent(p.content)
     setEditCategory(p.category || '')
+    setEditImage(null)
+    setEditVideo(null)
     setEditError(null)
     setEditing(true)
     setMenuOpen(false)
@@ -229,25 +236,57 @@ export function PostCard({ p, i, onSaveChange, onDelete, onEdit }) {
     setEditing(false)
     setEditContent(p.content)
     setEditCategory(p.category || '')
+    setEditImage(null)
+    setEditVideo(null)
     setEditError(null)
+    if (editImageRef.current) editImageRef.current.value = ''
+    if (editVideoRef.current) editVideoRef.current.value = ''
   }
 
   async function handleEditSave() {
     if (!editContent.trim() || editSaving) return
     setEditSaving(true)
     setEditError(null)
+    const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000'
+    const hasMediaChange = editImage !== null || editVideo !== null
     try {
-      const res = await apiFetch(`/profiles/community-posts/${p.id}/`, {
-        method: 'PATCH',
-        body: JSON.stringify({ content: editContent.trim(), category: editCategory || null }),
-      })
+      let res
+      if (hasMediaChange) {
+        // Multipart PATCH — required when uploading or clearing files
+        const form = new FormData()
+        form.append('content', editContent.trim())
+        form.append('category', editCategory || '')
+        if (editImage === false) {
+          // Send empty string to clear the field
+          form.append('image', '')
+        } else if (editImage instanceof File) {
+          form.append('image', editImage)
+        }
+        if (editVideo === false) {
+          form.append('video', '')
+        } else if (editVideo instanceof File) {
+          form.append('video', editVideo)
+        }
+        res = await fetch(`${API_BASE}/profiles/community-posts/${p.id}/`, {
+          method: 'PATCH',
+          headers: { Authorization: `Token ${token}` },
+          body: form,
+        })
+      } else {
+        res = await apiFetch(`/profiles/community-posts/${p.id}/`, {
+          method: 'PATCH',
+          body: JSON.stringify({ content: editContent.trim(), category: editCategory || null }),
+        })
+      }
       if (res.ok) {
         const data = await res.json()
         onEdit?.(data)
         setEditing(false)
+        if (editImageRef.current) editImageRef.current.value = ''
+        if (editVideoRef.current) editVideoRef.current.value = ''
       } else {
         const err = await res.json().catch(() => ({}))
-        setEditError(err?.detail || err?.content?.[0] || 'Save failed. Please try again.')
+        setEditError(err?.detail || err?.content?.[0] || err?.image?.[0] || err?.video?.[0] || 'Save failed. Please try again.')
       }
     } catch {
       setEditError('Network error. Please try again.')
@@ -407,6 +446,78 @@ export function PostCard({ p, i, onSaveChange, onDelete, onEdit }) {
             <option value="education">Education</option>
             <option value="other">Other</option>
           </select>
+
+          {/* Hidden file inputs */}
+          <input ref={editImageRef} type="file" accept="image/*" style={{ display: 'none' }}
+            onChange={e => { setEditImage(e.target.files[0] || null) }} />
+          <input ref={editVideoRef} type="file" accept="video/*" style={{ display: 'none' }}
+            onChange={e => {
+              const f = e.target.files[0] || null
+              if (f && f.size > 100 * 1024 * 1024) { setEditError('Video must be under 100 MB.'); e.target.value = ''; return }
+              setEditError(null)
+              setEditVideo(f)
+            }} />
+
+          {/* Image row */}
+          <div className={styles.editMediaRow}>
+            <span className={styles.editMediaLabel}>Image:</span>
+            {editImage === false ? (
+              <span className={styles.editMediaRemoved}>Will be removed</span>
+            ) : editImage instanceof File ? (
+              <span className={styles.editMediaName}>{editImage.name}</span>
+            ) : p.image ? (
+              <img src={absUrl(p.image)} alt="current" className={styles.editMediaThumb} />
+            ) : (
+              <span className={styles.editMediaNone}>None</span>
+            )}
+            <button type="button" className={styles.editMediaBtn}
+              onClick={() => { setEditImage(null); if (editImageRef.current) editImageRef.current.value = ''; editImageRef.current?.click() }}>
+              Replace
+            </button>
+            {(p.image || editImage instanceof File) && editImage !== false && (
+              <button type="button" className={`${styles.editMediaBtn} ${styles.editMediaBtnRemove}`}
+                onClick={() => { setEditImage(false); if (editImageRef.current) editImageRef.current.value = '' }}>
+                Remove
+              </button>
+            )}
+            {editImage !== null && (
+              <button type="button" className={styles.editMediaBtn}
+                onClick={() => { setEditImage(null); if (editImageRef.current) editImageRef.current.value = '' }}>
+                Reset
+              </button>
+            )}
+          </div>
+
+          {/* Video row */}
+          <div className={styles.editMediaRow}>
+            <span className={styles.editMediaLabel}>Video:</span>
+            {editVideo === false ? (
+              <span className={styles.editMediaRemoved}>Will be removed</span>
+            ) : editVideo instanceof File ? (
+              <span className={styles.editMediaName}>{editVideo.name}</span>
+            ) : p.video ? (
+              <span className={styles.editMediaName}>Current video</span>
+            ) : (
+              <span className={styles.editMediaNone}>None</span>
+            )}
+            <button type="button" className={styles.editMediaBtn}
+              onClick={() => { setEditVideo(null); if (editVideoRef.current) editVideoRef.current.value = ''; editVideoRef.current?.click() }}>
+              Replace
+            </button>
+            {(p.video || editVideo instanceof File) && editVideo !== false && (
+              <button type="button" className={`${styles.editMediaBtn} ${styles.editMediaBtnRemove}`}
+                onClick={() => { setEditVideo(false); if (editVideoRef.current) editVideoRef.current.value = '' }}>
+                Remove
+              </button>
+            )}
+            {editVideo !== null && (
+              <button type="button" className={styles.editMediaBtn}
+                onClick={() => { setEditVideo(null); if (editVideoRef.current) editVideoRef.current.value = '' }}>
+                Reset
+              </button>
+            )}
+          </div>
+
           {editError && <p className={styles.editError}>{editError}</p>}
           <div className={styles.editActions}>
             <button className={styles.editSaveBtn} onClick={handleEditSave} disabled={editSaving || !editContent.trim()}>
