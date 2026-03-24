@@ -374,6 +374,14 @@
   background: rgba(192,57,43,0.06);
 }
 
+.postMenuOptionHide {
+  color: #b45309;
+}
+
+.postMenuOptionHide:hover {
+  background: rgba(180,83,9,0.07);
+}
+
 /* ── Inline edit form ── */
 .editBlock {
   display: flex;

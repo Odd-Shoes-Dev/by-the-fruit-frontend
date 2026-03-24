@@ -181,7 +181,7 @@ export function CommentSection({ postId, onCommentAdded }) {
 }
 
 // ── Single post card ───────────────────────────────────────────────
-export function PostCard({ p, i, onSaveChange, onDelete, onEdit }) {
+export function PostCard({ p, i, onSaveChange, onDelete, onEdit, onHideToggle, showUnhide = false }) {
   const [liked, setLiked] = useState(!!p.is_liked)
   const [likesCount, setLikesCount] = useState(p.likes_count ?? 0)
   const [saved, setSaved] = useState(!!p.is_saved)
@@ -198,6 +198,7 @@ export function PostCard({ p, i, onSaveChange, onDelete, onEdit }) {
   const [editError, setEditError] = useState(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [hiding, setHiding] = useState(false)
   const isSaving = useRef(false)
   const isLiking = useRef(false)
   const menuRef = useRef()
@@ -210,7 +211,9 @@ export function PostCard({ p, i, onSaveChange, onDelete, onEdit }) {
   const photo = absUrl(author?.photo)
   const authorId = author?.id || p.author
   const catColor = CATEGORY_COLORS[p.category] || CATEGORY_COLORS.other
-  const canManage = token && (String(getUserId()) === String(authorId) || isAdmin())
+  const isAuthor = token && String(getUserId()) === String(authorId)
+  const adminUser = isAdmin()
+  const canManage = token && (isAuthor || adminUser)
 
   // Close menu on outside click
   useEffect(() => {
@@ -311,6 +314,22 @@ export function PostCard({ p, i, onSaveChange, onDelete, onEdit }) {
     }
   }
 
+  async function handleHideToggle(action) {
+    setHiding(true)
+    setMenuOpen(false)
+    try {
+      const res = await apiFetch(`/profiles/community-posts/${p.id}/hide/`, {
+        method: 'POST',
+        body: JSON.stringify({ action }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        onHideToggle?.(p.id, data.is_hidden)
+      }
+    } catch {}
+    finally { setHiding(false) }
+  }
+
   async function toggleLike() {
     if (!token || isLiking.current) return
     isLiking.current = true
@@ -400,13 +419,43 @@ export function PostCard({ p, i, onSaveChange, onDelete, onEdit }) {
               </button>
               {menuOpen && (
                 <div className={styles.postMenuDropdown}>
-                  <button className={styles.postMenuOption} onClick={openEdit}>
-                    <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                    </svg>
-                    Edit
-                  </button>
+                  {isAuthor && (
+                    <button className={styles.postMenuOption} onClick={openEdit}>
+                      <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
+                      Edit
+                    </button>
+                  )}
+                  {adminUser && (
+                    <button
+                      className={`${styles.postMenuOption} ${styles.postMenuOptionHide}`}
+                      onClick={() => handleHideToggle(showUnhide || p.is_hidden ? 'unhide' : 'hide')}
+                      disabled={hiding}
+                    >
+                      {hiding ? (
+                        <span style={{ fontSize: '0.78rem' }}>…</span>
+                      ) : (showUnhide || p.is_hidden) ? (
+                        <>
+                          <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                          </svg>
+                          Restore post
+                        </>
+                      ) : (
+                        <>
+                          <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                            <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                            <line x1="1" y1="1" x2="23" y2="23" />
+                          </svg>
+                          Hide post
+                        </>
+                      )}
+                    </button>
+                  )}
                   <button className={`${styles.postMenuOption} ${styles.postMenuOptionDelete}`} onClick={() => { setConfirmDelete(true); setMenuOpen(false) }}>
                     <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="3 6 5 6 21 6" />
@@ -674,6 +723,12 @@ export default function PostList({ refreshTrigger }) {
     setPosts(prev => prev.map(post => post.id === updatedPost.id ? updatedPost : post))
   }
 
+  function handleHideToggle(id, isHidden) {
+    // When a post is hidden on the regular feed, remove it from view
+    if (isHidden) setPosts(prev => prev.filter(post => post.id !== id))
+    else setPosts(prev => prev.map(post => post.id === id ? { ...post, is_hidden: false } : post))
+  }
+
   return (
     <div className={styles.feed}>
       <AnimatePresence initial={false}>
@@ -684,6 +739,7 @@ export default function PostList({ refreshTrigger }) {
             i={i}
             onDelete={handleDelete}
             onEdit={handleEdit}
+            onHideToggle={handleHideToggle}
           />
         ))}
       </AnimatePresence>

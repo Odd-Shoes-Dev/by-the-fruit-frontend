@@ -13,6 +13,7 @@ const NAV = [
   { key: 'contacts', label: 'Contact Messages', href: '/admin/contacts' },
   { key: 'landing-page', label: 'Landing Page', href: '/admin/landing-page' },
   { key: 'sunday-page', label: 'Sunday Page', href: '/admin/sunday-page' },
+  { key: 'hidden-posts', label: 'Hidden Posts', href: '/admin/hidden-posts' },
 ]
 
 export default function AdminLayout({ children, active }) {
