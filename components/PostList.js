@@ -80,6 +80,14 @@ const CATEGORY_COLORS = {
   education: '#f59e0b', other: '#6b7280',
 }
 
+const PIN_DURATIONS = [
+  { label: '1 day', hours: 24 },
+  { label: '3 days', hours: 72 },
+  { label: '7 days', hours: 168 },
+  { label: '14 days', hours: 336 },
+  { label: '30 days', hours: 720 },
+]
+
 function formatDate(str) {
   if (!str) return ''
   const d = new Date(str)
@@ -181,7 +189,7 @@ export function CommentSection({ postId, onCommentAdded }) {
 }
 
 // ── Single post card ───────────────────────────────────────────────
-export function PostCard({ p, i, onSaveChange, onDelete, onEdit, onHideToggle, showUnhide = false }) {
+export function PostCard({ p, i, onSaveChange, onDelete, onEdit, onHideToggle, onPinToggle, showUnhide = false }) {
   const [liked, setLiked] = useState(!!p.is_liked)
   const [likesCount, setLikesCount] = useState(p.likes_count ?? 0)
   const [saved, setSaved] = useState(!!p.is_saved)
@@ -199,6 +207,8 @@ export function PostCard({ p, i, onSaveChange, onDelete, onEdit, onHideToggle, s
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [hiding, setHiding] = useState(false)
+  const [pinning, setPinning] = useState(false)
+  const [showPinMenu, setShowPinMenu] = useState(false)
   const isSaving = useRef(false)
   const isLiking = useRef(false)
   const menuRef = useRef()
@@ -214,6 +224,7 @@ export function PostCard({ p, i, onSaveChange, onDelete, onEdit, onHideToggle, s
   const isAuthor = token && String(getUserId()) === String(authorId)
   const adminUser = isAdmin()
   const canManage = token && (isAuthor || adminUser)
+  const isPinnedActive = p.is_pinned && (!p.pinned_until || new Date(p.pinned_until) > new Date())
 
   // Close menu on outside click
   useEffect(() => {
@@ -330,6 +341,23 @@ export function PostCard({ p, i, onSaveChange, onDelete, onEdit, onHideToggle, s
     finally { setHiding(false) }
   }
 
+  async function handlePinToggle(action, pinnedUntil) {
+    setMenuOpen(false)
+    setShowPinMenu(false)
+    setPinning(true)
+    try {
+      const res = await apiFetch(`/profiles/community-posts/${p.id}/pin/`, {
+        method: 'POST',
+        body: JSON.stringify({ action, pinned_until: pinnedUntil }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        onPinToggle?.(p.id, data.is_pinned, data.pinned_until)
+      }
+    } catch {}
+    finally { setPinning(false) }
+  }
+
   async function toggleLike() {
     if (!token || isLiking.current) return
     isLiking.current = true
@@ -402,6 +430,14 @@ export function PostCard({ p, i, onSaveChange, onDelete, onEdit, onHideToggle, s
           </div>
         </Link>
         <div className={styles.postHeaderRight}>
+          {isPinnedActive && (
+            <span className={styles.postPinnedBadge}>
+              <svg viewBox="0 0 24 24" width={11} height={11} fill="currentColor">
+                <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/>
+              </svg>
+              Pinned
+            </span>
+          )}
           {p.category && (
             <span className={styles.categoryBadge} style={{ background: catColor + '18', color: catColor, borderColor: catColor + '30' }}>
               {p.category}
@@ -411,7 +447,7 @@ export function PostCard({ p, i, onSaveChange, onDelete, onEdit, onHideToggle, s
             <div className={styles.postMenu} ref={menuRef}>
               <button
                 className={styles.postMenuBtn}
-                onClick={() => { setMenuOpen(v => !v); setConfirmDelete(false) }}
+                onClick={() => { setMenuOpen(v => !v); setConfirmDelete(false); setShowPinMenu(false) }}
                 title="Post options"
                 aria-label="Post options"
               >
@@ -419,52 +455,101 @@ export function PostCard({ p, i, onSaveChange, onDelete, onEdit, onHideToggle, s
               </button>
               {menuOpen && (
                 <div className={styles.postMenuDropdown}>
-                  {isAuthor && (
-                    <button className={styles.postMenuOption} onClick={openEdit}>
-                      <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                      </svg>
-                      Edit
-                    </button>
-                  )}
-                  {adminUser && (
-                    <button
-                      className={`${styles.postMenuOption} ${styles.postMenuOptionHide}`}
-                      onClick={() => handleHideToggle(showUnhide || p.is_hidden ? 'unhide' : 'hide')}
-                      disabled={hiding}
-                    >
-                      {hiding ? (
-                        <span style={{ fontSize: '0.78rem' }}>…</span>
-                      ) : (showUnhide || p.is_hidden) ? (
-                        <>
+                  {showPinMenu ? (
+                    <>
+                      <button className={styles.pinBackBtn} onClick={() => setShowPinMenu(false)}>
+                        <svg viewBox="0 0 24 24" width={12} height={12} fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="15 18 9 12 15 6" />
+                        </svg>
+                        Back
+                      </button>
+                      <div className={styles.pinDurationLabel}>Pin for how long?</div>
+                      {PIN_DURATIONS.map(({ label, hours }) => (
+                        <button
+                          key={hours}
+                          className={styles.pinDurationBtn}
+                          disabled={pinning}
+                          onClick={() => handlePinToggle('pin', new Date(Date.now() + hours * 3600 * 1000).toISOString())}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </>
+                  ) : (
+                    <>
+                      {isAuthor && (
+                        <button className={styles.postMenuOption} onClick={openEdit}>
                           <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                            <circle cx="12" cy="12" r="3" />
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                           </svg>
-                          Restore post
-                        </>
-                      ) : (
-                        <>
-                          <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
-                            <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
-                            <line x1="1" y1="1" x2="23" y2="23" />
-                          </svg>
-                          Hide post
-                        </>
+                          Edit
+                        </button>
                       )}
-                    </button>
+                      {adminUser && (
+                        <button
+                          className={`${styles.postMenuOption} ${styles.postMenuOptionPin}`}
+                          onClick={() => { if (isPinnedActive) handlePinToggle('unpin', null); else setShowPinMenu(true) }}
+                          disabled={pinning}
+                        >
+                          {pinning ? (
+                            <span style={{ fontSize: '0.78rem' }}>…</span>
+                          ) : isPinnedActive ? (
+                            <>
+                              <svg viewBox="0 0 24 24" width={14} height={14} fill="currentColor">
+                                <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/>
+                              </svg>
+                              Unpin post
+                            </>
+                          ) : (
+                            <>
+                              <svg viewBox="0 0 24 24" width={14} height={14} fill="currentColor">
+                                <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/>
+                              </svg>
+                              Pin post
+                            </>
+                          )}
+                        </button>
+                      )}
+                      {adminUser && (
+                        <button
+                          className={`${styles.postMenuOption} ${styles.postMenuOptionHide}`}
+                          onClick={() => handleHideToggle(showUnhide || p.is_hidden ? 'unhide' : 'hide')}
+                          disabled={hiding}
+                        >
+                          {hiding ? (
+                            <span style={{ fontSize: '0.78rem' }}>…</span>
+                          ) : (showUnhide || p.is_hidden) ? (
+                            <>
+                              <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                              </svg>
+                              Restore post
+                            </>
+                          ) : (
+                            <>
+                              <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                                <line x1="1" y1="1" x2="23" y2="23" />
+                              </svg>
+                              Hide post
+                            </>
+                          )}
+                        </button>
+                      )}
+                      <button className={`${styles.postMenuOption} ${styles.postMenuOptionDelete}`} onClick={() => { setConfirmDelete(true); setMenuOpen(false) }}>
+                        <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                          <path d="M10 11v6M14 11v6" />
+                          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                        </svg>
+                        Delete
+                      </button>
+                    </>
                   )}
-                  <button className={`${styles.postMenuOption} ${styles.postMenuOptionDelete}`} onClick={() => { setConfirmDelete(true); setMenuOpen(false) }}>
-                    <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="3 6 5 6 21 6" />
-                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                      <path d="M10 11v6M14 11v6" />
-                      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                    </svg>
-                    Delete
-                  </button>
                 </div>
               )}
             </div>
@@ -669,6 +754,17 @@ export function PostCard({ p, i, onSaveChange, onDelete, onEdit, onHideToggle, s
 }
 
 // ── PostList ───────────────────────────────────────────────────────
+function sortWithPinned(list) {
+  const now = Date.now()
+  return [...list].sort((a, b) => {
+    const aPin = a.is_pinned && (!a.pinned_until || new Date(a.pinned_until).getTime() > now)
+    const bPin = b.is_pinned && (!b.pinned_until || new Date(b.pinned_until).getTime() > now)
+    if (aPin && !bPin) return -1
+    if (!aPin && bPin) return 1
+    return 0
+  })
+}
+
 export default function PostList({ refreshTrigger }) {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -684,13 +780,13 @@ export default function PostList({ refreshTrigger }) {
           const json = await res.json()
           const raw = json?.data ?? json
           const items = Array.isArray(raw) ? raw : Array.isArray(raw?.results) ? raw.results : []
-          if (mounted) setPosts(items)
+          if (mounted) setPosts(sortWithPinned(items))
           return
         }
       } catch (err) {}
       try {
         const local = JSON.parse(localStorage.getItem('btf_posts') || '[]')
-        if (mounted) setPosts(local)
+        if (mounted) setPosts(sortWithPinned(local))
       } catch {}
     }
     load().finally(() => { if (mounted) setLoading(false) })
@@ -729,6 +825,12 @@ export default function PostList({ refreshTrigger }) {
     else setPosts(prev => prev.map(post => post.id === id ? { ...post, is_hidden: false } : post))
   }
 
+  function handlePinToggle(id, isPinned, pinnedUntil) {
+    setPosts(prev => sortWithPinned(
+      prev.map(post => post.id === id ? { ...post, is_pinned: isPinned, pinned_until: pinnedUntil } : post)
+    ))
+  }
+
   return (
     <div className={styles.feed}>
       <AnimatePresence initial={false}>
@@ -740,6 +842,7 @@ export default function PostList({ refreshTrigger }) {
             onDelete={handleDelete}
             onEdit={handleEdit}
             onHideToggle={handleHideToggle}
+            onPinToggle={handlePinToggle}
           />
         ))}
       </AnimatePresence>
