@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, Component } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { motion, AnimatePresence } from 'framer-motion'
-import { apiFetch, getToken, getUserId } from '../lib/api'
+import { apiFetch, getToken, getUserId, isAdmin } from '../lib/api'
 import styles from '../styles/PostList.module.css'
 
 // VideoPlayer uses IntersectionObserver, videoRef.muted, and a module-level
@@ -181,14 +181,23 @@ export function CommentSection({ postId, onCommentAdded }) {
 }
 
 // ── Single post card ───────────────────────────────────────────────
-export function PostCard({ p, i, onSaveChange }) {
+export function PostCard({ p, i, onSaveChange, onDelete, onEdit }) {
   const [liked, setLiked] = useState(!!p.is_liked)
   const [likesCount, setLikesCount] = useState(p.likes_count ?? 0)
   const [saved, setSaved] = useState(!!p.is_saved)
   const [showComments, setShowComments] = useState(false)
   const [commentsCount, setCommentsCount] = useState(p.comments_count ?? 0)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [editing, setEditing] = useState(false)
+  const [editContent, setEditContent] = useState(p.content)
+  const [editCategory, setEditCategory] = useState(p.category || '')
+  const [editSaving, setEditSaving] = useState(false)
+  const [editError, setEditError] = useState(null)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const isSaving = useRef(false)
   const isLiking = useRef(false)
+  const menuRef = useRef()
   const token = getToken()
 
   const author = p.author_detail
@@ -196,6 +205,72 @@ export function PostCard({ p, i, onSaveChange }) {
   const photo = absUrl(author?.photo)
   const authorId = author?.id || p.author
   const catColor = CATEGORY_COLORS[p.category] || CATEGORY_COLORS.other
+  const canManage = token && (String(getUserId()) === String(authorId) || isAdmin())
+
+  // Close menu on outside click
+  useEffect(() => {
+    if (!menuOpen) return
+    function handle(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [menuOpen])
+
+  function openEdit() {
+    setEditContent(p.content)
+    setEditCategory(p.category || '')
+    setEditError(null)
+    setEditing(true)
+    setMenuOpen(false)
+  }
+
+  function cancelEdit() {
+    setEditing(false)
+    setEditContent(p.content)
+    setEditCategory(p.category || '')
+    setEditError(null)
+  }
+
+  async function handleEditSave() {
+    if (!editContent.trim() || editSaving) return
+    setEditSaving(true)
+    setEditError(null)
+    try {
+      const res = await apiFetch(`/profiles/community-posts/${p.id}/`, {
+        method: 'PATCH',
+        body: JSON.stringify({ content: editContent.trim(), category: editCategory || null }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        onEdit?.(data)
+        setEditing(false)
+      } else {
+        const err = await res.json().catch(() => ({}))
+        setEditError(err?.detail || err?.content?.[0] || 'Save failed. Please try again.')
+      }
+    } catch {
+      setEditError('Network error. Please try again.')
+    } finally {
+      setEditSaving(false)
+    }
+  }
+
+  async function handleDelete() {
+    setDeleting(true)
+    try {
+      const res = await apiFetch(`/profiles/community-posts/${p.id}/`, { method: 'DELETE' })
+      if (res.ok || res.status === 204) {
+        onDelete?.(p.id)
+      } else {
+        setConfirmDelete(false)
+        setDeleting(false)
+      }
+    } catch {
+      setConfirmDelete(false)
+      setDeleting(false)
+    }
+  }
 
   async function toggleLike() {
     if (!token || isLiking.current) return
@@ -268,15 +343,96 @@ export function PostCard({ p, i, onSaveChange }) {
             <span className={styles.postTime}>{formatDate(p.created_at)}</span>
           </div>
         </Link>
-        {p.category && (
-          <span className={styles.categoryBadge} style={{ background: catColor + '18', color: catColor, borderColor: catColor + '30' }}>
-            {p.category}
-          </span>
-        )}
+        <div className={styles.postHeaderRight}>
+          {p.category && (
+            <span className={styles.categoryBadge} style={{ background: catColor + '18', color: catColor, borderColor: catColor + '30' }}>
+              {p.category}
+            </span>
+          )}
+          {canManage && (
+            <div className={styles.postMenu} ref={menuRef}>
+              <button
+                className={styles.postMenuBtn}
+                onClick={() => { setMenuOpen(v => !v); setConfirmDelete(false) }}
+                title="Post options"
+                aria-label="Post options"
+              >
+                &#8942;
+              </button>
+              {menuOpen && (
+                <div className={styles.postMenuDropdown}>
+                  <button className={styles.postMenuOption} onClick={openEdit}>
+                    <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                    Edit
+                  </button>
+                  <button className={`${styles.postMenuOption} ${styles.postMenuOptionDelete}`} onClick={() => { setConfirmDelete(true); setMenuOpen(false) }}>
+                    <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                      <path d="M10 11v6M14 11v6" />
+                      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                    </svg>
+                    Delete
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Content */}
-      <p className={styles.postContent}>{p.content}</p>
+      {/* Content — inline edit form or regular display */}
+      {editing ? (
+        <div className={styles.editBlock}>
+          <textarea
+            className={styles.editTextarea}
+            value={editContent}
+            onChange={e => setEditContent(e.target.value)}
+            rows={4}
+            maxLength={5000}
+            autoFocus
+          />
+          <select
+            className={styles.editCategorySelect}
+            value={editCategory}
+            onChange={e => setEditCategory(e.target.value)}
+          >
+            <option value="">No category</option>
+            <option value="technology">Technology</option>
+            <option value="finance">Finance</option>
+            <option value="healthcare">Healthcare</option>
+            <option value="education">Education</option>
+            <option value="other">Other</option>
+          </select>
+          {editError && <p className={styles.editError}>{editError}</p>}
+          <div className={styles.editActions}>
+            <button className={styles.editSaveBtn} onClick={handleEditSave} disabled={editSaving || !editContent.trim()}>
+              {editSaving ? 'Saving…' : 'Save'}
+            </button>
+            <button className={styles.editCancelBtn} onClick={cancelEdit} disabled={editSaving}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p className={styles.postContent}>{p.content}</p>
+      )}
+
+      {/* Confirm delete strip */}
+      {confirmDelete && (
+        <div className={styles.deleteConfirm}>
+          <span className={styles.deleteConfirmText}>Delete this post?</span>
+          <button className={styles.deleteConfirmYes} onClick={handleDelete} disabled={deleting}>
+            {deleting ? 'Deleting…' : 'Yes, delete'}
+          </button>
+          <button className={styles.deleteConfirmCancel} onClick={() => setConfirmDelete(false)} disabled={deleting}>
+            Cancel
+          </button>
+        </div>
+      )}
 
       {/* Image */}
       {p.image && (
@@ -399,11 +555,25 @@ export default function PostList({ refreshTrigger }) {
     )
   }
 
+  function handleDelete(id) {
+    setPosts(prev => prev.filter(post => post.id !== id))
+  }
+
+  function handleEdit(updatedPost) {
+    setPosts(prev => prev.map(post => post.id === updatedPost.id ? updatedPost : post))
+  }
+
   return (
     <div className={styles.feed}>
       <AnimatePresence initial={false}>
         {posts.map((p, i) => (
-          <PostCard key={p.id || p.created_at || i} p={p} i={i} />
+          <PostCard
+            key={p.id || p.created_at || i}
+            p={p}
+            i={i}
+            onDelete={handleDelete}
+            onEdit={handleEdit}
+          />
         ))}
       </AnimatePresence>
     </div>
