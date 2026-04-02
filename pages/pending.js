@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
 import { FiClock } from 'react-icons/fi'
-import { getToken, getStoredUser, clearAuth, isApproved } from '../lib/api'
+import { getToken, getStoredUser, clearAuth, isApproved, refreshAuthUser } from '../lib/api'
 import FluffyButton from '../components/FluffyButton'
 import styles from '../styles/Auth.module.css'
 
@@ -13,15 +13,21 @@ export default function Pending() {
   const router = useRouter()
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    if (!getToken()) {
-      router.replace('/login')
-      return
+    let cancelled = false
+    async function syncApprovalState() {
+      if (typeof window === 'undefined') return
+      if (!getToken()) {
+        router.replace('/login')
+        return
+      }
+      await refreshAuthUser()
+      if (cancelled) return
+      if (isApproved()) {
+        router.replace('/community')
+      }
     }
-    if (isApproved()) {
-      router.replace('/')
-      return
-    }
+    syncApprovalState()
+    return () => { cancelled = true }
   }, [router])
 
   const user = typeof window !== 'undefined' ? getStoredUser() : null
@@ -58,6 +64,44 @@ export default function Pending() {
             </p>
             <p style={{ margin: 0, fontWeight: 600, color: 'var(--orange)' }}>
               You&apos;re on the list. We&apos;ll be in touch.
+            </p>
+          </div>
+
+          <div
+            style={{
+              marginBottom: '1.25rem',
+              padding: '1rem',
+              border: '1px solid #e5e7eb',
+              borderRadius: '12px',
+              background: '#fafafa',
+              textAlign: 'left',
+            }}
+          >
+            <p style={{ margin: '0 0 0.75rem', fontWeight: 600, color: '#1f2937' }}>
+              🎬 Watch the 60-sec vision from Chantelle
+            </p>
+            <div
+              style={{
+                borderRadius: '8px',
+                overflow: 'hidden',
+                background: '#000',
+                aspectRatio: '9 / 16',
+                maxWidth: '100%',
+              }}
+            >
+              <iframe
+                width="100%"
+                height="100%"
+                src="https://www.youtube.com/embed/DMC55L_AgXc?autoplay=0"
+                title="By The Fruit Vision"
+                frameBorder="0"
+                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{ display: 'block' }}
+              />
+            </div>
+            <p style={{ fontSize: '0.9rem', color: '#6b7280', margin: '0.75rem 0 0 0' }}>
+              Watch while your request is being reviewed
             </p>
           </div>
 

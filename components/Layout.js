@@ -191,6 +191,13 @@ export default function Layout({ children }) {
 
   function handleLogout() {
     clearAuth()
+    setToken(false)
+    setApproved(false)
+    setAdmin(false)
+    setUserId(null)
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('btf:logged-out'))
+    }
     router.push('/')
   }
 
