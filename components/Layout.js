@@ -201,6 +201,7 @@ export default function Layout({ children }) {
               <>
                 <Link href="/community" className={`${styles.navLink} ${router.pathname === '/community' ? styles.active : ''}`}>Feed</Link>
                 <Link href="/events" className={`${styles.navLink} ${router.pathname === '/events' ? styles.active : ''}`}>Events</Link>
+                <Link href="/orchard" className={`${styles.navLink} ${router.pathname === '/orchard' || router.pathname.startsWith('/orchard/') || router.pathname === '/my-orchard' ? styles.active : ''}`}>Orchard</Link>
                 <Link href="/offerings" className={`${styles.navLink} ${router.pathname === '/offerings' || router.pathname.startsWith('/offerings/') ? styles.active : ''}`}>Offerings</Link>
                 <Link href="/my-offerings" className={`${styles.navLink} ${router.pathname === '/my-offerings' ? styles.active : ''}`}>My Deals</Link>
                 <Link href="/portfolio" className={`${styles.navLink} ${router.pathname === '/portfolio' ? styles.active : ''}`}>Portfolio</Link>
@@ -251,6 +252,7 @@ export default function Layout({ children }) {
                   <>
                     <Link href="/community" className={`${styles.navLink} ${router.pathname === '/community' ? styles.active : ''}`}>Feed</Link>
                     <Link href="/events" className={`${styles.navLink} ${router.pathname === '/events' ? styles.active : ''}`}>Events</Link>
+                    <Link href="/orchard" className={`${styles.navLink} ${router.pathname === '/orchard' || router.pathname.startsWith('/orchard/') || router.pathname === '/my-orchard' ? styles.active : ''}`}>Orchard</Link>
                     <Link href="/offerings" className={`${styles.navLink} ${router.pathname === '/offerings' || router.pathname.startsWith('/offerings/') ? styles.active : ''}`}>Offerings</Link>
                     <Link href="/my-offerings" className={`${styles.navLink} ${router.pathname === '/my-offerings' ? styles.active : ''}`}>My Deals</Link>
                     <Link href="/portfolio" className={`${styles.navLink} ${router.pathname === '/portfolio' ? styles.active : ''}`}>Portfolio</Link>
