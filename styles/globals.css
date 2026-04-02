@@ -181,7 +181,7 @@ label {
   display: flex; flex-direction: column;
   font-weight: 500; font-size: 0.88rem; gap: 5px; color: var(--cream);
 }
-input, textarea, select {
+input:not([type='checkbox']):not([type='radio']), textarea, select {
   padding: 10px 12px; border-radius: 9px;
   border: 1.5px solid rgba(0,0,0,0.12);
   max-width: 100%; font-family: inherit; font-size: 0.95rem;
@@ -189,11 +189,22 @@ input, textarea, select {
   transition: border-color var(--transition), box-shadow var(--transition);
   margin-top: 0;
 }
-input::placeholder, textarea::placeholder { color: rgba(45,59,81,0.35); }
-input:focus, textarea:focus, select:focus {
+input:not([type='checkbox']):not([type='radio'])::placeholder, textarea::placeholder { color: rgba(45,59,81,0.35); }
+input:not([type='checkbox']):not([type='radio']):focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--blue);
   box-shadow: 0 0 0 3px rgba(79,107,217,0.12);
+}
+input[type='checkbox'], input[type='radio'] {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  padding: 0;
+  border-radius: 3px;
+  accent-color: #A855F7;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.25);
+  color: initial;
 }
 select option { background: #fff; color: var(--cream); }
 .success { color: #1a8a3c; margin-top: 8px; font-weight: 500; }

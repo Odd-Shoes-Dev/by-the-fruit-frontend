@@ -11,16 +11,27 @@ import styles from '../../styles/Auth.module.css'
 export default function Signup() {
   const router = useRouter()
   const role = router.query.role || ''
+  const useLegacyForm = router.query.legacy === '1'
 
   useEffect(() => {
     if (!router.isReady) return
     if (getToken()) {
       router.replace(isApproved() ? '/community' : '/pending')
+      return
     }
-  }, [router.isReady])
+
+    // Keep this legacy form file, but route public traffic to the multi-step flow.
+    if (!useLegacyForm) {
+      router.replace({
+        pathname: '/signup/multi-step',
+        query: router.query,
+      })
+    }
+  }, [router.isReady, useLegacyForm])
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [city, setCity] = useState('')
   const [state, setState] = useState('')
   const [country, setCountry] = useState('')
@@ -42,11 +53,22 @@ export default function Signup() {
   const [error, setError] = useState('')
   const [fieldErrors, setFieldErrors] = useState({})
 
+  if (!router.isReady || !useLegacyForm) {
+    return null
+  }
+
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || ''
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
+    
+    // Validate passwords match
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+    
     setLoading(true)
     try {
       const res = await fetch(`${API_BASE}/user/register`, {
@@ -197,6 +219,19 @@ export default function Signup() {
                     className={`${styles.fieldInput}${fieldErrors.password ? ' '+styles.fieldInputError : ''}`}
                   />
                   {fieldErrors.password && <p className={styles.fieldError}>{fieldErrors.password}</p>}
+                </label>
+                <label className={styles.fieldLabel}>
+                  Confirm password
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                    minLength={8}
+                    required
+                    placeholder="Re-enter your password"
+                    className={`${styles.fieldInput}${confirmPassword && password !== confirmPassword ? ' '+styles.fieldInputError : ''}`}
+                  />
+                  {confirmPassword && password !== confirmPassword && <p style={{ color: '#dc2626', fontSize: '0.9rem', fontWeight: 600, margin: '0.5rem 0 0 0' }}>⚠️ Passwords don&apos;t match</p>}
                 </label>
                 <label className={styles.fieldLabel}>
                   City

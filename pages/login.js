@@ -4,7 +4,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
-import { setAuth, getToken, isApproved } from '../lib/api'
+import { setAuth, getToken, isApproved, refreshAuthUser } from '../lib/api'
 import FluffyButton from '../components/FluffyButton'
 import styles from '../styles/Auth.module.css'
 
@@ -19,9 +19,15 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (getToken()) {
+    let cancelled = false
+    async function routeExistingSession() {
+      if (!getToken()) return
+      await refreshAuthUser()
+      if (cancelled) return
       router.replace(isApproved() ? '/community' : '/pending')
     }
+    routeExistingSession()
+    return () => { cancelled = true }
   }, [])
 
   async function handleSubmit(e) {

@@ -2,7 +2,7 @@ import Head from 'next/head'
 import '../styles/globals.css'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { getToken, isApproved } from './../lib/api'
+import { getToken, isApproved, refreshAuthUser } from './../lib/api'
 import Layout from '../components/Layout'
 import fallbackVerses from '../data/verses.json'
 
@@ -92,13 +92,24 @@ export default function MyApp({ Component, pageProps }) {
   }, [])
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    const token = getToken()
-    if (!token) return
-    if (pathname === '/pending' || pathname === '/login') return
-    if (!isApproved() && PROTECTED_PATHS.some(p => pathname.startsWith(p))) {
-      router.replace('/pending')
+    let cancelled = false
+    async function enforceApprovalGate() {
+      if (typeof window === 'undefined') return
+      const token = getToken()
+      if (!token) return
+      if (pathname === '/pending' || pathname === '/login') return
+      if (!PROTECTED_PATHS.some(p => pathname.startsWith(p))) return
+      if (isApproved()) return
+
+      await refreshAuthUser()
+      if (cancelled) return
+      if (!isApproved()) {
+        router.replace('/pending')
+      }
     }
+
+    enforceApprovalGate()
+    return () => { cancelled = true }
   }, [pathname, router])
 
   // Redirect to login when the server rejects our token (401 from any API call)

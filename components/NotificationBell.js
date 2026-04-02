@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { FiBell } from 'react-icons/fi'
-import { apiFetch } from '../lib/api'
+import { apiFetch, getToken } from '../lib/api'
 
 export default function NotificationBell() {
   const [count, setCount] = useState(0)
@@ -12,6 +12,12 @@ export default function NotificationBell() {
     let mounted = true
 
     function fetchCount() {
+      // Skip protected request once auth is cleared (e.g., during logout).
+      if (!getToken()) {
+        if (mounted) setCount(0)
+        return
+      }
+
       apiFetch('/profiles/notifications/unread-count/')
         .then(r => r.ok ? r.json() : {})
         .then(json => {
@@ -28,11 +34,24 @@ export default function NotificationBell() {
     const handleRouteChange = (url) => {
       if (url !== '/notifications') fetchCount()
     }
+    const handleAuthCleared = () => {
+      if (!mounted) return
+      setCount(0)
+    }
+
     router.events.on('routeChangeComplete', handleRouteChange)
+    if (typeof window !== 'undefined') {
+      window.addEventListener('auth:expired', handleAuthCleared)
+      window.addEventListener('btf:logged-out', handleAuthCleared)
+    }
 
     return () => {
       mounted = false
       router.events.off('routeChangeComplete', handleRouteChange)
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('auth:expired', handleAuthCleared)
+        window.removeEventListener('btf:logged-out', handleAuthCleared)
+      }
     }
   }, [router])
 
