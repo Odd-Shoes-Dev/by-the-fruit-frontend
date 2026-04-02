@@ -114,6 +114,15 @@ export default function Layout({ children }) {
   const [isCreatorInfluencer, setIsCreatorInfluencer] = useState(false)
   const router = useRouter()
 
+  function syncUserFromStorage() {
+    const u = getStoredUser()
+    if (u) {
+      setUserId(u.id ?? u.user_data?.id ?? null)
+      setUserPhoto(u.photo || null)
+      setUserName(u.full_name || u.email || '')
+    }
+  }
+
   useEffect(() => {
     const t = !!getToken()
     const a = isApproved()
@@ -121,11 +130,7 @@ export default function Layout({ children }) {
     setAdmin(isAdmin())
     setApproved(a)
     setUserId(getUserId())
-    const u = getStoredUser()
-    if (u) {
-      setUserPhoto(u.photo || null)
-      setUserName(u.full_name || u.email || '')
-    }
+    syncUserFromStorage()
     // Read cached creator flag immediately, then refresh from API
     if (typeof window !== 'undefined') {
       const cached = localStorage.getItem('btf_creator')
@@ -143,6 +148,24 @@ export default function Layout({ children }) {
           }
         })
         .catch(() => {})
+    }
+  }, [])
+
+  useEffect(() => {
+    function handleUserUpdate() {
+      syncUserFromStorage()
+    }
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('btf:user-updated', handleUserUpdate)
+      window.addEventListener('storage', handleUserUpdate)
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('btf:user-updated', handleUserUpdate)
+        window.removeEventListener('storage', handleUserUpdate)
+      }
     }
   }, [])
 

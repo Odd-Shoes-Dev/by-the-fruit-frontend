@@ -238,12 +238,17 @@ function ProfileTab({ user, onUserUpdate }) {
       if (res.ok) {
         const json = await res.json()
         const d = json?.data ?? json
+        const photoUrl = d.photo && photoFile
+          ? `${d.photo}${d.photo.includes('?') ? '&' : '?'}v=${Date.now()}`
+          : d.photo
+        const updatedUser = { ...d, photo: photoUrl }
         setPhotoFile(null)
-        if (d.photo) setPhotoPreview(d.photo)
+        if (photoUrl) setPhotoPreview(photoUrl)
         // Persist to localStorage so navbar updates
         const stored = JSON.parse(localStorage.getItem('btf_user') || '{}')
-        localStorage.setItem('btf_user', JSON.stringify({ ...stored, ...d }))
-        onUserUpdate(d)
+        localStorage.setItem('btf_user', JSON.stringify({ ...stored, ...updatedUser }))
+        window.dispatchEvent(new Event('btf:user-updated'))
+        onUserUpdate(updatedUser)
         setSaved(true)
         setTimeout(() => setSaved(false), 3500)
       } else {
