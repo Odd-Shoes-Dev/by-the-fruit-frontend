@@ -31,6 +31,11 @@ export default function OfferingDetailPage() {
   const [commitMsg, setCommitMsg] = useState('')
   const [myCommitment, setMyCommitment] = useState(null)
   const [kycStatus, setKycStatus] = useState(null) // null | 'none' | 'pending' | 'approved' | 'rejected'
+  const [seedCount, setSeedCount] = useState(0)
+  const [userHasSeeded, setUserHasSeeded] = useState(false)
+  const [recentSeeders, setRecentSeeders] = useState([])
+  const [seeding, setSeeding] = useState(false)
+  const [showDeck, setShowDeck] = useState(false)
 
   useEffect(() => {
     const t = getToken()
@@ -48,6 +53,9 @@ export default function OfferingDetailPage() {
           const data = unwrap(await res.json())
           setOffering(data)
           if (data.min_investment) setAmount(String(Math.ceil(data.min_investment)))
+          setSeedCount(data.seed_count || 0)
+          setUserHasSeeded(data.user_has_seeded || false)
+          setRecentSeeders(data.recent_seeders || [])
         } else if (res.status === 404) {
           router.replace('/offerings')
         }
@@ -81,6 +89,21 @@ export default function OfferingDetailPage() {
     }
     checkCommitment()
   }, [token, id])
+
+  async function handleSeed() {
+    if (!token) { router.push('/login'); return }
+    setSeeding(true)
+    const action = userHasSeeded ? 'unseed' : 'seed'
+    try {
+      const res = await apiFetch(`/spv/offerings/${id}/${action}/`, { method: 'POST' })
+      if (res.ok) {
+        const data = await res.json()
+        setSeedCount(data.seed_count)
+        setUserHasSeeded(!userHasSeeded)
+      }
+    } catch (e) {}
+    setSeeding(false)
+  }
 
   async function handleCommit() {
     if (!amount || isNaN(Number(amount))) {
@@ -168,17 +191,72 @@ export default function OfferingDetailPage() {
               {offering.terms_text && (
                 <div className={styles.termsBox}>
                   <h3 className={styles.sectionLabel}>Deal Terms</h3>
-                  <p style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7, color: 'rgba(244,239,230,0.75)', fontSize: '0.95rem' }}>
+                  <p style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7, color: '#3d2e1e', fontSize: '0.95rem' }}>
                     {offering.terms_text}
                   </p>
                 </div>
               )}
 
+              {/* Seed section */}
+              <div style={{ margin: '1.75rem 0', padding: '1.25rem', background: 'rgba(245,166,35,0.07)', border: '1px solid rgba(245,166,35,0.2)', borderRadius: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontSize: '1.4rem' }}>🌱</span>
+                      <span style={{ fontWeight: 700, fontSize: '1.1rem' }}>{seedCount} {seedCount === 1 ? 'seed' : 'seeds'}</span>
+                    </div>
+                    {recentSeeders.length > 0 && (
+                      <p style={{ margin: '4px 0 0', fontSize: '0.8rem', opacity: 0.65 }}>
+                        {recentSeeders.slice(0, 3).join(', ')}{recentSeeders.length > 3 ? ` +${recentSeeders.length - 3} more` : ''} believe{recentSeeders.length === 1 ? 's' : ''} in this
+                      </p>
+                    )}
+                  </div>
+                  <button
+                    onClick={handleSeed}
+                    disabled={seeding}
+                    style={{
+                      padding: '8px 20px',
+                      borderRadius: 20,
+                      border: userHasSeeded ? '1px solid rgba(245,166,35,0.5)' : 'none',
+                      background: userHasSeeded ? 'transparent' : '#F5A623',
+                      color: userHasSeeded ? '#F5A623' : '#fff',
+                      fontWeight: 600,
+                      fontSize: '0.88rem',
+                      cursor: seeding ? 'not-allowed' : 'pointer',
+                      opacity: seeding ? 0.6 : 1,
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    {seeding ? '…' : userHasSeeded ? '✓ Seeded' : '🌱 Seed this'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Pitch Deck */}
               {offering.pitch_deck && (
                 <div style={{ marginTop: '1.5rem' }}>
-                  <a href={offering.pitch_deck} target="_blank" rel="noreferrer" className={styles.deckLink}>
-                    📎 Download Pitch Deck
-                  </a>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: showDeck ? 12 : 0 }}>
+                    <a href={offering.pitch_deck} target="_blank" rel="noreferrer" className={styles.deckLink}>
+                      📎 Download Pitch Deck
+                    </a>
+                    <button
+                      onClick={() => setShowDeck(v => !v)}
+                      style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '0.5rem 1rem', fontSize: '0.88rem', cursor: 'pointer', color: 'inherit', fontWeight: 600 }}
+                    >
+                      {showDeck ? 'Hide Preview ▲' : 'Preview ▼'}
+                    </button>
+                  </div>
+                  {showDeck && (
+                    <div style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border)', marginTop: 4 }}>
+                      <iframe
+                        src={`https://docs.google.com/viewer?url=${encodeURIComponent(offering.pitch_deck)}&embedded=true`}
+                        title="Pitch Deck Preview"
+                        width="100%"
+                        height="520"
+                        style={{ display: 'block', border: 'none' }}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
