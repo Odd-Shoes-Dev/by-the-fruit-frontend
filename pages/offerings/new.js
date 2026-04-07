@@ -8,9 +8,21 @@ import styles from '../../styles/OfferingForm.module.css'
 
 const unwrap = json => json?.data ?? json
 
+const ROUND_TYPES = [
+  { value: 'pre_seed', label: 'Pre-Seed' },
+  { value: 'seed',     label: 'Seed Round' },
+  { value: 'series_a', label: 'Series A' },
+  { value: 'series_b', label: 'Series B' },
+  { value: 'series_c', label: 'Series C' },
+  { value: 'series_d', label: 'Series D+' },
+  { value: 'growth',   label: 'Growth Round' },
+  { value: 'bridge',   label: 'Bridge Round' },
+]
+
 const INITIAL = {
   title: '',
   tagline: '',
+  round_type: 'seed',
   video_url: '',
   target_raise: '',
   min_investment: '1000',
@@ -148,17 +160,10 @@ export default function NewOfferingPage() {
                 </FieldGroup>
 
                 <div className={styles.row2}>
-                  <FieldGroup label="Target Raise (USD) *" error={fieldErrors.target_raise}>
-                    <input className={styles.input} type="number" min="1000" step="1000" placeholder="e.g. 500000" value={form.target_raise} onChange={e => set('target_raise', e.target.value)} />
-                  </FieldGroup>
-                  <FieldGroup label="Minimum Investment (USD)" error={fieldErrors.min_investment}>
-                    <input className={styles.input} type="number" min="100" step="100" placeholder="1000" value={form.min_investment} onChange={e => set('min_investment', e.target.value)} />
-                  </FieldGroup>
-                </div>
-
-                <div className={styles.row2}>
-                  <FieldGroup label="Closing Date" error={fieldErrors.closing_date}>
-                    <input className={styles.input} type="date" value={form.closing_date} onChange={e => set('closing_date', e.target.value)} />
+                  <FieldGroup label="Round Type" error={fieldErrors.round_type}>
+                    <select className={styles.select} value={form.round_type} onChange={e => set('round_type', e.target.value)}>
+                      {ROUND_TYPES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+                    </select>
                   </FieldGroup>
                   <FieldGroup label="Status" error={fieldErrors.status}>
                     <select className={styles.select} value={form.status} onChange={e => set('status', e.target.value)}>
@@ -170,8 +175,21 @@ export default function NewOfferingPage() {
                   </FieldGroup>
                 </div>
 
+                <div className={styles.row2}>
+                  <FieldGroup label="Target Raise (USD) *" error={fieldErrors.target_raise}>
+                    <input className={styles.input} type="number" min="1000" step="1000" placeholder="e.g. 500000" value={form.target_raise} onChange={e => set('target_raise', e.target.value)} />
+                  </FieldGroup>
+                  <FieldGroup label="Minimum Investment (USD)" error={fieldErrors.min_investment}>
+                    <input className={styles.input} type="number" min="100" step="100" placeholder="1000" value={form.min_investment} onChange={e => set('min_investment', e.target.value)} />
+                  </FieldGroup>
+                </div>
+
+                <FieldGroup label="Closing Date" error={fieldErrors.closing_date}>
+                  <input className={styles.input} type="date" value={form.closing_date} onChange={e => set('closing_date', e.target.value)} />
+                </FieldGroup>
+
                 <FieldGroup label="Pitch Video URL" error={fieldErrors.video_url}>
-                  <input className={styles.input} type="url" placeholder="https://youtube.com/watch?v=..." value={form.video_url} onChange={e => set('video_url', e.target.value)} />
+                  <input className={styles.input} type="url" placeholder="YouTube link (watch, shorts, or youtu.be)" value={form.video_url} onChange={e => set('video_url', e.target.value)} />
                 </FieldGroup>
 
                 <FieldGroup label="Deal Terms" error={fieldErrors.terms_text}>

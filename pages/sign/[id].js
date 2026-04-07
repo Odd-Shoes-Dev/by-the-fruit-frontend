@@ -89,8 +89,8 @@ export default function SignAgreementPage() {
                 {agreement?.signer_name && (
                   <p className={styles.signedAs}>Signed as: <strong>{agreement.signer_name}</strong></p>
                 )}
-                <Link href="/portfolio" className={styles.primaryLink}>
-                  Back to Portfolio →
+                <Link href="/orchard" className={styles.primaryLink}>
+                  Back to Orchard →
                 </Link>
               </div>
             </div>
@@ -112,8 +112,8 @@ export default function SignAgreementPage() {
               <p style={{ fontSize: '0.82rem', color: 'rgba(244,239,230,0.4)', marginTop: 8 }}>
                 The agreement is created automatically once your payment is confirmed. If you have just paid, please wait a moment and refresh.
               </p>
-              <Link href="/portfolio" className={styles.primaryLink} style={{ marginTop: '1.5rem', display: 'inline-block' }}>
-                Back to Portfolio
+              <Link href="/orchard" className={styles.primaryLink} style={{ marginTop: '1.5rem', display: 'inline-block' }}>
+                Back to Orchard
               </Link>
             </div>
           </div>
@@ -128,7 +128,7 @@ export default function SignAgreementPage() {
       <div className="container">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
           <div className={styles.wrap}>
-            <Link href="/portfolio" className={styles.backLink}>← Back to Portfolio</Link>
+            <Link href="/orchard" className={styles.backLink}>← Back to Orchard</Link>
 
             <div className={styles.card}>
               <p className={styles.eyebrow}>E-Signature Required</p>

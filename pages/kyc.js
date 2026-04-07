@@ -223,7 +223,7 @@ export default function KYCPage() {
                 Your documents have been received. Our team will review within 1–2 business days. 
                 You&apos;ll receive an email once a decision has been made.
               </p>
-              <Link href="/portfolio" className={styles.backLink}>← Back to Portfolio</Link>
+              <Link href="/orchard" className={styles.backLink}>← Back to Orchard</Link>
             </div>
           )}
 

@@ -14,6 +14,7 @@ const NAV = [
   { key: 'landing-page', label: 'Landing Page', href: '/admin/landing-page' },
   { key: 'sunday-page', label: 'Sunday Page', href: '/admin/sunday-page' },
   { key: 'hidden-posts', label: 'Hidden Posts', href: '/admin/hidden-posts' },
+  { key: 'seed-projects', label: 'Seed Projects', href: '/admin/seed-projects' },
 ]
 
 export default function AdminLayout({ children, active }) {
