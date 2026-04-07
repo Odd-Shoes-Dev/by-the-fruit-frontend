@@ -239,10 +239,10 @@ export default function Layout({ children }) {
                   <Link href="/deals" className={`${styles.navLink} ${router.pathname === '/deals' ? styles.active : ''}`}>Deals</Link>
                 )}
                 <Link href="/channels" className={`${styles.navLink} ${router.pathname === '/channels' || router.pathname.startsWith('/channels/') ? styles.active : ''}`}>Messages</Link>
+                <Link href="/founders" className={`${styles.navLink} ${router.pathname === '/founders' ? styles.active : ''}`}>Founders</Link>
+                <Link href="/investors" className={`${styles.navLink} ${router.pathname === '/investors' ? styles.active : ''}`}>Investors</Link>
                 {admin && (
                   <>
-                    <Link href="/founders" className={`${styles.navLink} ${router.pathname === '/founders' ? styles.active : ''}`}>Founders</Link>
-                    <Link href="/investors" className={`${styles.navLink} ${router.pathname === '/investors' ? styles.active : ''}`}>Investors</Link>
                     <Link href="/admin" className={`${styles.navLink} ${router.pathname === '/admin' || router.pathname.startsWith('/admin/') ? styles.active : ''}`}>Admin</Link>
                   </>
                 )}
@@ -289,10 +289,10 @@ export default function Layout({ children }) {
                       <Link href="/deals" className={`${styles.navLink} ${router.pathname === '/deals' ? styles.active : ''}`}>Deals</Link>
                     )}
                     <Link href="/channels" className={`${styles.navLink} ${router.pathname === '/channels' || router.pathname.startsWith('/channels/') ? styles.active : ''}`}>Messages</Link>
+                    <Link href="/founders" className={`${styles.navLink} ${router.pathname === '/founders' ? styles.active : ''}`}>Founders</Link>
+                    <Link href="/investors" className={`${styles.navLink} ${router.pathname === '/investors' ? styles.active : ''}`}>Investors</Link>
                     {admin && (
                       <>
-                        <Link href="/founders" className={`${styles.navLink} ${router.pathname === '/founders' ? styles.active : ''}`}>Founders</Link>
-                        <Link href="/investors" className={`${styles.navLink} ${router.pathname === '/investors' ? styles.active : ''}`}>Investors</Link>
                         <Link href="/admin" className={`${styles.navLink} ${router.pathname === '/admin' || router.pathname.startsWith('/admin/') ? styles.active : ''}`}>Admin</Link>
                       </>
                     )}
