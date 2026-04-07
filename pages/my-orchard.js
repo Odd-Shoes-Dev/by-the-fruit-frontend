@@ -1,38 +1,12 @@
-/**
- * pages/my-orchard.js — "My Orchard" personal dashboard.
- *
- * Shows:
- * - Seed wallet (balance, cycle countdown, allocation history)
- * - Projects supported this cycle
- * - All-time allocations
- */
-import Head from 'next/head'
-import { useState, useEffect } from 'react'
+// Redirects to /orchard — merged into main Orchard page.
+import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { apiFetch, getToken, isApproved, isAdmin } from '../lib/api'
-import SeedAllocateModal from '../components/SeedAllocateModal'
-import { SeedSymbol, SeedCount } from '../components/SeedSymbol'
-import styles from '../styles/Orchard.module.css'
-import { AnimatePresence } from 'framer-motion'
 
-const STAGE_LABELS = { concept: 'Concept', pilot: 'Pilot', development: 'Development', launched: 'Launched' }
-
-export default function MyOrchardPage() {
+export default function MyOrchardRedirect() {
   const router = useRouter()
-  const [wallet, setWallet] = useState(null)
-  const [subscription, setSubscription] = useState(null)
-  const [history, setHistory] = useState([])
-  const [allTime, setAllTime] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [allocateTarget, setAllocateTarget] = useState(null)
-
-  useEffect(() => {
-    if (!getToken()) { router.push('/login'); return }
-    if (!isApproved()) { router.push('/pending'); return }
-    load()
-  }, [])
+  useEffect(() => { router.replace('/orchard') }, [router])
+  return null
+}
 
   async function load() {
     setLoading(true)
