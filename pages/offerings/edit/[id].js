@@ -39,6 +39,7 @@ export default function EditOfferingPage() {
           setForm({
             title: data.title || '',
             tagline: data.tagline || '',
+            round_type: data.round_type || 'seed',
             video_url: data.video_url || '',
             target_raise: data.target_raise || '',
             min_investment: data.min_investment || '1000',
@@ -140,17 +141,11 @@ export default function EditOfferingPage() {
                 </FieldGroup>
 
                 <div className={styles.row2}>
-                  <FieldGroup label="Target Raise (USD) *" error={fieldErrors.target_raise}>
-                    <input className={styles.input} type="number" min="1000" step="1000" placeholder="e.g. 500000" value={form.target_raise} onChange={e => set('target_raise', e.target.value)} />
-                  </FieldGroup>
-                  <FieldGroup label="Minimum Investment (USD)" error={fieldErrors.min_investment}>
-                    <input className={styles.input} type="number" min="100" step="100" placeholder="1000" value={form.min_investment} onChange={e => set('min_investment', e.target.value)} />
-                  </FieldGroup>
-                </div>
-
-                <div className={styles.row2}>
-                  <FieldGroup label="Closing Date" error={fieldErrors.closing_date}>
-                    <input className={styles.input} type="date" value={form.closing_date} onChange={e => set('closing_date', e.target.value)} />
+                  <FieldGroup label="Round Type" error={fieldErrors.round_type}>
+                    <select className={styles.select} value={form.round_type} onChange={e => set('round_type', e.target.value)}>
+                      {[{v:'pre_seed',l:'Pre-Seed'},{v:'seed',l:'Seed Round'},{v:'series_a',l:'Series A'},{v:'series_b',l:'Series B'},{v:'series_c',l:'Series C'},{v:'series_d',l:'Series D+'},{v:'growth',l:'Growth Round'},{v:'bridge',l:'Bridge Round'}]
+                        .map(r => <option key={r.v} value={r.v}>{r.l}</option>)}
+                    </select>
                   </FieldGroup>
                   <FieldGroup label="Status" error={fieldErrors.status}>
                     <select className={styles.select} value={form.status} onChange={e => set('status', e.target.value)}>
@@ -162,8 +157,21 @@ export default function EditOfferingPage() {
                   </FieldGroup>
                 </div>
 
+                <div className={styles.row2}>
+                  <FieldGroup label="Target Raise (USD) *" error={fieldErrors.target_raise}>
+                    <input className={styles.input} type="number" min="1000" step="1000" placeholder="e.g. 500000" value={form.target_raise} onChange={e => set('target_raise', e.target.value)} />
+                  </FieldGroup>
+                  <FieldGroup label="Minimum Investment (USD)" error={fieldErrors.min_investment}>
+                    <input className={styles.input} type="number" min="100" step="100" placeholder="1000" value={form.min_investment} onChange={e => set('min_investment', e.target.value)} />
+                  </FieldGroup>
+                </div>
+
+                <FieldGroup label="Closing Date" error={fieldErrors.closing_date}>
+                  <input className={styles.input} type="date" value={form.closing_date} onChange={e => set('closing_date', e.target.value)} />
+                </FieldGroup>
+
                 <FieldGroup label="Pitch Video URL" error={fieldErrors.video_url}>
-                  <input className={styles.input} type="url" placeholder="https://youtube.com/watch?v=..." value={form.video_url} onChange={e => set('video_url', e.target.value)} />
+                  <input className={styles.input} type="url" placeholder="YouTube link (watch, shorts, or youtu.be)" value={form.video_url} onChange={e => set('video_url', e.target.value)} />
                 </FieldGroup>
 
                 <FieldGroup label="Deal Terms" error={fieldErrors.terms_text}>
