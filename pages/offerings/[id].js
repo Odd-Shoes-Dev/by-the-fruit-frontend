@@ -8,6 +8,28 @@ import styles from '../../styles/Offerings.module.css'
 
 const unwrap = json => { const r = json?.data ?? json; return r }
 
+function getYouTubeEmbedUrl(url) {
+  if (!url) return null
+  try {
+    const u = new URL(url)
+    let videoId = null
+    if (u.hostname === 'youtu.be') {
+      // https://youtu.be/VIDEO_ID
+      videoId = u.pathname.slice(1).split('?')[0]
+    } else if (u.pathname.includes('/shorts/')) {
+      // https://youtube.com/shorts/VIDEO_ID
+      videoId = u.pathname.split('/shorts/')[1].split('?')[0]
+    } else {
+      // https://www.youtube.com/watch?v=VIDEO_ID
+      videoId = u.searchParams.get('v')
+    }
+    if (!videoId) return null
+    return `https://www.youtube.com/embed/${videoId}`
+  } catch {
+    return null
+  }
+}
+
 export default function OfferingDetailPage() {
   const router = useRouter()
   const { id } = router.query
@@ -53,7 +75,7 @@ export default function OfferingDetailPage() {
     setSeeding(true)
     const action = userHasSeeded ? 'unseed' : 'seed'
     try {
-      const res = await apiFetch(`/spv/offerings/${id}/${action}/`, { method: 'POST' })
+      const res = await apiFetch(`/profiles/offerings/${id}/${action}/`, { method: 'POST' })
       if (res.ok) {
         const data = await res.json()
         setSeedCount(data.seed_count)
@@ -121,10 +143,10 @@ export default function OfferingDetailPage() {
                 </div>
               )}
 
-              {offering.video_url && (
+              {getYouTubeEmbedUrl(offering.video_url) && (
                 <div className={styles.videoWrap}>
                   <iframe
-                    src={offering.video_url.replace('watch?v=', 'embed/')}
+                    src={getYouTubeEmbedUrl(offering.video_url)}
                     title="Pitch video"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
@@ -196,12 +218,14 @@ export default function OfferingDetailPage() {
                   )}
                 </div>
 
-                {/* Progress bar */}
+                {/* Seed progress bar */}
                 <div style={{ marginBottom: '1.25rem' }}>
                   <div style={{ height: 6, borderRadius: 10, background: 'rgba(61,46,30,0.1)', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', borderRadius: 10, background: 'var(--orange)', width: `${Math.min(100, offering.progress_percent || 0)}%`, transition: 'width 0.5s' }} />
+                    <div style={{ height: '100%', borderRadius: 10, background: 'var(--orange)', width: `${offering.seed_progress_percent || 0}%`, transition: 'width 0.5s' }} />
                   </div>
-                  <p style={{ fontSize: '0.78rem', margin: '0.4rem 0 0', opacity: 0.5 }}>{offering.progress_percent || 0}% of target raised</p>
+                  <p style={{ fontSize: '0.78rem', margin: '0.4rem 0 0', opacity: 0.5 }}>
+                    {seedCount} / {offering.target_seeds ?? '—'} seeds · {offering.seed_progress_percent || 0}% toward seed goal
+                  </p>
                 </div>
 
                 {/* Seed count */}

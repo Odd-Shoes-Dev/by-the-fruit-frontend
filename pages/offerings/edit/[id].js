@@ -171,7 +171,7 @@ export default function EditOfferingPage() {
                 </FieldGroup>
 
                 <FieldGroup label="Pitch Video URL" error={fieldErrors.video_url}>
-                  <input className={styles.input} type="url" placeholder="https://youtube.com/watch?v=..." value={form.video_url} onChange={e => set('video_url', e.target.value)} />
+                  <input className={styles.input} type="url" placeholder="YouTube link (watch, shorts, or youtu.be)" value={form.video_url} onChange={e => set('video_url', e.target.value)} />
                 </FieldGroup>
 
                 <FieldGroup label="Deal Terms" error={fieldErrors.terms_text}>

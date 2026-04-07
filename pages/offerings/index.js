@@ -113,8 +113,8 @@ export default function OfferingsPage() {
                   )}
                 </div>
 
-                <ProgressBar percent={o.progress_percent || 0} />
-                <p className={styles.progressLabel}>{o.progress_percent || 0}% of target raised</p>
+                <ProgressBar percent={o.seed_progress_percent || 0} />
+                <p className={styles.progressLabel}>{o.seed_count ?? 0} / {o.target_seeds ?? '—'} seeds · {o.seed_progress_percent || 0}% toward seed goal</p>
 
                 <Link href={`/offerings/${o.id}`} className={styles.viewBtn}>
                   View Offering →
