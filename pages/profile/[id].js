@@ -8,6 +8,13 @@ import ConnectionButtons from '../../components/ConnectionButtons'
 import FluffyButton from '../../components/FluffyButton'
 import styles from '../../styles/ProfilePage.module.css'
 
+const STATUS_COLORS = {
+  pending: '#E8601A',
+  signed: '#4CAF50',
+  funded: '#2196F3',
+  refunded: '#9E9E9E',
+}
+
 function Avatar({ src, name, size = 96 }) {
   const initials = (name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
   if (src) return <img src={src} alt={name} className={styles.avatar} style={{ width: size, height: size }} />
@@ -59,6 +66,8 @@ export default function ProfilePage() {
   const [isGeneratingSeed, setIsGeneratingSeed] = useState(false)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
+  const [commitments, setCommitments] = useState([])
+  const [portfolioLoading, setPortfolioLoading] = useState(false)
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(profile.user_code)
@@ -121,6 +130,25 @@ export default function ProfilePage() {
       })
     return () => { mounted = false }
   }, [id])
+
+  useEffect(() => {
+    if (!viewerId || !id || String(viewerId) !== String(id)) return
+    const tok = getToken()
+    if (!tok) return
+    setPortfolioLoading(true)
+    async function loadPortfolio() {
+      try {
+        const unwrap = json => json?.data ?? json
+        const commRes = await apiFetch('/profiles/spv-commitments/')
+        if (commRes.ok) {
+          const d = unwrap(await commRes.json())
+          setCommitments(Array.isArray(d) ? d : (d?.results || []))
+        }
+      } catch (e) {}
+      setPortfolioLoading(false)
+    }
+    loadPortfolio()
+  }, [viewerId, id])
 
   if (loading) {
     return (
@@ -486,6 +514,78 @@ export default function ProfilePage() {
                   </li>
                 ))}
               </ul>
+            </motion.section>
+          )}
+
+          {/* Portfolio summary — own profile only */}
+          {isOwnProfile && (
+            <motion.section
+              className={styles.detailCard}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+                <p className={styles.sectionEyebrow} style={{ margin: 0 }}>
+                  <FiTrendingUp size={12} style={{ marginRight: 5, verticalAlign: 'middle' }} />Portfolio
+                </p>
+              </div>
+
+              {portfolioLoading && (
+                <p style={{ color: 'var(--muted)', fontSize: '0.875rem', margin: 0 }}>Loading…</p>
+              )}
+
+              {!portfolioLoading && commitments.length === 0 && (
+                <p style={{ color: 'var(--muted)', fontSize: '0.875rem', margin: 0 }}>
+                  No commitments yet.{' '}
+                  <Link href="/offerings" style={{ color: 'var(--orange)' }}>Browse offerings →</Link>
+                </p>
+              )}
+
+              {!portfolioLoading && commitments.length > 0 && (
+                <>
+                  <div style={{ display: 'flex', gap: 12, marginBottom: 14, flexWrap: 'wrap' }}>
+                    <div style={{ flex: 1, minWidth: 80, background: 'var(--cardBg)', border: '1px solid var(--border)', borderRadius: 8, padding: '8px 12px' }}>
+                      <p style={{ margin: '0 0 2px', fontSize: '0.7rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Total</p>
+                      <p style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700 }}>
+                        ${commitments.reduce((s, c) => s + Number(c.amount || 0), 0).toLocaleString()}
+                      </p>
+                    </div>
+                    <div style={{ flex: 1, minWidth: 70, background: 'var(--cardBg)', border: '1px solid var(--border)', borderRadius: 8, padding: '8px 12px' }}>
+                      <p style={{ margin: '0 0 2px', fontSize: '0.7rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Funded</p>
+                      <p style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: '#2196F3' }}>
+                        {commitments.filter(c => c.status === 'funded').length}
+                      </p>
+                    </div>
+                    <div style={{ flex: 1, minWidth: 70, background: 'var(--cardBg)', border: '1px solid var(--border)', borderRadius: 8, padding: '8px 12px' }}>
+                      <p style={{ margin: '0 0 2px', fontSize: '0.7rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Pending</p>
+                      <p style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: 'var(--orange)' }}>
+                        {commitments.filter(c => c.status === 'pending').length}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {commitments.slice(0, 3).map(c => (
+                      <div key={c.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', borderRadius: 8, background: 'var(--cardBg)', border: '1px solid var(--border)' }}>
+                        <div style={{ minWidth: 0 }}>
+                          <p style={{ margin: 0, fontWeight: 600, fontSize: '0.85rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.spv_name || `SPV #${c.spv}`}</p>
+                          {c.offering_title && <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--muted)' }}>{c.offering_title}</p>}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, marginLeft: 8 }}>
+                          <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>${Number(c.amount).toLocaleString()}</span>
+                          <span style={{ background: STATUS_COLORS[c.status] || '#555', color: '#fff', borderRadius: 4, padding: '2px 6px', fontSize: '0.7rem', fontWeight: 600 }}>{c.status}</span>
+                        </div>
+                      </div>
+                    ))}
+                    {commitments.length > 3 && (
+                      <Link href="/portfolio" style={{ fontSize: '0.8rem', color: 'var(--orange)', textAlign: 'center', paddingTop: 4, textDecoration: 'none' }}>
+                        +{commitments.length - 3} more commitments →
+                      </Link>
+                    )}
+                  </div>
+                </>
+              )}
             </motion.section>
           )}
 
