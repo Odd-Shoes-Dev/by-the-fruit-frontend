@@ -100,6 +100,7 @@ function NavAvatar({ userId, photo, name, admin, onLogout }) {
 }
 
 export default function Layout({ children }) {
+  const [authReady, setAuthReady] = useState(false)
   const [token, setToken] = useState(false)
   const [admin, setAdmin] = useState(false)
   const [approved, setApproved] = useState(false)
@@ -127,6 +128,7 @@ export default function Layout({ children }) {
     setApproved(a)
     setUserId(getUserId())
     syncUserFromStorage()
+    setAuthReady(true)
     // Read cached creator flag immediately, then refresh from API
     if (typeof window !== 'undefined') {
       const cached = localStorage.getItem('btf_creator')
@@ -255,7 +257,7 @@ export default function Layout({ children }) {
                 <button onClick={handleLogout} className={styles.navLogout}>Log out</button>
               </>
             )}
-            {!token && (
+            {!token && authReady && (
               <>
                 <FluffyButton href="/signup" label="Join the waitlist" width={180} height={40} strands={900} strandLen={6} fontSize={14} />
                 <Link href="/login" className={styles.navLink}>Log in</Link>
@@ -305,7 +307,7 @@ export default function Layout({ children }) {
                     <button onClick={handleLogout} className={styles.navLogout}>Log out</button>
                   </>
                 )}
-                {!token && (
+                {!token && authReady && (
                   <>
                     <FluffyButton href="/signup" label="Join the waitlist" fullWidth height={40} strands={900} strandLen={6} fontSize={13} />
                     <Link href="/login" className={styles.navLink}>Log in</Link>
