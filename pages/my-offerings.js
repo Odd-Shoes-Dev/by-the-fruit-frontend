@@ -62,45 +62,65 @@ export default function MyOfferingsPage() {
               </Link>
             </div>
           ) : (
-            <div className={styles.list}>
-              {offerings.map(o => (
-                <div key={o.id} className={styles.card}>
-                  <div className={styles.cardLeft}>
-                    <div className={styles.cardTitleRow}>
-                      <h2 className={styles.cardTitle}>{o.title}</h2>
-                      <span
-                        className={styles.statusPill}
-                        style={{ background: STATUS_COLORS[o.status] || '#555' }}
-                      >
-                        {o.status}
-                      </span>
-                    </div>
-                    {o.tagline && <p className={styles.cardTagline}>{o.tagline}</p>}
-                    <div className={styles.cardMeta}>
-                      <span>Target: <strong>${Number(o.target_raise).toLocaleString()}</strong></span>
-                      {o.closing_date && (
-                        <span>Closes: <strong>{new Date(o.closing_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</strong></span>
-                      )}
-                      <span>
-                        Progress: <strong>{o.progress_percent ?? 0}%</strong>
-                        {' '}(${Number(o.total_committed || 0).toLocaleString()} raised)
-                      </span>
-                    </div>
-                  </div>
-                  <div className={styles.cardActions}>
-                    <Link href={`/offerings/edit/${o.id}`} className={styles.editBtn}>
-                      Edit
-                    </Link>
-                    <Link href={`/offerings/dashboard/${o.id}`} className={styles.dashBtn}>
-                      Pipeline
-                    </Link>
-                    <Link href={`/offerings/${o.id}`} className={styles.viewBtn}>
-                      View
-                    </Link>
+            // Group by business
+            (() => {
+              const groups = {}
+              offerings.forEach(o => {
+                const key = o.business_name || 'My Business'
+                if (!groups[key]) groups[key] = []
+                groups[key].push(o)
+              })
+              return Object.entries(groups).map(([bizName, bizOfferings]) => (
+                <div key={bizName} style={{ marginBottom: '2rem' }}>
+                  <h2 style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', opacity: 0.45, margin: '0 0 0.75rem' }}>
+                    {bizName}
+                  </h2>
+                  <div className={styles.list}>
+                    {bizOfferings.map(o => (
+                      <div key={o.id} className={styles.card}>
+                        <div className={styles.cardLeft}>
+                          <div className={styles.cardTitleRow}>
+                            <h2 className={styles.cardTitle}>{o.title}</h2>
+                            <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+                              {o.round_type_display && (
+                                <span style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', padding: '2px 8px', borderRadius: 20, background: 'rgba(245,166,35,0.12)', color: 'var(--orange)', border: '1px solid rgba(245,166,35,0.3)' }}>
+                                  {o.round_type_display}
+                                </span>
+                              )}
+                              <span
+                                className={styles.statusPill}
+                                style={{ background: STATUS_COLORS[o.status] || '#555' }}
+                              >
+                                {o.status}
+                              </span>
+                            </div>
+                          </div>
+                          {o.tagline && <p className={styles.cardTagline}>{o.tagline}</p>}
+                          <div className={styles.cardMeta}>
+                            <span>Target: <strong>${Number(o.target_raise).toLocaleString()}</strong></span>
+                            {o.closing_date && (
+                              <span>Closes: <strong>{new Date(o.closing_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</strong></span>
+                            )}
+                            <span>🌱 <strong>{o.seed_count ?? 0}</strong> seeds</span>
+                          </div>
+                        </div>
+                        <div className={styles.cardActions}>
+                          <Link href={`/offerings/edit/${o.id}`} className={styles.editBtn}>
+                            Edit
+                          </Link>
+                          <Link href={`/offerings/dashboard/${o.id}`} className={styles.dashBtn}>
+                            Pipeline
+                          </Link>
+                          <Link href={`/offerings/${o.id}`} className={styles.viewBtn}>
+                            View
+                          </Link>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
+              ))
+            })()
           )}
 
         </motion.div>

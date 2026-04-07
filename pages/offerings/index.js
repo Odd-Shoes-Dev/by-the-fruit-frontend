@@ -77,7 +77,14 @@ export default function OfferingsPage() {
                     <img src={o.business_logo} alt={o.business_name} className={styles.logo} />
                   )}
                   <div>
-                    <span className={styles.category}>{o.business_category || 'Other'}</span>
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 4 }}>
+                      <span className={styles.category}>{o.business_category || 'Other'}</span>
+                      {o.round_type_display && (
+                        <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', padding: '2px 8px', borderRadius: 20, background: 'rgba(245,166,35,0.12)', color: 'var(--orange)', border: '1px solid rgba(245,166,35,0.3)' }}>
+                          {o.round_type_display}
+                        </span>
+                      )}
+                    </div>
                     <h2 className={styles.cardTitle}>{o.title}</h2>
                     <p className={styles.cardSub}>{o.business_name}</p>
                   </div>
@@ -91,8 +98,8 @@ export default function OfferingsPage() {
                     <span className={styles.statVal}>${Number(o.target_raise).toLocaleString()}</span>
                   </div>
                   <div className={styles.stat}>
-                    <span className={styles.statLabel}>Committed</span>
-                    <span className={styles.statVal}>${Number(o.total_committed || 0).toLocaleString()}</span>
+                    <span className={styles.statLabel}>🌱 Seeds</span>
+                    <span className={styles.statVal}>{o.seed_count ?? 0}</span>
                   </div>
                   <div className={styles.stat}>
                     <span className={styles.statLabel}>Min. Investment</span>
