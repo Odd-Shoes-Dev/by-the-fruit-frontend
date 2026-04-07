@@ -373,7 +373,7 @@ export default function Layout({ children }) {
           <div className={styles.footerSocial}>
             <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer">Twitter</a>
             <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer">Instagram</a>
-            <a href="https://linkedin.com/company/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="https://www.linkedin.com/company/by-the-fruit/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
           </div>
         </div>
       </motion.footer>

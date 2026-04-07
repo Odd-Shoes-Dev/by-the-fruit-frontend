@@ -168,7 +168,7 @@ export default function OfferingDetailPage() {
               {offering.terms_text && (
                 <div className={styles.termsBox}>
                   <h3 className={styles.sectionLabel}>Deal Terms</h3>
-                  <p style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7, color: 'rgba(244,239,230,0.75)', fontSize: '0.95rem' }}>
+                  <p style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7, color: '#3d2e1e', fontSize: '0.95rem' }}>
                     {offering.terms_text}
                   </p>
                 </div>
