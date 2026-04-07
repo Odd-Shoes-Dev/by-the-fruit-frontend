@@ -5,6 +5,19 @@ import Pagination from '../components/Pagination'
 import FluffyButton from '../components/FluffyButton'
 import { apiFetch, getToken, isAdmin } from '../lib/api'
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000'
+function absUrl(url) {
+  if (!url) return null
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  return `${API_BASE}${url}`
+}
+function UserAvatar({ src, name, size = 44 }) {
+  const initials = (name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+  const base = { width: size, height: size, borderRadius: '50%', flexShrink: 0 }
+  if (src) return <img src={absUrl(src)} alt={name} style={{ ...base, objectFit: 'cover' }} onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex' }} />
+  return <div style={{ ...base, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F5A623', color: '#fff', fontWeight: 700, fontSize: size * 0.38 }}>{initials}</div>
+}
+
 const PAGE_SIZE = 8
 const unwrap = json => { const r = json?.data ?? json; return Array.isArray(r) ? r : Array.isArray(r?.results) ? r.results : [] }
 
@@ -71,12 +84,15 @@ export default function InvestorsList() {
           {pageItems.map(inv => (
             <li key={inv.id} className="list-item">
               <div className="list-item-row">
-                <div>
-                  <Link href={`/profile/${inv.id}`}><strong>{inv.full_name || 'Investor'}</strong></Link>
-                  <div className="meta">{inv.email}</div>
-                  {inv.investment_type && <div className="meta">Focus: {inv.investment_type} · {inv.check_size_range}</div>}
-                  {inv.location && <div className="meta">{inv.location}</div>}
-                  {inv.bio && <div className="meta">{inv.bio}{inv.bio.length >= 120 ? '…' : ''}</div>}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                  <UserAvatar src={inv.photo} name={inv.full_name} size={44} />
+                  <div>
+                    <Link href={`/profile/${inv.id}`}><strong>{inv.full_name || 'Investor'}</strong></Link>
+                    <div className="meta">{inv.email}</div>
+                    {inv.investment_type && <div className="meta">Focus: {inv.investment_type} · {inv.check_size_range}</div>}
+                    {inv.location && <div className="meta">{inv.location}</div>}
+                    {inv.bio && <div className="meta">{inv.bio}{inv.bio.length >= 120 ? '…' : ''}</div>}
+                  </div>
                 </div>
                 <div className="list-item-actions">
                   <FluffyButton href={`/profile/${inv.id}`} label="View" width={80} height={36} strands={700} strandLen={6} fontSize={13} color="#F5A623" />

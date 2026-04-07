@@ -6,6 +6,19 @@ import ConnectionButtons from '../components/ConnectionButtons'
 import FluffyButton from '../components/FluffyButton'
 import { apiFetch, getToken, isAdmin } from '../lib/api'
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000'
+function absUrl(url) {
+  if (!url) return null
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  return `${API_BASE}${url}`
+}
+function UserAvatar({ src, name, size = 44 }) {
+  const initials = (name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+  const base = { width: size, height: size, borderRadius: '50%', flexShrink: 0, display: 'inline-block' }
+  if (src) return <img src={absUrl(src)} alt={name} style={{ ...base, objectFit: 'cover' }} onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex' }} />
+  return <div style={{ ...base, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F5A623', color: '#fff', fontWeight: 700, fontSize: size * 0.38 }}>{initials}</div>
+}
+
 const PAGE_SIZE = 6
 const unwrap = json => { const r = json?.data ?? json; return Array.isArray(r) ? r : Array.isArray(r?.results) ? r.results : [] }
 
@@ -68,9 +81,12 @@ export default function FoundersList() {
           {pageItems.map(f => (
             <li key={f.id} className="list-item">
               <div className="list-item-row">
-                <div>
-                  <Link href={`/profile/${f.id}`}><strong>{f.name || f.full_name}</strong></Link>
-                  <div className="meta">{f.company}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                  <UserAvatar src={f.photo} name={f.name || f.full_name} size={44} />
+                  <div>
+                    <Link href={`/profile/${f.id}`}><strong>{f.name || f.full_name}</strong></Link>
+                    <div className="meta">{f.company}</div>
+                  </div>
                 </div>
                 <div className="list-item-actions">
                   <ConnectionButtons targetUserId={f.id} viewerRole="investor" />
