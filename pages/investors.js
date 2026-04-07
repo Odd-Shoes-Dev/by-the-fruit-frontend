@@ -1,9 +1,7 @@
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import Pagination from '../components/Pagination'
-import FluffyButton from '../components/FluffyButton'
-import { apiFetch, getToken, isAdmin } from '../lib/api'
+import { apiFetch, getToken } from '../lib/api'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000'
 function absUrl(url) {
@@ -27,6 +25,14 @@ export default function InvestorsList() {
   const [q, setQ] = useState('')
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   useEffect(() => {
     if (!getToken()) {
@@ -82,20 +88,17 @@ export default function InvestorsList() {
       ) : (
         <ul className="list">
           {pageItems.map(inv => (
-            <li key={inv.id} className="list-item">
+            <li key={inv.id} className="list-item" onClick={() => router.push(`/profile/${inv.id}`)} style={{ cursor: 'pointer' }}>
               <div className="list-item-row">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
                   <UserAvatar src={inv.photo} name={inv.full_name} size={44} />
                   <div>
-                    <Link href={`/profile/${inv.id}`}><strong>{inv.full_name || 'Investor'}</strong></Link>
+                    <strong>{inv.full_name || 'Investor'}</strong>
                     <div className="meta">{inv.email}</div>
                     {inv.investment_type && <div className="meta">Focus: {inv.investment_type} · {inv.check_size_range}</div>}
                     {inv.location && <div className="meta">{inv.location}</div>}
                     {inv.bio && <div className="meta">{inv.bio}{inv.bio.length >= 120 ? '…' : ''}</div>}
                   </div>
-                </div>
-                <div className="list-item-actions">
-                  <FluffyButton href={`/profile/${inv.id}`} label="View" width={80} height={36} strands={700} strandLen={6} fontSize={13} color="#F5A623" />
                 </div>
               </div>
             </li>

@@ -1,10 +1,8 @@
 import { useRouter } from 'next/router'
-import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import Pagination from '../components/Pagination'
 import ConnectionButtons from '../components/ConnectionButtons'
-import FluffyButton from '../components/FluffyButton'
-import { apiFetch, getToken, isAdmin } from '../lib/api'
+import { apiFetch, getToken } from '../lib/api'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000'
 function absUrl(url) {
@@ -28,6 +26,14 @@ export default function FoundersList() {
   const [q, setQ] = useState('')
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   useEffect(() => {
     if (!getToken()) {
@@ -79,18 +85,17 @@ export default function FoundersList() {
       ) : (
         <ul className="list">
           {pageItems.map(f => (
-            <li key={f.id} className="list-item">
+            <li key={f.id} className="list-item" onClick={() => router.push(`/profile/${f.id}`)} style={{ cursor: 'pointer' }}>
               <div className="list-item-row">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
                   <UserAvatar src={f.photo} name={f.name || f.full_name} size={44} />
                   <div>
-                    <Link href={`/profile/${f.id}`}><strong>{f.name || f.full_name}</strong></Link>
+                    <strong>{f.name || f.full_name}</strong>
                     <div className="meta">{f.company}</div>
                   </div>
                 </div>
-                <div className="list-item-actions">
-                  <ConnectionButtons targetUserId={f.id} viewerRole="investor" />
-                  <FluffyButton href={`/profile/${f.id}`} label="View" width={80} height={36} strands={700} strandLen={6} fontSize={13} color="#F5A623" />
+                <div className="list-item-actions" onClick={e => e.stopPropagation()}>
+                  <ConnectionButtons targetUserId={f.id} viewerRole="investor" iconOnly={isMobile} />
                 </div>
               </div>
               {f.family && <div className="meta">Family: {(f.family || []).join(', ')}</div>}
