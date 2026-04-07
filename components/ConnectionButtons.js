@@ -2,10 +2,17 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { apiFetch, getToken, getUserId } from '../lib/api'
 import FluffyButton from './FluffyButton'
+import { FiMessageCircle } from 'react-icons/fi'
+
+const iconBtnStyle = (bg) => ({
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  width: 36, height: 36, borderRadius: '50%', border: 'none',
+  background: bg, color: '#fff', cursor: 'pointer', flexShrink: 0
+})
 
 const unwrap = json => { const r = json?.data ?? json; return Array.isArray(r) ? r : Array.isArray(r?.results) ? r.results : r }
 
-export default function ConnectionButtons({ targetUserId, viewerRole = 'investor' }) {
+export default function ConnectionButtons({ targetUserId, viewerRole = 'investor', iconOnly = false }) {
   const [connection, setConnection] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -86,6 +93,22 @@ export default function ConnectionButtons({ targetUserId, viewerRole = 'investor
   if (!userId || String(userId) === String(targetUserId)) return null
 
   const status = connection?.status
+
+  if (iconOnly) {
+    return (
+      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+        {error && <span title={error} style={{ color: 'red', fontSize: '0.8rem' }}>!</span>}
+        <button
+          onClick={openChannel}
+          disabled={loading}
+          title={status === 'connected' ? 'Open channel' : 'Message'}
+          style={iconBtnStyle(status === 'connected' ? '#4F6BD9' : '#F5A623')}
+        >
+          <FiMessageCircle size={17} />
+        </button>
+      </div>
+    )
+  }
 
   return (
     <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
