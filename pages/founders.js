@@ -17,7 +17,7 @@ export default function FoundersList() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!getToken() || !isAdmin()) {
+    if (!getToken()) {
       router.replace('/')
       return
     }
