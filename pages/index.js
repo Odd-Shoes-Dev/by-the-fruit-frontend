@@ -102,11 +102,16 @@ export default function LandingPage() {
       if (res.ok) {
         setSubmitted(true)
       } else {
-        const raw      = data?.data || data
-        const emailErr = (raw?.email?.[0] || '').toLowerCase()
-        setErrorMsg(emailErr.includes('already exists')
-          ? "You're already on the list — check your inbox."
-          : (raw?.message || raw?.detail || 'Something went wrong. Please try again.'))
+        const raw = data?.data || data
+        const allErrText = [
+          raw?.email?.[0] || '',
+          ...(Array.isArray(raw?.errors) ? raw.errors : []),
+        ].join(' ').toLowerCase()
+        setErrorMsg(
+          allErrText.includes('already exists')
+            ? "You're already on the list — check your inbox."
+            : (raw?.message || raw?.detail || raw?.errors?.[0] || 'Something went wrong. Please try again.')
+        )
       }
     } catch (_) {
       setErrorMsg('Could not reach the server. Please check your connection.')
