@@ -8,6 +8,7 @@ export default function LandingPage() {
   const [submitting, setSubmitting]     = useState(false)
   const [errorMsg, setErrorMsg]         = useState('')
   const [submitted, setSubmitted]       = useState(false)
+  const [alreadyListed, setAlreadyListed] = useState(false)
 
   const capitalSectionRef = useRef(null)
   const parallaxImgRef    = useRef(null)
@@ -105,11 +106,11 @@ export default function LandingPage() {
           raw?.email?.[0] || '',
           ...(Array.isArray(raw?.errors) ? raw.errors : []),
         ].join(' ').toLowerCase()
-        setErrorMsg(
-          allErrText.includes('already exists')
-            ? "You're already on the list — check your inbox."
-            : (raw?.message || raw?.detail || raw?.errors?.[0] || 'Something went wrong. Please try again.')
-        )
+        if (allErrText.includes('already exists')) {
+          setAlreadyListed(true)
+        } else {
+          setErrorMsg(raw?.message || raw?.detail || raw?.errors?.[0] || 'Something went wrong. Please try again.')
+        }
       }
     } catch (_) {
       setErrorMsg('Could not reach the server. Please check your connection.')
@@ -473,12 +474,21 @@ export default function LandingPage() {
             </div>
 
             {submitted ? (
-              <div className="waitlist-card reveal" style={{ textAlign: 'center' }}>
+              <div className="waitlist-card visible" style={{ textAlign: 'center' }}>
                 <p style={{ fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: '36px', color: '#2e2e28', lineHeight: '1.2' }}>
                   You&apos;re on the list.
                 </p>
                 <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '15px', color: '#6e906a', lineHeight: '1.6' }}>
                   Check your inbox &mdash; we&apos;ve sent you a confirmation.<br />
+                  We&apos;ll be in touch when the platform opens.
+                </p>
+              </div>
+            ) : alreadyListed ? (
+              <div className="waitlist-card visible" style={{ textAlign: 'center' }}>
+                <p style={{ fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: '36px', color: '#2e2e28', lineHeight: '1.2' }}>
+                  You&apos;re already on the list.
+                </p>
+                <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '15px', color: '#6e906a', lineHeight: '1.6' }}>
                   We&apos;ll be in touch when the platform opens.
                 </p>
               </div>
