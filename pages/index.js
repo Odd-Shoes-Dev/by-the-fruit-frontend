@@ -8,6 +8,7 @@ export default function LandingPage() {
   const [submitting, setSubmitting]     = useState(false)
   const [errorMsg, setErrorMsg]         = useState('')
   const [submitted, setSubmitted]       = useState(false)
+  const [alreadyListed, setAlreadyListed] = useState(false)
 
   const capitalSectionRef = useRef(null)
   const parallaxImgRef    = useRef(null)
@@ -105,11 +106,11 @@ export default function LandingPage() {
           raw?.email?.[0] || '',
           ...(Array.isArray(raw?.errors) ? raw.errors : []),
         ].join(' ').toLowerCase()
-        setErrorMsg(
-          allErrText.includes('already exists')
-            ? "You're already on the list — check your inbox."
-            : (raw?.message || raw?.detail || raw?.errors?.[0] || 'Something went wrong. Please try again.')
-        )
+        if (allErrText.includes('already exists')) {
+          setAlreadyListed(true)
+        } else {
+          setErrorMsg(raw?.message || raw?.detail || raw?.errors?.[0] || 'Something went wrong. Please try again.')
+        }
       }
     } catch (_) {
       setErrorMsg('Could not reach the server. Please check your connection.')
@@ -124,15 +125,15 @@ export default function LandingPage() {
         <title>By the Fruit</title>
         <link rel="icon" href="/images/favicon.png" type="image/png" />
         <link rel="apple-touch-icon" href="/images/favicon.png" />
-        <meta name="description" content="" />
+        <meta name="description" content="The front door to conviction capital. Matching founders with aligned investors and creators. Join the waitlist." />
         <meta property="og:type"        content="website" />
         <meta property="og:title"       content="By the Fruit" />
-        <meta property="og:description" content="" />
+        <meta property="og:description" content="The front door to conviction capital. Matching founders with aligned investors and creators. Join the waitlist." />
         <meta property="og:url"         content="https://www.bythefruit.com" />
         <meta property="og:image"       content="https://www.bythefruit.com/images/OG-image.png" />
         <meta name="twitter:card"        content="summary_large_image" />
         <meta name="twitter:title"       content="By the Fruit" />
-        <meta name="twitter:description" content="" />
+        <meta name="twitter:description" content="The front door to conviction capital. Matching founders with aligned investors and creators. Join the waitlist." />
         <meta name="twitter:image"       content="https://www.bythefruit.com/images/OG-image.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
@@ -473,12 +474,21 @@ export default function LandingPage() {
             </div>
 
             {submitted ? (
-              <div className="waitlist-card reveal" style={{ textAlign: 'center' }}>
+              <div className="waitlist-card visible" style={{ textAlign: 'center' }}>
                 <p style={{ fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: '36px', color: '#2e2e28', lineHeight: '1.2' }}>
                   You&apos;re on the list.
                 </p>
                 <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '15px', color: '#6e906a', lineHeight: '1.6' }}>
                   Check your inbox &mdash; we&apos;ve sent you a confirmation.<br />
+                  We&apos;ll be in touch when the platform opens.
+                </p>
+              </div>
+            ) : alreadyListed ? (
+              <div className="waitlist-card visible" style={{ textAlign: 'center' }}>
+                <p style={{ fontFamily: "'Instrument Serif', serif", fontStyle: 'italic', fontSize: '36px', color: '#2e2e28', lineHeight: '1.2' }}>
+                  You&apos;re already on the list.
+                </p>
+                <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '15px', color: '#6e906a', lineHeight: '1.6' }}>
                   We&apos;ll be in touch when the platform opens.
                 </p>
               </div>
