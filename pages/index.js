@@ -300,6 +300,7 @@ export default function LandingPage() {
           .hero-apple { display: block; left: calc(50% - 200px); top: 750px; width: 84px; height: 81px; }
           .hero-watermelon { display: block; left: calc(50% + 100px); top: 820px; width: 158px; height: 109px; }
           .capital-section { height: auto; padding: 80px 40px 100px; }
+          .capital-quotes { padding: 0 20px; }
           .capital-body { font-size: 48px; }
           .capital-accent { font-size: 80px; }
           .model-section { min-height: auto; padding: 80px 40px; }
