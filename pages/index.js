@@ -124,15 +124,15 @@ export default function LandingPage() {
         <title>By the Fruit</title>
         <link rel="icon" href="/images/favicon.png" type="image/png" />
         <link rel="apple-touch-icon" href="/images/favicon.png" />
-        <meta name="description" content="" />
+        <meta name="description" content="The front door to conviction capital. Matching founders with aligned investors and creators. Join the waitlist." />
         <meta property="og:type"        content="website" />
         <meta property="og:title"       content="By the Fruit" />
-        <meta property="og:description" content="" />
+        <meta property="og:description" content="The front door to conviction capital. Matching founders with aligned investors and creators. Join the waitlist." />
         <meta property="og:url"         content="https://www.bythefruit.com" />
         <meta property="og:image"       content="https://www.bythefruit.com/images/OG-image.png" />
         <meta name="twitter:card"        content="summary_large_image" />
         <meta name="twitter:title"       content="By the Fruit" />
-        <meta name="twitter:description" content="" />
+        <meta name="twitter:description" content="The front door to conviction capital. Matching founders with aligned investors and creators. Join the waitlist." />
         <meta name="twitter:image"       content="https://www.bythefruit.com/images/OG-image.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
