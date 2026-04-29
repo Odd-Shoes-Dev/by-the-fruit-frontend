@@ -89,14 +89,12 @@ export default function LandingPage() {
     const email = e.target.email.value.trim()
     const about = e.target.about.value.trim()
     if (!email) { setErrorMsg('Please enter your email address.'); return }
-    const rand = Array.from(crypto.getRandomValues(new Uint8Array(18)))
-      .map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 20)
     setSubmitting(true)
     try {
-      const res  = await fetch(`${BACKEND_URL}/user/register`, {
+      const res  = await fetch(`${BACKEND_URL}/user/signup`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ email, intended_role: selectedRole, building_description: about, password: rand + 'Aa1!' }),
+        body:    JSON.stringify({ email, intended_role: selectedRole, building_description: about }),
       })
       const data = await res.json().catch(() => ({}))
       if (res.ok) {
@@ -142,6 +140,9 @@ export default function LandingPage() {
       </Head>
 
       <style jsx global>{`
+        .btf-page *, .btf-page *::before, .btf-page *::after {
+          box-sizing: border-box; margin: 0; padding: 0;
+        }
         .btf-page {
           background: #fff;
           color: #3a3a34;
@@ -299,6 +300,7 @@ export default function LandingPage() {
           .hero-apple { display: block; left: calc(50% - 200px); top: 750px; width: 84px; height: 81px; }
           .hero-watermelon { display: block; left: calc(50% + 100px); top: 820px; width: 158px; height: 109px; }
           .capital-section { height: auto; padding: 80px 40px 100px; }
+          .capital-quotes { padding: 0 20px; }
           .capital-body { font-size: 48px; }
           .capital-accent { font-size: 80px; }
           .model-section { min-height: auto; padding: 80px 40px; }
