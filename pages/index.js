@@ -185,7 +185,7 @@ export default function LandingPage() {
           display: flex; align-items: center; justify-content: space-between;
           backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 20;
         }
-        .nav-brand { display: flex; align-items: center; text-decoration: none; }
+        .nav-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; }
         .nav-brand-logo { display: block; height: 31px; width: auto; }
         .btn-dark {
           display: inline-flex; align-items: center; gap: 10px;
@@ -263,9 +263,11 @@ export default function LandingPage() {
         .form-fields { display: flex; flex-direction: column; gap: 24px; width: 100%; }
         .field-group { display: flex; flex-direction: column; gap: 10px; }
         .field-label { font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: 16px; line-height: 1.5; letter-spacing: -0.48px; color: #000; }
-        .field-input, .field-textarea { border: 1px solid #cacaca; border-radius: 32px; padding: 10px 16px; background: transparent; color: #000; font-family: 'IBM Plex Mono', monospace; font-size: 16px; line-height: 1.5; letter-spacing: -0.48px; width: 100%; outline: none; transition: border-color 0.2s; }
+        .field-input, .field-textarea { border: 1px solid #cacaca; border-radius: 32px; padding: 10px 16px; background: transparent; color: #000; font-family: 'IBM Plex Mono', monospace; font-size: 16px; line-height: 1.5; letter-spacing: -0.48px; width: 100%; outline: none; transition: border-color 0.2s; -webkit-appearance: none; appearance: none; }
+        .btf-page .field-input, .btf-page .field-textarea { border-radius: 32px !important; }
+        .btf-page .field-input:focus, .btf-page .field-textarea:focus { border-color: var(--color-dark) !important; box-shadow: none !important; outline: none !important; }
         .field-input::placeholder, .field-textarea::placeholder { color: #b4b4b4; }
-        .field-input:focus, .field-textarea:focus { border-color: var(--color-dark); }
+        .field-input:focus, .field-textarea:focus { border-color: var(--color-dark); outline: none; box-shadow: none; }
         .field-textarea { height: 129px; resize: vertical; border-radius: 24px; }
         .sections { display: flex; flex-direction: column; align-items: flex-end; width: 100%; }
         .site-footer { width: 100%; padding: 32px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: 13px; letter-spacing: 0.08em; color: #888; background: var(--color-green-pale); }
@@ -362,7 +364,8 @@ export default function LandingPage() {
           </div>
           <nav className="nav">
             <a className="nav-brand" href="#">
-              <img className="nav-brand-logo" src="/images/Logo-full.svg" alt="By the Fruit" width="130" height="31" />
+              <img src="/images/logo.png" alt="" width="28" height="28" style={{display:'block',flexShrink:0}} />
+              <img src="/images/logo-text.svg" alt="By the Fruit" height="22" style={{display:'block',flexShrink:0}} />
             </a>
             <a className="btn-dark" href="#waitlist">Waitlist now</a>
           </nav>
