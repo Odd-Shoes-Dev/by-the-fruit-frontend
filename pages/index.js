@@ -364,8 +364,7 @@ export default function LandingPage() {
           </div>
           <nav className="nav">
             <a className="nav-brand" href="#">
-              <img src="/images/logo.png" alt="" width="28" height="28" style={{display:'block',flexShrink:0}} />
-              <img src="/images/logo-text.svg" alt="By the Fruit" height="22" style={{display:'block',flexShrink:0}} />
+              <img className="nav-brand-logo" src="/images/Logo-full.svg" alt="By the Fruit" width="130" height="31" />
             </a>
             <a className="btn-dark" href="#waitlist">Waitlist now</a>
           </nav>
